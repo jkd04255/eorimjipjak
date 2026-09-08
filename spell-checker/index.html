@@ -2,16 +2,22 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f0f0f4">
   <meta name="description" content="완벽하게 고쳐준다고 자신하지만 가끔 더 틀리게 만드는 맞춤법 교정기.">
   <title>맞춤법 교정기 — 아주 완벽한 척하는 교정기</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    .header-actions{display:flex;align-items:center;gap:10px}.home-link{display:inline-flex;align-items:center;gap:6px;padding:8px 11px;border:1px solid #dcdce4;border-radius:10px;background:#fff;color:#4d33c5;text-decoration:none;font-size:12px;font-weight:750;white-space:nowrap}.home-link:hover{background:#ede9ff}.home-link:focus-visible{outline:3px solid #6045db;outline-offset:3px}@media(max-width:720px){.edition{display:none}.header-actions{margin-left:auto}.home-link{font-size:11px;padding:7px 9px}}
+    .tool-nav{height:52px;min-height:52px;display:flex;align-items:center;padding:0 max(14px,env(safe-area-inset-left));border-bottom:1px solid #dcdce4;background:#f0f0f4}.home-button{width:36px;height:36px;display:grid;place-items:center;border-radius:10px;background:#fff;color:#4d33c5;text-decoration:none;border:1px solid #dcdce4;transition:background .15s,transform .15s}.home-button:hover{background:#ede9ff}.home-button:active{transform:translateY(1px)}.home-button:focus-visible{outline:3px solid #6045db;outline-offset:3px}.home-button svg{width:19px;height:19px;display:block}
   </style>
 </head>
 <body>
+  <nav class="tool-nav" aria-label="사이트 이동">
+    <a class="home-button" href="../" aria-label="메인 홈페이지로 돌아가기" title="메인 홈페이지">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-7h6v7"/></svg>
+    </a>
+  </nav>
+
   <div class="shell">
     <header>
       <div class="brand">
@@ -21,10 +27,7 @@
           <p class="brand-sub">가끔 틀리는 교정기</p>
         </div>
       </div>
-      <div class="header-actions">
-        <a class="home-link" href="../">← 개똥도 쓸모는 있겠지</a>
-        <span class="edition">THE ALMOST RIGHT SPELL CHECKER</span>
-      </div>
+      <span class="edition">THE ALMOST RIGHT SPELL CHECKER</span>
     </header>
 
     <main>
