@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#f0f0f4">
   <title>어림짐작 — 가끔 틀리는 계산기</title>
   <style>
-    *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#f0f0f4;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR","Malgun Gothic",sans-serif}body{display:flex;flex-direction:column;min-height:100dvh}.tool-nav{height:52px;min-height:52px;display:flex;align-items:center;padding:0 max(14px,env(safe-area-inset-left));border-bottom:1px solid #dcdce4;background:#f0f0f4}.home-button{width:36px;height:36px;display:grid;place-items:center;border-radius:10px;background:#fff;color:#4d33c5;text-decoration:none;border:1px solid #dcdce4;transition:background .15s,transform .15s}.home-button:hover{background:#ede9ff}.home-button:active{transform:translateY(1px)}.home-button:focus-visible{outline:3px solid #6045db;outline-offset:3px}.home-button svg{width:19px;height:19px;display:block}.tool-frame{width:100%;flex:1;border:0;background:#f0f0f4;display:block}.feedback-bar{min-height:48px;display:flex;align-items:center;justify-content:center;border-top:1px solid #dcdce4;background:#f0f0f4}.feedback-link{color:#686875;text-decoration:none;font-size:12px;font-weight:650}.feedback-link:hover{color:#4d33c5;text-decoration:underline}.feedback-link:focus-visible{outline:3px solid #6045db;outline-offset:3px;border-radius:4px}
+    *{box-sizing:border-box}html,body{margin:0;width:100%;background:#f0f0f4;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR","Malgun Gothic",sans-serif}body{display:block}.tool-nav{height:52px;min-height:52px;display:flex;align-items:center;padding:0 max(14px,env(safe-area-inset-left));border-bottom:1px solid #dcdce4;background:#f0f0f4}.home-button{width:36px;height:36px;display:grid;place-items:center;border-radius:10px;background:#fff;color:#4d33c5;text-decoration:none;border:1px solid #dcdce4;transition:background .15s,transform .15s}.home-button:hover{background:#ede9ff}.home-button:active{transform:translateY(1px)}.home-button:focus-visible{outline:3px solid #6045db;outline-offset:3px}.home-button svg{width:19px;height:19px;display:block}.tool-frame{width:100%;height:900px;border:0;background:#f0f0f4;display:block;overflow:hidden}.feedback-bar{position:static;min-height:48px;display:flex;align-items:center;justify-content:center;border-top:1px solid #dcdce4;background:#f0f0f4}.feedback-link{color:#686875;text-decoration:none;font-size:12px;font-weight:650}.feedback-link:hover{color:#4d33c5;text-decoration:underline}.feedback-link:focus-visible{outline:3px solid #6045db;outline-offset:3px;border-radius:4px}
   </style>
 </head>
 <body>
@@ -15,7 +15,30 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-7h6v7"/></svg>
     </a>
   </nav>
-  <iframe class="tool-frame" src="../dist/" title="어림짐작 계산기"></iframe>
+  <iframe class="tool-frame" id="toolFrame" src="../dist/" title="어림짐작 계산기" scrolling="no"></iframe>
   <footer class="feedback-bar"><a class="feedback-link" href="mailto:jkd04255@khu.ac.kr?subject=%5B%EA%B0%9C%EB%98%A5%EB%8F%84%20%EC%93%B8%EB%AA%A8%EB%8A%94%20%EC%9E%88%EA%B2%A0%EC%A7%80%5D%20%EB%AC%B8%EC%9D%98%20%C2%B7%20%EC%98%A4%EB%A5%98%20%EC%A0%9C%EB%B3%B4">✉ 문의 · 오류 제보</a></footer>
+  <script>
+    (() => {
+      const frame = document.getElementById('toolFrame');
+      let observer;
+      const fitFrame = () => {
+        try {
+          const doc = frame.contentDocument;
+          if (!doc) return;
+          const height = Math.max(doc.body?.scrollHeight || 0, doc.documentElement?.scrollHeight || 0);
+          if (height > 0) frame.style.height = height + 'px';
+        } catch (_) {}
+      };
+      frame.addEventListener('load', () => {
+        fitFrame();
+        observer?.disconnect();
+        try {
+          observer = new ResizeObserver(fitFrame);
+          observer.observe(frame.contentDocument.documentElement);
+        } catch (_) {}
+      });
+      window.addEventListener('resize', fitFrame);
+    })();
+  </script>
 </body>
 </html>
