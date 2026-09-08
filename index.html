@@ -4,390 +4,83 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f0f0f4">
-  <meta name="description" content="자신감은 100%, 정확도는 글쎄요. 실수 확률을 조절하고 정답을 확인하는, 가끔 틀리는 계산기 어림짐작.">
-  <title>어림짐작 — 가끔 틀리는 계산기</title>
+  <meta name="description" content="쓸모없어 보이는데 묘하게 쓸모 있는 이상한 도구들을 모아둔 곳.">
+  <title>개똥도 쓸모는 있겠지</title>
   <style>
-    :root { color-scheme: light; --bg: #f0f0f4; --paper: #fff; --ink: #22232c; --muted: #686875; --line: #dcdce4; --purple: #6045db; --purple-dark: #4d33c5; --purple-soft: #ede9ff; --lime: #dfff86; }
-    * { box-sizing: border-box; }
-    body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", "Malgun Gothic", sans-serif; word-break: keep-all; }
-    button, input, select { font: inherit; }
-    button { cursor: pointer; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
-    button:disabled { cursor: default; }
-    button:focus-visible, input:focus-visible, a:focus-visible { outline: 3px solid var(--purple); outline-offset: 4px; }
-    button { color: inherit; }
-    [hidden] { display: none !important; }
-    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
-    .shell { width: min(1080px, calc(100% - 64px)); margin: 0 auto; }
-    header { min-height: 108px; display: flex; align-items: center; justify-content: space-between; gap: 20px; border-bottom: 1px solid var(--line); }
-    .brand { display: flex; align-items: center; gap: 14px; }
-    .brand-mark { display: grid; place-items: center; width: 43px; height: 43px; border-radius: 13px; background: var(--ink); color: white; font-size: 30px; line-height: 1; transform: rotate(-7deg); }
-    h1 { font-size: 23px; line-height: 1.3; letter-spacing: -.9px; margin: 0; font-weight: 800; }
-    .brand-sub { font-size: 13px; color: var(--muted); margin: 3px 0 0; }
-    .edition { font-size: 12px; letter-spacing: 1.3px; color: var(--muted); }
-    main { padding: 46px 0 48px; display: grid; grid-template-columns: minmax(0, 440px) minmax(0, 346px); justify-content: center; align-items: start; gap: 56px; }
-    .calculator { position: relative; background: #292a34; border: 1px solid #1d1e27; border-radius: 28px; padding: 24px; box-shadow: 0 7px 0 #171820, 0 22px 38px -20px #22233266; }
-    .calc-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 0 0 19px; color: #c1c1ce; }
-    .calc-top span:first-child { letter-spacing: 2px; font-size: 12px; }
-    .sticker { background: var(--lime); color: #2c3d0c; padding: 3px 10px; border-radius: 5px; transform: rotate(4deg); font-size: 12px; font-weight: 750; }
-    .display { border: 1px solid #d8d9df; background: #eff1ed; min-height: 148px; padding: 17px 20px 14px; border-radius: 13px; box-shadow: inset 0 2px 5px #00000009; display: flex; flex-direction: column; justify-content: space-between; gap: 6px; }
-    .expression { text-align: right; color: #71766e; height: 24px; line-height: 24px; overflow-x: auto; white-space: nowrap; font: 15px/24px ui-monospace, "SFMono-Regular", Consolas, monospace; scrollbar-width: thin; }
-    .number { display: block; color: #283325; font: 500 clamp(2.5rem, 5vw, 3.5rem)/1.15 ui-monospace, "SFMono-Regular", Consolas, monospace; letter-spacing: -2px; text-align: right; white-space: nowrap; overflow-x: auto; scrollbar-width: thin; font-variant-numeric: tabular-nums; }
-    .number.long { font-size: 2.1rem; letter-spacing: -1px; }
-    .display-bottom { display: flex; align-items: center; justify-content: space-between; gap: 10px; color: #606859; font-size: 12px; }
-    .keypad { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 20px; }
-    .key { min-width: 0; height: 59px; border: 0; border-radius: 11px; background: #fcfcfd; color: #30303a; box-shadow: 0 3px 0 #b6b6c1; font-size: 25px; line-height: 1; font-weight: 500; transition: background .12s, transform .12s, box-shadow .12s; }
-    .key:hover { background: #eae7fc; }
-    .key:active, .key.pressed { transform: translateY(3px); box-shadow: 0 0 0 #b6b6c1; }
-    .key.utility { background: #bfc0ce; color: #2d2e3b; box-shadow: 0 3px 0 #8b8d9e; font-size: 21px; }
-    .key.operator { background: #ded8fc; color: #4a359e; box-shadow: 0 3px 0 #a89ace; }
-    .key.equals { background: #8566f1; color: white; box-shadow: 0 3px 0 #5430b1; font-size: 31px; }
-    .key.equals:hover { background: #977afa; }
-    .key:active, .key.pressed { box-shadow: none; }
-    .key:focus-visible { outline-color: var(--lime); }
-    .key svg { display: block; margin: auto; }
-    .reveal { width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 22px; min-height: 43px; background: transparent; border: 1px solid #71717f; border-radius: 9px; color: #f7f5ff; font-size: 14px; transition: background .15s; }
-    .reveal:hover:not(:disabled) { background: #3e3d4d; }
-    .reveal:disabled { border-color: #555561; color: #aaaab7; }
-    .reveal:focus-visible { outline-color: var(--lime); }
-    .keyboard-note { text-align: center; font-size: 12px; color: var(--muted); margin: 20px 0 0; }
-    kbd { font: inherit; padding: 1px 4px; border: 1px solid #d4d4df; border-radius: 4px; background: #f9f9fc; }
-    .settings { padding-top: 5px; }
-    .eyebrow { color: var(--purple); font-size: 12px; letter-spacing: 1.2px; font-weight: 750; margin: 0 0 9px; }
-    h2 { margin: 0; font-size: 26px; line-height: 1.4; letter-spacing: -1px; font-weight: 750; }
-    .intro { margin: 9px 0 23px; font-size: 14px; line-height: 1.8; color: var(--muted); }
-    .control-card { background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 23px; }
-    .probability-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
-    .control-label { font-size: 14px; font-weight: 650; }
-    .probability-value { font: 650 39px/1.15 ui-monospace, "SFMono-Regular", Consolas, monospace; letter-spacing: -2px; color: var(--purple); }
-    .probability-value small { font-size: 19px; margin-left: 2px; }
-    .range { width: 100%; height: 26px; margin: 7px 0; appearance: none; -webkit-appearance: none; background: transparent; accent-color: var(--purple); cursor: pointer; }
-    .range::-webkit-slider-runnable-track { height: 6px; border-radius: 10px; background: linear-gradient(to right, var(--purple) 0%, var(--purple) var(--fill,30%), #e9e6f4 var(--fill,30%), #e9e6f4 100%); }
-    .range::-moz-range-track { height: 6px; border-radius: 10px; background: #e9e6f4; }
-    .range::-moz-range-progress { height: 6px; border-radius: 10px; background: var(--purple); }
-    .range::-webkit-slider-thumb { appearance: none; -webkit-appearance: none; width: 22px; height: 22px; margin-top: -8px; background: white; border: 6px solid var(--purple); border-radius: 50%; box-shadow: 0 2px 4px #6045db25; }
-    .range::-moz-range-thumb { width: 12px; height: 12px; background: white; border: 6px solid var(--purple); border-radius: 50%; }
-    .range-ends { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; }
-    .presets { display: flex; gap: 7px; margin: 17px 0 21px; }
-    .preset { flex: 1; padding: 6px 4px; font-size: 13px; border: 1px solid var(--line); border-radius: 7px; background: white; }
-    .preset[aria-pressed="true"] { border-color: #c7bbf6; background: var(--purple-soft); color: var(--purple-dark); font-weight: 650; }
-    .style-control { border-top: 1px solid #eeeef3; padding-top: 18px; }
-    .segmented { display: flex; padding: 4px; gap: 4px; background: #f1f1f6; border-radius: 9px; margin-top: 10px; }
-    .segmented button { flex: 1; font-size: 14px; border: 0; border-radius: 6px; padding: 8px 4px; background: transparent; color: var(--muted); }
-    .segmented button[aria-pressed="true"] { background: white; color: var(--ink); box-shadow: 0 1px 5px #29223412; font-weight: 650; }
-    .style-help { color: var(--muted); font-size: 12px; margin: 10px 0 0; min-height: 20px; }
-    .verdict { margin-top: 17px; padding: 21px 23px; border: 1px dashed #c5c2d6; border-radius: 16px; min-height: 147px; background: #e9e7f1; }
-    .verdict-label { display: flex; align-items: center; gap: 7px; margin: 0 0 8px; font-size: 12px; color: #666172; }
-    .verdict h3 { font-size: 19px; line-height: 1.5; letter-spacing: -.5px; margin: 0; }
-    .verdict-copy { font-size: 13px; line-height: 1.65; color: #666172; margin: 7px 0 0; }
-    .verdict[data-state="wrong"] { background: #eee8ff; border-color: #b7a8e4; }
-    .verdict[data-state="correct"] { background: #e7eddf; border-color: #b3c09d; }
-    .truth { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: 11px; padding-top: 10px; border-top: 1px solid #c8c1df; }
-    .truth span { font-size: 13px; flex-shrink: 0; }
-    .truth strong { font: 650 25px/1.3 ui-monospace, "SFMono-Regular", Consolas, monospace; overflow-wrap: anywhere; word-break: break-all; text-align: right; }
-    footer { border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 23px 0 28px; color: var(--muted); font-size: 12px; }
-    footer p { margin: 0; }
-    .footer-name { white-space: nowrap; }
-    .pop { animation: result-pop .18s ease-out; }
-    @keyframes result-pop { from { opacity: .45; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
-    @media (max-width: 900px) { main { gap: 30px; grid-template-columns: minmax(0, 410px) minmax(0, 300px); } .control-card, .verdict { padding: 20px; } }
-    @media (max-width: 720px) {
-      .shell { width: min(460px, calc(100% - 36px)); }
-      header { min-height: 89px; }
-      .edition { display: none; }
-      main { grid-template-columns: minmax(0, 1fr); gap: 32px; padding: 28px 0 32px; }
-      .calculator { padding: 21px; border-radius: 24px; }
-      .number { font-size: 3.25rem; }
-      .keyboard-note { display: none; }
-      .settings { padding: 0; }
-      h2 { font-size: 24px; }
-      .intro { margin-bottom: 18px; }
-      footer { display: block; }
-      .footer-name { margin-top: 8px; }
-    }
-    @media (max-width: 370px) { .shell { width: calc(100% - 24px); } .calculator { padding: 16px; } .keypad { gap: 8px; } .key { height: 55px; } .display { padding: 14px; } }
-    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+    :root{color-scheme:light;--bg:#f0f0f4;--paper:#fff;--ink:#22232c;--muted:#6f7080;--line:#dcdce4;--purple:#6045db;--lime:#dfff86;--dark:#292a34}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR","Malgun Gothic",sans-serif;word-break:keep-all}a{color:inherit;text-decoration:none}.shell{width:min(1080px,calc(100% - 48px));margin:0 auto}header{min-height:108px;display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:14px}.brand-mark{display:grid;place-items:center;width:46px;height:46px;border-radius:14px;background:var(--ink);color:white;font-size:23px;font-weight:900;transform:rotate(-7deg)}h1{margin:0;font-size:24px;letter-spacing:-1px}.brand p{margin:3px 0 0;color:var(--muted);font-size:13px}.edition{color:var(--muted);font-size:12px;letter-spacing:1.4px}.hero{padding:68px 0 32px}.eyebrow{margin:0 0 12px;color:var(--purple);font-size:12px;font-weight:800;letter-spacing:1.2px}.hero h2{margin:0;font-size:clamp(38px,7vw,72px);line-height:1.05;letter-spacing:-3px;max-width:780px}.hero .lead{max-width:610px;margin:20px 0 0;color:var(--muted);font-size:16px;line-height:1.8}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;padding:18px 0 64px}.tool-card{position:relative;min-height:300px;padding:26px;border:1px solid var(--line);border-radius:24px;background:var(--paper);box-shadow:0 18px 40px -32px #22232c88;overflow:hidden;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}.tool-card:hover{transform:translateY(-4px);border-color:#c9c2e8;box-shadow:0 24px 48px -30px #22232c99}.tool-top{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}.tool-icon{display:grid;place-items:center;width:64px;height:64px;border-radius:18px;background:var(--dark);color:#fff;font-size:30px;font-weight:800;box-shadow:0 5px 0 #171820}.tag{padding:4px 10px;border-radius:6px;background:var(--lime);color:#32420c;font-size:11px;font-weight:800;transform:rotate(3deg)}.tool-card h3{margin:28px 0 8px;font-size:28px;letter-spacing:-1.3px}.tool-card p{margin:0;color:var(--muted);font-size:14px;line-height:1.75}.tool-footer{position:absolute;left:26px;right:26px;bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:18px;border-top:1px solid #ececf1}.tool-footer span:first-child{font-size:12px;color:var(--muted)}.arrow{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:#8566f1;color:white;font-size:19px;font-weight:800}.coming{opacity:.58;filter:saturate(.65);cursor:default}.coming:hover{transform:none;border-color:var(--line);box-shadow:0 18px 40px -32px #22232c88}.coming .tool-icon{background:#8b8c96;box-shadow:0 5px 0 #666771}.coming .tag{background:#e2e2e8;color:#6d6e78;transform:none}.coming .arrow{background:#b8b8c2}.philosophy{margin-bottom:56px;padding:24px 26px;border:1px dashed #c5c2d6;border-radius:18px;background:#e9e7f1}.philosophy strong{display:block;margin-bottom:5px;font-size:15px}.philosophy p{margin:0;color:#666172;font-size:13px}footer{display:flex;justify-content:space-between;gap:20px;padding:24px 0 30px;border-top:1px solid var(--line);color:var(--muted);font-size:12px}@media(max-width:720px){.shell{width:min(460px,calc(100% - 28px))}.edition{display:none}header{min-height:90px}.hero{padding:44px 0 24px}.hero h2{letter-spacing:-2px}.grid{grid-template-columns:1fr;padding-bottom:40px}.tool-card{min-height:285px}footer{display:block}footer p{margin:4px 0}}
   </style>
 </head>
 <body>
   <div class="shell">
     <header>
       <div class="brand">
-        <span class="brand-mark" aria-hidden="true">≈</span>
-        <div><h1>어림짐작</h1><p class="brand-sub">가끔 틀리는 계산기</p></div>
+        <span class="brand-mark" aria-hidden="true">?</span>
+        <div>
+          <h1>개똥도 쓸모는 있겠지</h1>
+          <p>이상한데 이상하게 쓸모 있는 도구 상자</p>
+        </div>
       </div>
-      <span class="edition">THE ALMOST RIGHT CALCULATOR</span>
+      <span class="edition">THE QUESTIONABLY USEFUL TOOLBOX</span>
     </header>
-    <main>
-      <section aria-label="계산기">
-        <div class="calculator">
-          <div class="calc-top"><span>EORIMJIPJAK / 001</span><span class="sticker">자신감은 100%</span></div>
-          <div class="display">
-            <div class="expression" id="expression" aria-label="입력한 계산식">계산을 시작해 주세요</div>
-            <output class="number" id="display" aria-label="계산 결과" aria-live="polite" aria-atomic="true">0</output>
-            <div class="display-bottom"><span id="display-status">준비됐어요. 아마도요.</span><span id="mode-indicator">실수 30%</span></div>
-          </div>
-          <div class="keypad" id="keypad" aria-label="계산기 버튼">
-            <button class="key utility" data-action="clear" aria-label="모두 지우기">AC</button>
-            <button class="key utility" data-action="sign" aria-label="양수와 음수 바꾸기">+/−</button>
-            <button class="key utility" data-action="percent" aria-label="퍼센트">%</button>
-            <button class="key operator" data-operator="/" aria-label="나누기">÷</button>
-            <button class="key" data-digit="7">7</button><button class="key" data-digit="8">8</button><button class="key" data-digit="9">9</button>
-            <button class="key operator" data-operator="*" aria-label="곱하기">×</button>
-            <button class="key" data-digit="4">4</button><button class="key" data-digit="5">5</button><button class="key" data-digit="6">6</button>
-            <button class="key operator" data-operator="-" aria-label="빼기">−</button>
-            <button class="key" data-digit="1">1</button><button class="key" data-digit="2">2</button><button class="key" data-digit="3">3</button>
-            <button class="key operator" data-operator="+" aria-label="더하기">+</button>
-            <button class="key utility" data-action="backspace" aria-label="한 자리 지우기"><svg width="25" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5h11v14H9l-7-7 7-7Z"/><path d="m12 9 6 6m0-6-6 6"/></svg></button>
-            <button class="key" data-digit="0">0</button><button class="key" data-digit="." aria-label="소수점">.</button>
-            <button class="key equals" data-action="equals" aria-label="계산하기">=</button>
-          </div>
-          <button class="reveal" id="reveal" disabled><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg><span id="reveal-label">정답 확인하기</span></button>
+
+    <section class="hero">
+      <p class="eyebrow">USEFUL? MAYBE.</p>
+      <h2>쓸모없어 보여도<br>한 번쯤은 쓸모 있겠죠.</h2>
+      <p class="lead">정확해야 할 계산기가 가끔 틀리고, 맞춤법 교정기가 오히려 맞춤법을 망칩니다. 진지하게 만들었지만 진지하게 쓰면 곤란한 도구들을 모아둡니다.</p>
+    </section>
+
+    <main class="grid" aria-label="이상한 도구 목록">
+      <a class="tool-card" href="calculator/">
+        <div class="tool-top">
+          <div class="tool-icon" aria-hidden="true">≈</div>
+          <span class="tag">자신감은 100%</span>
         </div>
-        <p class="keyboard-note">키보드로도 계산하세요 · <kbd>Enter</kbd> 계산 · <kbd>Esc</kbd> 초기화</p>
-      </section>
-      <aside class="settings" aria-labelledby="settings-title">
-        <p class="eyebrow">A LITTLE HUMAN ERROR</p>
-        <h2 id="settings-title">얼마나 믿어볼까요?</h2>
-        <p class="intro">계산기는 실수하지 않는다던데.<br>얘는 조금 다릅니다.</p>
-        <div class="control-card">
-          <div class="probability-head"><label class="control-label" for="probability">실수 확률</label><output class="probability-value" for="probability"><span id="probability-value">30</span><small>%</small></output></div>
-          <input class="range" id="probability" type="range" min="0" max="100" step="5" value="30" aria-describedby="probability-help" aria-valuetext="30퍼센트">
-          <div class="range-ends"><span>멀쩡한 계산기</span><span>매번 틀려요</span></div>
-          <div class="presets" aria-label="실수 확률 빠른 설정"><button class="preset" data-rate="0" aria-pressed="false">0%</button><button class="preset" data-rate="30" aria-pressed="true">30%</button><button class="preset" data-rate="100" aria-pressed="false">100%</button></div>
-          <span id="probability-help" class="sr-only">새 계산마다 독립적으로 적용됩니다. 0퍼센트는 정상 계산, 100퍼센트는 항상 다른 답을 표시합니다.</span>
-          <div class="style-control"><div class="control-label" id="style-label">실수 강도</div>
-            <div class="segmented" role="group" aria-labelledby="style-label"><button data-intensity="small" aria-pressed="true">사소하게</button><button data-intensity="wild" aria-pressed="false">과감하게</button></div>
-            <p class="style-help" id="style-help">마지막 자리에서 살짝 삐끗해요.</p>
-          </div>
+        <h3>어림짐작</h3>
+        <p>멀쩡하게 계산하다가 가끔 슬쩍 틀립니다. 실수 확률과 강도까지 직접 조절할 수 있는 계산기.</p>
+        <div class="tool-footer"><span>가끔 틀리는 계산기</span><span class="arrow">→</span></div>
+      </a>
+
+      <a class="tool-card" href="spell-checker/">
+        <div class="tool-top">
+          <div class="tool-icon" aria-hidden="true">가</div>
+          <span class="tag">완벽도 103%</span>
         </div>
-        <section class="verdict" id="verdict" aria-live="polite" aria-atomic="true">
-          <p class="verdict-label"><span aria-hidden="true">“</span> 계산기의 한마디</p>
-          <h3 id="verdict-title">저도 가끔은 틀릴 수 있죠.</h3>
-          <p class="verdict-copy" id="verdict-copy">일단 계산해 보세요.<br>수상하면 정답 확인 버튼을 눌러주세요.</p>
-          <div class="truth" id="truth" hidden><span>진짜 정답</span><strong id="truth-value"></strong></div>
-        </section>
-      </aside>
+        <h3>맞춤법 교정기</h3>
+        <p>완벽하게 교정했다고 자신하지만 결과를 보면 어딘가 킹받습니다. 더 완벽하게 할수록 더 과감해집니다.</p>
+        <div class="tool-footer"><span>가끔 틀리는 교정기</span><span class="arrow">→</span></div>
+      </a>
+
+      <article class="tool-card coming" aria-disabled="true">
+        <div class="tool-top">
+          <div class="tool-icon" aria-hidden="true">?</div>
+          <span class="tag">제작 중</span>
+        </div>
+        <h3>깜박</h3>
+        <p>일정을 기억해주는 대신 가끔 내용이 흐려지고, 바뀌고, 까먹는 캘린더. 완성되면 이 자리에 연결됩니다.</p>
+        <div class="tool-footer"><span>내용을 까먹는 캘린더</span><span class="arrow">…</span></div>
+      </article>
+
+      <article class="tool-card coming" aria-disabled="true">
+        <div class="tool-top">
+          <div class="tool-icon" aria-hidden="true">+</div>
+          <span class="tag">빈 자리</span>
+        </div>
+        <h3>다음 이상한 도구</h3>
+        <p>쓸모 있는지 없는지 아직 아무도 모르는 다음 아이디어를 위해 비워둔 자리입니다.</p>
+        <div class="tool-footer"><span>곧 하나 더 생길지도</span><span class="arrow">…</span></div>
+      </article>
     </main>
-    <footer><p>재미로 쓰는 계산기입니다. 중요한 계산은 정답을 꼭 확인해 주세요.</p><p class="footer-name">어림짐작 · 완벽하지 않아도 괜찮아</p></footer>
+
+    <section class="philosophy">
+      <strong>이 사이트의 기준</strong>
+      <p>버그처럼 보여도 의도한 이상함이면 기능입니다. 대신 진짜 버그는 고칩니다.</p>
+    </section>
+
+    <footer>
+      <p>중요한 계산, 문서, 일정에는 사용하지 않는 편을 권장합니다.</p>
+      <p>개똥도 쓸모는 있겠지 · 2026</p>
+    </footer>
   </div>
-  <noscript><p style="padding:24px;text-align:center">계산기를 사용하려면 브라우저에서 JavaScript를 켜주세요.</p></noscript>
-  <script id="calculator-core">
-    // 정상 계산과 의도적인 실수를 분리합니다. 사용자 입력을 eval로 실행하지 않습니다.
-    const AlmostMath = (() => {
-      const symbols = { '+': '+', '-': '−', '*': '×', '/': '÷' };
-      function normalize(value) {
-        if (!Number.isFinite(value)) throw new Error('계산할 수 있는 숫자 범위를 넘었어요.');
-        const rounded = Number(value.toPrecision(12));
-        if (!Number.isFinite(rounded)) throw new Error('계산할 수 있는 숫자 범위를 넘었어요.');
-        return Object.is(rounded, -0) ? 0 : rounded;
-      }
-      function evaluate(tokens) {
-        if (!tokens.length || tokens.length % 2 === 0) throw new Error('계산식을 끝까지 입력해 주세요.');
-        const numberPattern = /^-?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i;
-        for (let i = 0; i < tokens.length; i++) {
-          if (i % 2 === 0 ? !numberPattern.test(String(tokens[i])) || !Number.isFinite(Number(tokens[i])) : !Object.prototype.hasOwnProperty.call(symbols, tokens[i])) throw new Error('계산식을 다시 확인해 주세요.');
-        }
-        let total = 0, term = Number(tokens[0]);
-        for (let i = 1; i < tokens.length; i += 2) {
-          const op = tokens[i], value = Number(tokens[i + 1]);
-          if (op === '*') term *= value;
-          else if (op === '/') {
-            if (value === 0) throw new Error('0으로는 나눌 수 없어요.');
-            term /= value;
-          } else { total += term; term = op === '+' ? value : -value; }
-          if (!Number.isFinite(term) || !Number.isFinite(total)) throw new Error('계산할 수 있는 숫자 범위를 넘었어요.');
-        }
-        return normalize(total + term);
-      }
-      function format(value) {
-        const n = normalize(Number(value));
-        if (n !== 0 && (Math.abs(n) >= 1e12 || Math.abs(n) < 1e-7)) return String(n);
-        return n.toLocaleString('en-US', { maximumSignificantDigits: 12, useGrouping: true });
-      }
-      function slipUnit(value) {
-        if (value === 0) return 1;
-        if (Number.isInteger(value)) return Math.max(1, 10 ** (Math.floor(Math.log10(Math.abs(value))) - 10));
-        const [mantissa, exponent = '0'] = String(value).toLowerCase().split('e');
-        const decimals = (mantissa.split('.')[1] || '').length - Number(exponent);
-        return Math.max(10 ** -Math.max(0, decimals), Math.abs(value) * 1e-10, Number.MIN_VALUE);
-      }
-      function makeMistake(correct, tokens, intensity, random = Math.random) {
-        const candidates = [];
-        const add = (value, reason) => {
-          try {
-            const n = normalize(value);
-            if (n !== correct && format(n) !== format(correct)) candidates.push({ value: n, reason });
-          } catch (_) { /* 정답과 같거나 범위 밖인 후보는 버립니다. */ }
-        };
-        const unit = slipUnit(correct);
-        if (intensity === 'wild') {
-          add(correct * 10, '자릿수를 하나 더 붙여버렸어요.');
-          add(correct / 10, '소수점을 엉뚱한 곳에 찍었어요.');
-          add(-correct, '양수와 음수를 헷갈렸어요.');
-          if (tokens.length >= 3) {
-            const changed = tokens.slice(), at = tokens.length - 2;
-            changed[at] = { '+': '-', '-': '+', '*': '+', '/': '*' }[changed[at]];
-            try { add(evaluate(changed), '연산 기호를 잘못 읽었어요.'); } catch (_) {}
-          }
-          if (!candidates.length) { add(correct + 7, '어쩐지 7이 더 마음에 들었어요.'); add(correct - 7, '숫자 하나가 멋대로 끼어들었어요.'); }
-        } else {
-          add(correct + unit, '마지막 자리에서 하나 더 셌어요.');
-          add(correct - unit, '마지막 자리에서 하나 덜 셌어요.');
-        }
-        if (!candidates.length) { add(correct / 2, '숫자를 절반쯤 잊어버렸어요.'); add(correct === 0 ? 1 : 0, '답을 잠깐 잊어버렸어요.'); }
-        return candidates[Math.min(candidates.length - 1, Math.floor(random() * candidates.length))];
-      }
-      function calculate(tokens, probability = 30, intensity = 'small', random = Math.random) {
-        const correct = evaluate(tokens);
-        const rate = Math.max(0, Math.min(100, Number(probability) || 0));
-        const mistaken = rate === 100 || (rate > 0 && random() < rate / 100);
-        const shown = mistaken ? makeMistake(correct, tokens, intensity, random) : { value: correct, reason: '' };
-        return { correct, displayed: shown.value, mistaken, reason: shown.reason };
-      }
-      function percentage(prefix, operand) {
-        const last = prefix[prefix.length - 1];
-        const fraction = Number(operand) / 100;
-        return normalize((last === '+' || last === '-') && prefix.length >= 2 ? evaluate(prefix.slice(0, -1)) * fraction : fraction);
-      }
-      return { normalize, evaluate, format, calculate, percentage, symbols };
-    })();
-  </script>
-  <script id="calculator-app">
-    (() => {
-      const $ = id => document.getElementById(id);
-      const state = { tokens: [], entry: '0', fresh: true, finished: false, result: null, revealed: false, error: false, probability: 30, intensity: 'small' };
-      const initialTitle = '저도 가끔은 틀릴 수 있죠.';
-      const initialCopy = '일단 계산해 보세요. 수상하면 정답 확인 버튼을 눌러주세요.';
-      const phrases = ['계산 끝! 제법 자신 있어요.', '이 정도는 암산으로도 하죠.', '음, 아마 맞을 거예요.', '몇 번 생각했어요. 한 번인가?'];
-      const expressionText = tokens => tokens.map((token, i) => i % 2 ? AlmostMath.symbols[token] : Number(token) < 0 ? '(' + token.replace('-', '−') + ')' : token).join(' ');
-      function setVerdict(title, copy, mode = '') {
-        $('verdict-title').textContent = title;
-        $('verdict-copy').textContent = copy;
-        $('verdict').dataset.state = mode;
-        $('truth').hidden = true;
-      }
-      function hidePreviousResult() {
-        if (state.result) setVerdict(initialTitle, initialCopy);
-        state.result = null; state.revealed = false;
-        $('reveal').disabled = true; $('reveal-label').textContent = '정답 확인하기';
-      }
-      function reset() {
-        Object.assign(state, { tokens: [], entry: '0', fresh: true, finished: false, result: null, revealed: false, error: false });
-        setVerdict(initialTitle, initialCopy);
-        $('reveal').disabled = true; $('reveal-label').textContent = '정답 확인하기';
-        render();
-      }
-      function render() {
-        let visible = state.entry;
-        if (state.finished && state.result) visible = AlmostMath.format(state.result.displayed);
-        else if (/^-?\d+(\.\d*)?$/.test(visible)) {
-          const parts = visible.split('.');
-          visible = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (parts.length > 1 ? '.' + parts[1] : '');
-        }
-        $('display').textContent = state.error ? '오류' : visible;
-        $('display').classList.toggle('long', visible.length > 10);
-        $('expression').textContent = state.finished && state.result ? expressionText(state.result.tokens) + ' =' : state.tokens.length ? expressionText(state.tokens) : state.entry === '0' ? '계산을 시작해 주세요' : '입력 중';
-        $('expression').scrollLeft = $('expression').scrollWidth;
-        $('display-status').textContent = state.error ? '이번엔 진짜 계산 오류예요.' : state.finished ? state.revealed ? '확인 완료' : '계산 완료. 믿으시겠어요?' : state.tokens.length || state.entry !== '0' ? '차근차근 계산해 볼게요.' : '준비됐어요. 아마도요.';
-      }
-      function fail(message) {
-        state.error = true; hidePreviousResult();
-        setVerdict('이건 계산할 수 없어요.', message);
-        render();
-      }
-      function digit(value) {
-        if (state.finished || state.error) reset();
-        hidePreviousResult();
-        if (state.fresh || state.entry.includes('e')) { state.entry = value === '.' ? '0.' : value; state.fresh = false; }
-        else if (value === '.') { if (!state.entry.includes('.') && !state.entry.includes('e')) state.entry += '.'; }
-        else {
-          if (state.entry.replace(/[^0-9]/g, '').length >= 12) { $('display-status').textContent = '숫자는 12자리까지 입력할 수 있어요.'; return; }
-          state.entry = state.entry === '0' ? value : state.entry === '-0' ? '-' + value : state.entry + value;
-        }
-        render();
-      }
-      function operator(op) {
-        if (state.error) return;
-        if (state.tokens.length >= 79) { $('display-status').textContent = '먼저 = 버튼으로 계산을 마쳐주세요.'; return; }
-        if (state.finished) {
-          state.tokens = [String(state.result.displayed), op]; state.finished = false; state.fresh = true; hidePreviousResult();
-        } else if (state.fresh && state.tokens.length) state.tokens[state.tokens.length - 1] = op;
-        else { state.tokens.push(state.entry, op); state.fresh = true; hidePreviousResult(); }
-        render();
-      }
-      function equals() {
-        if (state.error || state.finished) return;
-        if (state.fresh && state.tokens.length) { $('display-status').textContent = '다음 숫자를 입력해 주세요.'; return; }
-        try {
-          const tokens = [...state.tokens, state.entry];
-          state.result = { ...AlmostMath.calculate(tokens, state.probability, state.intensity), tokens };
-          state.entry = String(state.result.displayed); state.tokens = []; state.finished = true; state.fresh = true; state.revealed = false;
-          $('reveal').disabled = false; $('reveal-label').textContent = '정답 확인하기';
-          setVerdict(phrases[Math.floor(Math.random() * phrases.length)], '제 답이 의심되면, 정답을 확인해 보세요.');
-          render(); $('display').classList.remove('pop'); void $('display').offsetWidth; $('display').classList.add('pop');
-        } catch (err) { fail(err.message); }
-      }
-      function editValue(action) {
-        if (state.error) { reset(); return; }
-        if (state.finished) { state.finished = false; state.fresh = false; hidePreviousResult(); }
-        if (action === 'backspace') {
-          if (state.fresh && state.tokens.length) { state.tokens.pop(); state.entry = state.tokens.pop(); state.fresh = false; }
-          else { state.entry = state.entry.includes('e') ? '0' : state.entry.slice(0, -1); if (!state.entry || state.entry === '-') state.entry = '0'; }
-        } else if (action === 'sign') {
-          if (state.fresh) state.entry = '0';
-          state.entry = state.entry.startsWith('-') ? state.entry.slice(1) : '-' + state.entry; state.fresh = false;
-        } else if (action === 'percent') {
-          if (state.fresh && state.tokens.length) return;
-          try { state.entry = String(AlmostMath.percentage(state.tokens, state.entry)); state.fresh = false; } catch (err) { fail(err.message); return; }
-        }
-        render();
-      }
-      function action(type) { if (type === 'clear') reset(); else if (type === 'equals') equals(); else editValue(type); }
-      $('keypad').addEventListener('click', event => {
-        const button = event.target.closest('button'); if (!button) return;
-        if (button.dataset.digit !== undefined) digit(button.dataset.digit);
-        else if (button.dataset.operator) operator(button.dataset.operator);
-        else action(button.dataset.action);
-      });
-      $('reveal').addEventListener('click', () => {
-        if (!state.result || state.revealed) return;
-        state.revealed = true;
-        const r = state.result;
-        setVerdict(r.mistaken ? '아차, 들켰네요.' : '이번엔 진짜 맞았어요!', r.mistaken ? r.reason : '의심하셨죠? 가끔은 저도 정확하답니다.', r.mistaken ? 'wrong' : 'correct');
-        $('truth-value').textContent = AlmostMath.format(r.correct); $('truth').hidden = false;
-        $('reveal-label').textContent = '정답 확인 완료'; $('reveal').disabled = true; render();
-      });
-      function setProbability(value) {
-        state.probability = Number(value); $('probability').value = value; $('probability-value').textContent = value;
-        $('probability').style.setProperty('--fill', value + '%'); $('probability').setAttribute('aria-valuetext', value + '퍼센트');
-        $('mode-indicator').textContent = state.probability === 0 ? '정상 모드' : '실수 ' + value + '%';
-        document.querySelectorAll('[data-rate]').forEach(button => button.setAttribute('aria-pressed', String(Number(button.dataset.rate) === state.probability)));
-      }
-      $('probability').addEventListener('input', event => setProbability(event.target.value));
-      document.querySelectorAll('[data-rate]').forEach(button => button.addEventListener('click', () => setProbability(button.dataset.rate)));
-      document.querySelectorAll('[data-intensity]').forEach(button => button.addEventListener('click', () => {
-        state.intensity = button.dataset.intensity;
-        document.querySelectorAll('[data-intensity]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
-        $('style-help').textContent = state.intensity === 'small' ? '마지막 자리에서 살짝 삐끗해요.' : '자릿수, 부호, 연산 기호를 헷갈려요.';
-      }));
-      document.addEventListener('keydown', event => {
-        if (event.ctrlKey || event.metaKey || event.altKey || event.isComposing) return;
-        const target = event.target;
-        if (target.matches('input, textarea, select, [contenteditable="true"]')) return;
-        if (target.closest('button') && (event.key === 'Enter' || event.key === ' ')) return;
-        const key = event.key;
-        let button;
-        if (/^[0-9.]$/.test(key)) { digit(key); button = document.querySelector('[data-digit="' + key + '"]'); }
-        else if (/^[+*/-]$/.test(key)) { operator(key); button = document.querySelector('[data-operator="' + key + '"]'); }
-        else {
-          const mapped = { Enter: 'equals', '=': 'equals', Escape: 'clear', Delete: 'clear', Backspace: 'backspace', '%': 'percent' }[key];
-          if (!mapped) return; action(mapped); button = document.querySelector('[data-action="' + mapped + '"]');
-        }
-        event.preventDefault();
-        if (button) { button.classList.add('pressed'); setTimeout(() => button.classList.remove('pressed'), 110); }
-      });
-      setProbability(30); render();
-    })();
-  </script>
 </body>
 </html>
