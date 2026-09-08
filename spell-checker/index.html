@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f0f0f4">
+  <meta name="description" content="완벽하게 고쳐준다고 자신하지만 가끔 더 틀리게 만드는 맞춤법 교정기.">
+  <title>맞춤법 교정기 — 아주 완벽한 척하는 교정기</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">가</span>
+        <div>
+          <h1>맞춤법 교정기</h1>
+          <p class="brand-sub">가끔 틀리는 교정기</p>
+        </div>
+      </div>
+      <span class="edition">THE ALMOST RIGHT SPELL CHECKER</span>
+    </header>
+
+    <main>
+      <section aria-label="맞춤법 입력">
+        <div class="checker">
+          <div class="checker-top">
+            <span>SPELLCHECK / 001</span>
+            <span class="sticker">자신감은 100%</span>
+          </div>
+
+          <div class="paper-display">
+            <label class="sr-only" for="inputText">교정할 문장</label>
+            <textarea
+              id="inputText"
+              maxlength="1000"
+              placeholder="완벽하게 교정할 문장을 입력해 주세요."
+            ></textarea>
+
+            <div class="display-bottom">
+              <span id="inputStatus">문장을 기다리고 있어요.</span>
+              <span><span id="charCount">0</span> / 1000</span>
+            </div>
+          </div>
+
+          <button class="check-button" id="checkButton" type="button">
+            <span>맞춤법 검사하기</span>
+            <strong>✓</strong>
+          </button>
+
+          <p class="machine-note">문법 · 띄어쓰기 · 맞춤법을 굉장히 진지하게 보는 척합니다.</p>
+        </div>
+      </section>
+
+      <aside class="settings" aria-labelledby="settings-title">
+        <p class="eyebrow">A LITTLE KOREAN ERROR</p>
+        <h2 id="settings-title">얼마나 완벽하게 할까요?</h2>
+        <p class="intro">
+          더 완벽하게 부탁할수록<br>
+          더 자신 있게 고쳐드립니다.
+        </p>
+
+        <div class="control-card">
+          <div class="control-label">완벽한 정도</div>
+
+          <div class="segmented vertical" id="perfectOptions" role="group" aria-label="완벽한 정도">
+            <button type="button" data-level="light" aria-pressed="false">
+              <span>거의 완벽함</span>
+              <small>조심스럽고 정교하게</small>
+            </button>
+            <button type="button" data-level="normal" aria-pressed="true">
+              <span>완벽함</span>
+              <small>가장 권장되는 교정</small>
+            </button>
+            <button type="button" data-level="extreme" aria-pressed="false">
+              <span>매우 완벽함</span>
+              <small>한 치의 오차도 없이</small>
+            </button>
+          </div>
+
+          <div class="perfection-meter">
+            <div class="meter-head">
+              <span>현재 완벽도</span>
+              <strong id="meterValue">100%</strong>
+            </div>
+            <div class="meter-track">
+              <span id="meterFill"></span>
+            </div>
+            <p id="levelHelp">이 정도면 꽤 믿어도 될 것 같아요.</p>
+          </div>
+        </div>
+
+        <section class="verdict" id="resultCard" aria-live="polite" aria-atomic="true">
+          <p class="verdict-label"><span aria-hidden="true">“</span> 교정기의 한마디</p>
+          <h3 id="resultTitle">문장을 주시면 완벽하게 고쳐볼게요.</h3>
+          <p class="verdict-copy" id="resultGuide">
+            맞춤법 검사 버튼을 눌러주세요.<br>
+            결과는 아주 자신 있게 알려드립니다.
+          </p>
+
+          <div class="result-body" id="resultBody" hidden>
+            <div class="score-row">
+              <span>교정 완성도</span>
+              <strong><span id="score">99</span>%</strong>
+            </div>
+            <div class="result-text" id="resultText"></div>
+            <div class="result-actions">
+              <button id="retryButton" class="secondary-button" type="button">다시 검사</button>
+              <button id="copyButton" class="copy-button" type="button">결과 복사</button>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </main>
+
+    <footer>
+      <p>재미로 쓰는 맞춤법 교정기입니다. 중요한 문장은 직접 한 번 더 확인해 주세요.</p>
+      <p class="footer-name">맞춤법 교정기 · 완벽하다고 했지 맞다고는 안 했어요</p>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <noscript>
+    <p style="padding:24px;text-align:center">
+      교정기를 사용하려면 브라우저에서 JavaScript를 켜주세요.
+    </p>
+  </noscript>
+
+  <script src="script.js"></script>
+</body>
+</html>
