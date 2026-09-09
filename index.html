@@ -26,7 +26,45 @@
   <title>개똥도 쓸모는 있겠지 — 이상한 도구 모음</title>
   <style>
     :root{color-scheme:light;--bg:#f0f0f4;--paper:#fff;--ink:#22232c;--muted:#6f7080;--line:#dcdce4;--purple:#6045db;--lime:#dfff86;--dark:#292a34}
-    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR","Malgun Gothic",sans-serif;word-break:keep-all}a{color:inherit;text-decoration:none}.shell{width:min(1080px,calc(100% - 48px));margin:0 auto}header{min-height:108px;display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:14px}.brand-mark{display:grid;place-items:center;width:46px;height:46px;border-radius:14px;background:var(--ink);color:#fff;font-size:23px;font-weight:900;transform:rotate(-7deg)}h1{margin:0;font-size:24px;letter-spacing:-1px}.brand p{margin:3px 0 0;color:var(--muted);font-size:13px}.edition{color:var(--muted);font-size:12px;letter-spacing:1.4px}.hero{padding:68px 0 32px}.eyebrow{margin:0 0 12px;color:var(--purple);font-size:12px;font-weight:800;letter-spacing:1.2px}.hero h2{margin:0;font-size:clamp(38px,7vw,72px);line-height:1.05;letter-spacing:-3px;max-width:780px}.hero .lead{max-width:640px;margin:20px 0 0;color:var(--muted);font-size:16px;line-height:1.8}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;padding:18px 0 64px}.tool-card{position:relative;min-height:300px;padding:26px;border:1px solid var(--line);border-radius:24px;background:var(--paper);box-shadow:0 18px 40px -32px #22232c88;overflow:hidden;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}.tool-card:hover{transform:translateY(-4px);border-color:#c9c2e8;box-shadow:0 24px 48px -30px #22232c99}.tool-top{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}.tool-icon{display:grid;place-items:center;width:64px;height:64px;border-radius:18px;background:var(--dark);color:#fff;font-size:30px;font-weight:800;box-shadow:0 5px 0 #171820}.tag{padding:4px 10px;border-radius:6px;background:var(--lime);color:#32420c;font-size:11px;font-weight:800;transform:rotate(3deg)}.tool-card h3{margin:28px 0 8px;font-size:28px;letter-spacing:-1.3px}.tool-card p{margin:0;color:var(--muted);font-size:14px;line-height:1.75}.tool-footer{position:absolute;left:26px;right:26px;bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:18px;border-top:1px solid #ececf1}.tool-footer span:first-child{font-size:12px;color:var(--muted)}.arrow{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:#8566f1;color:#fff;font-size:19px;font-weight:800}.coming{opacity:.58;filter:saturate(.65);cursor:default}.coming:hover{transform:none;border-color:var(--line);box-shadow:0 18px 40px -32px #22232c88}.coming .tool-icon{background:#8b8c96;box-shadow:0 5px 0 #666771}.coming .tag{background:#e2e2e8;color:#6d6e78;transform:none}.coming .arrow{background:#b8b8c2}.philosophy{margin-bottom:56px;padding:24px 26px;border:1px dashed #c5c2d6;border-radius:18px;background:#e9e7f1}.philosophy strong{display:block;margin-bottom:5px;font-size:15px}.philosophy p{margin:0;color:#666172;font-size:13px}.site-footer{display:flex;justify-content:space-between;gap:20px;padding:24px 0 24px;border-top:1px solid var(--line);color:var(--muted);font-size:12px}.feedback-bar{min-height:48px;display:flex;align-items:center;justify-content:center;border-top:1px solid var(--line);color:var(--muted);font-size:12px}.feedback-link{font-weight:650}.feedback-link:hover{color:var(--purple);text-decoration:underline}.feedback-link:focus-visible{outline:3px solid var(--purple);outline-offset:3px;border-radius:4px}@media(max-width:720px){.shell{width:min(460px,calc(100% - 28px))}.edition{display:none}header{min-height:90px}.hero{padding:44px 0 24px}.hero h2{letter-spacing:-2px}.grid{grid-template-columns:1fr;padding-bottom:40px}.tool-card{min-height:285px}.site-footer{display:block}.site-footer p{margin:4px 0}}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR","Malgun Gothic",sans-serif;word-break:keep-all}
+    a{color:inherit;text-decoration:none}
+    .shell{width:min(1080px,calc(100% - 48px));margin:0 auto}
+    header{min-height:108px;display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid var(--line)}
+    .brand{display:flex;align-items:center;gap:14px}
+    .brand-mark{display:grid;place-items:center;width:46px;height:46px;border-radius:14px;background:var(--ink);color:#fff;font-size:23px;font-weight:900;transform:rotate(-7deg)}
+    h1{margin:0;font-size:24px;letter-spacing:-1px}
+    .brand p{margin:3px 0 0;color:var(--muted);font-size:13px}
+    .edition{color:var(--muted);font-size:12px;letter-spacing:1.4px}
+    .hero{padding:68px 0 32px}
+    .eyebrow{margin:0 0 12px;color:var(--purple);font-size:12px;font-weight:800;letter-spacing:1.2px}
+    .hero h2{margin:0;font-size:clamp(38px,7vw,72px);line-height:1.05;letter-spacing:-3px;max-width:780px}
+    .hero .lead{max-width:640px;margin:20px 0 0;color:var(--muted);font-size:16px;line-height:1.8}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;padding:18px 0 64px}
+    .tool-card{position:relative;min-height:300px;padding:26px;border:1px solid var(--line);border-radius:24px;background:var(--paper);box-shadow:0 18px 40px -32px #22232c88;overflow:hidden;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
+    .tool-card:hover{transform:translateY(-4px);border-color:#c9c2e8;box-shadow:0 24px 48px -30px #22232c99}
+    .tool-top{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}
+    .tool-icon{display:grid;place-items:center;width:64px;height:64px;border-radius:18px;background:var(--dark);color:#fff;font-size:30px;font-weight:800;box-shadow:0 5px 0 #171820}
+    .tag{padding:4px 10px;border-radius:6px;background:var(--lime);color:#32420c;font-size:11px;font-weight:800;transform:rotate(3deg)}
+    .tool-card h3{margin:28px 0 8px;font-size:28px;letter-spacing:-1.3px}
+    .tool-card p{margin:0;color:var(--muted);font-size:14px;line-height:1.75}
+    .tool-footer{position:absolute;left:26px;right:26px;bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:18px;border-top:1px solid #ececf1}
+    .tool-footer span:first-child{font-size:12px;color:var(--muted)}
+    .arrow{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:#8566f1;color:#fff;font-size:19px;font-weight:800}
+    .coming{opacity:.58;filter:saturate(.65);cursor:default}
+    .coming:hover{transform:none;border-color:var(--line);box-shadow:0 18px 40px -32px #22232c88}
+    .coming .tool-icon{background:#8b8c96;box-shadow:0 5px 0 #666771}
+    .coming .tag{background:#e2e2e8;color:#6d6e78;transform:none}
+    .coming .arrow{background:#b8b8c2}
+    .philosophy{margin-bottom:56px;padding:24px 26px;border:1px dashed #c5c2d6;border-radius:18px;background:#e9e7f1}
+    .philosophy strong{display:block;margin-bottom:5px;font-size:15px}
+    .philosophy p{margin:0;color:#666172;font-size:13px}
+    .site-footer{display:flex;justify-content:space-between;gap:20px;padding:24px 0 24px;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
+    .feedback-bar{min-height:48px;display:flex;align-items:center;justify-content:center;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
+    .feedback-link{font-weight:650}
+    .feedback-link:hover{color:var(--purple);text-decoration:underline}
+    .feedback-link:focus-visible{outline:3px solid var(--purple);outline-offset:3px;border-radius:4px}
+    @media(max-width:720px){.shell{width:min(460px,calc(100% - 28px))}.edition{display:none}header{min-height:90px}.hero{padding:44px 0 24px}.hero h2{letter-spacing:-2px}.grid{grid-template-columns:1fr;padding-bottom:40px}.tool-card{min-height:285px}.site-footer{display:block}.site-footer p{margin:4px 0}}
   </style>
 </head>
 <body>
@@ -46,7 +84,7 @@
       <a class="tool-card" href="nunchi-timer/"><div class="tool-top"><div class="tool-icon">◉</div><span class="tag">보고 있으면 얌전함</span></div><h3>눈치</h3><p>정면에서는 평범하게 흐르다가 다른 탭에 다녀오면 슬쩍 시간을 앞당깁니다. 눈치 강도도 직접 조절할 수 있어요.</p><div class="tool-footer"><span>눈치보는 타이머</span><span class="arrow">→</span></div></a>
       <a class="tool-card" href="gugu-mackerel/"><div class="tool-top"><div class="tool-icon">魚</div><span class="tag">손님은 전부 비둘기</span></div><h3>구구상회</h3><p>고등어를 노릇하게 굽고 적당한 순간에 뒤집은 다음 기다리는 비둘기에게 팝니다. 태우면 새도 화냅니다.</p><div class="tool-footer"><span>비둘기 전문 고등어 노점</span><span class="arrow">→</span></div></a>
       <a class="tool-card" href="broken-clock/"><div class="tool-top"><div class="tool-icon">◷</div><span class="tag">하루에 두 번은 맞음</span></div><h3>째깍?</h3><p>멀쩡하게 가는 척하다가 멈추고, 되감기고, 몇 분을 건너뜁니다. 고장 정도도 직접 조절할 수 있어요.</p><div class="tool-footer"><span>믿으면 곤란한 고장난 시계</span><span class="arrow">→</span></div></a>
-      <a class="tool-card" href="solar-charge/"><div class="tool-top"><div class="tool-icon">☀</div><span class="tag">무 료 전 기</span></div><h3>쨍</h3><p>햇빛을 받으면 앱 속 가상 배터리가 차오릅니다. 주변 밝기를 감지하거나 수동으로 햇빛 세기를 조절해 충전할 수 있어요.</p><div class="tool-footer"><span>햇빛으로 충전하는 앱</span><span class="arrow">→</span></div></a>
+      <a class="tool-card" href="solar-charge/?build=20260910-2"><div class="tool-top"><div class="tool-icon">☀</div><span class="tag">무 료 전 기</span></div><h3>쨍</h3><p>햇빛을 받으면 앱 속 가상 배터리가 차오르고, 빛이 부족하면 조금씩 방전됩니다. 주변 밝기를 감지하거나 수동으로 햇빛 세기를 조절할 수 있어요.</p><div class="tool-footer"><span>햇빛으로 충전하는 앱</span><span class="arrow">→</span></div></a>
       <article class="tool-card coming"><div class="tool-top"><div class="tool-icon">＋</div><span class="tag">추가 예정</span></div><h3>새로운 앱 추가 예정</h3><p>다음엔 또 어떤 이상한 도구가 들어올까요. 새 앱이 생기면 이 자리 앞에 추가됩니다.</p><div class="tool-footer"><span>다음 도구를 준비 중</span><span class="arrow">…</span></div></article>
     </main>
     <section class="philosophy"><strong>이 사이트의 기준</strong><p>버그처럼 보여도 의도한 이상함이면 기능입니다. 대신 진짜 버그는 고칩니다.</p></section>
