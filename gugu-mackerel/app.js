@@ -22,15 +22,27 @@
   const cookValue = $('cook-value');
   const flipCount = $('flip-count');
   const salePop = $('sale-pop');
+  const meterTrack = document.querySelector('.meter-track');
+  const meterTarget = document.querySelector('.meter-target');
 
-  // Keep the original cooking speed, quality thresholds and prices.
   const COOK_SPEED = 0.0068;
 
-  // Random gag event. If armed, it only happens while the fish is still raw.
+  // The sweet spot is deliberately narrow now.
+  const PERFECT_CENTER = 71;
+  const PERFECT_MIN = 67;
+  const PERFECT_MAX = 75;
+
+  // Random gag event 1: raw fish bolts from the grill.
   const RUNAWAY_CHANCE = 0.18;
   const RUNAWAY_MIN_COOK = 3;
   const RUNAWAY_MAX_COOK = 18;
   const RUNAWAY_DURATION = 1050;
+
+  // Random gag event 2: a stray cat steals an almost-cooked fish.
+  const CAT_STEAL_CHANCE = 0.14;
+  const CAT_MIN_COOK = 64;
+  const CAT_MAX_COOK = 69;
+  const CAT_DURATION = 1450;
 
   let cooking = false;
   let transitioning = false;
@@ -47,6 +59,10 @@
   let runawayArmed = false;
   let runawayAt = Infinity;
   let runawayAnimation = null;
+  let catArmed = false;
+  let catAt = Infinity;
+  let catAnimation = null;
+  let catEl = null;
   const pending = new Set();
 
   const customers = [
@@ -89,9 +105,10 @@
   function cookLabel() {
     if (!cooking && cook === 0) return '불판이 비어 있어요';
     if (cook < 24) return '아직 생생함';
-    if (cook < 48) return '슬슬 익는 중';
-    if (cook < 58) return '조금만 더';
-    if (cook <= 82) return '지금! 노릇노릇';
+    if (cook < 52) return '슬슬 익는 중';
+    if (cook < PERFECT_MIN) return '조금만 더';
+    if (cook <= PERFECT_MAX) return '지금! 딱 이때';
+    if (cook <= 92) return '조금 늦었어요';
     if (cook <= 100) return '앗, 타기 시작해요';
     return '고등어였던 것';
   }
@@ -111,36 +128,41 @@
     const label = cookLabel();
     if (fishScore.textContent !== label) fishScore.textContent = label;
     flipCount.textContent = `뒤집기 ${flips}회`;
-    const nextState = !cooking ? 'idle' : cook > 82 ? 'burning' : cook >= 58 ? 'golden' : 'cooking';
+    const nextState = !cooking ? 'idle' : cook > PERFECT_MAX ? 'burning' : cook >= PERFECT_MIN ? 'golden' : 'cooking';
     if (stage.dataset.state !== nextState) {
       stage.dataset.state = nextState;
       if (cooking) setMood(nextState === 'golden' ? 'happy' : nextState === 'burning' ? 'grumpy' : 'curious');
     }
-    heatStatus.textContent = !cooking ? '불판 준비 완료' : cook > 100 ? '연기가 심상치 않아요' : cook > 82 ? '서둘러 꺼내주세요' : cook >= 58 ? '지금 판매하면 좋아요' : '지글지글 굽는 중';
+    heatStatus.textContent = !cooking ? '불판 준비 완료' : cook > 100 ? '연기가 심상치 않아요' : cook > PERFECT_MAX ? '타이밍이 지나가고 있어요' : cook >= PERFECT_MIN ? '지금 판매하세요!' : cook >= 58 ? '거의 다 익었어요' : '지글지글 굽는 중';
+  }
+
+  function removeRunawayBubble() {
+    const bubble = stage.querySelector('.fish-runaway-bubble');
+    if (bubble) bubble.remove();
+  }
+
+  function cleanupCat() {
+    if (catAnimation) {
+      catAnimation.cancel();
+      catAnimation = null;
+    }
+    if (catEl) {
+      catEl.remove();
+      catEl = null;
+    }
   }
 
   function makeRunawayBubble() {
-    const oldBubble = stage.querySelector('.fish-runaway-bubble');
-    if (oldBubble) oldBubble.remove();
-
+    removeRunawayBubble();
     const bubble = document.createElement('div');
     bubble.className = 'fish-runaway-bubble';
     bubble.textContent = '앗 뜨거!';
     Object.assign(bubble.style, {
-      position: 'absolute',
-      zIndex: '9',
-      left: '54%',
-      top: '21%',
-      transform: 'translate(-50%, -50%) rotate(-5deg)',
-      padding: '7px 12px',
-      border: '2px solid #2d2138',
-      borderRadius: '14px 14px 14px 3px',
-      background: '#fffaf5',
-      color: '#3d2b47',
-      boxShadow: '3px 4px 0 #2d2138',
-      font: '800 17px/1.2 var(--tb-font)',
-      whiteSpace: 'nowrap',
-      pointerEvents: 'none'
+      position: 'absolute', zIndex: '9', left: '54%', top: '21%',
+      transform: 'translate(-50%, -50%) rotate(-5deg)', padding: '7px 12px',
+      border: '2px solid #2d2138', borderRadius: '14px 14px 14px 3px',
+      background: '#fffaf5', color: '#3d2b47', boxShadow: '3px 4px 0 #2d2138',
+      font: '800 17px/1.2 var(--tb-font)', whiteSpace: 'nowrap', pointerEvents: 'none'
     });
     stage.appendChild(bubble);
     bubble.animate([
@@ -157,6 +179,7 @@
     cooking = false;
     transitioning = true;
     runawayArmed = false;
+    catArmed = false;
     cancelAnimationFrame(frame);
     lastTime = 0;
 
@@ -201,6 +224,81 @@
     }, RUNAWAY_DURATION + 180);
   }
 
+  function makeCatThief() {
+    cleanupCat();
+    catEl = document.createElement('div');
+    catEl.setAttribute('aria-label', '고등어를 훔쳐 달아나는 길고양이');
+    Object.assign(catEl.style, {
+      position: 'absolute', zIndex: '10', right: '-105px', top: '40%', width: '102px', height: '76px',
+      display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none',
+      filter: 'drop-shadow(0 6px 5px #34243d40)'
+    });
+    const cat = document.createElement('span');
+    cat.textContent = '🐈‍⬛';
+    Object.assign(cat.style, { fontSize: '66px', lineHeight: '1' });
+    const stolenFish = document.createElement('span');
+    stolenFish.textContent = '🐟';
+    Object.assign(stolenFish.style, {
+      position: 'absolute', left: '0', top: '39px', fontSize: '29px', lineHeight: '1',
+      opacity: '0', transform: 'rotate(-17deg)'
+    });
+    catEl.append(cat, stolenFish);
+    stage.appendChild(catEl);
+
+    const travel = Math.max(420, stage.clientWidth + 150);
+    catAnimation = catEl.animate([
+      { transform: 'translateX(0) translateY(0) scaleX(-1)', offset: 0 },
+      { transform: `translateX(${-travel * 0.48}px) translateY(-3px) scaleX(-1)`, offset: 0.37 },
+      { transform: `translateX(${-travel * 0.56}px) translateY(1px) scaleX(-1)`, offset: 0.52 },
+      { transform: `translateX(${-travel * 0.62}px) translateY(-5px) scaleX(1)`, offset: 0.62 },
+      { transform: `translateX(${-travel}px) translateY(-12px) scaleX(1)`, offset: 1 }
+    ], { duration: CAT_DURATION, easing: 'cubic-bezier(.3,.7,.22,1)', fill: 'forwards' });
+
+    later(() => {
+      fish.style.opacity = '0';
+      stolenFish.style.opacity = '1';
+    }, Math.round(CAT_DURATION * 0.52));
+  }
+
+  function triggerCatSteal() {
+    if (!cooking || transitioning) return;
+    cooking = false;
+    transitioning = true;
+    runawayArmed = false;
+    catArmed = false;
+    cancelAnimationFrame(frame);
+    lastTime = 0;
+
+    if (tossTimer) {
+      clearTimeout(tossTimer);
+      pending.delete(tossTimer);
+      tossTimer = 0;
+    }
+    fish.classList.remove('tossing');
+    fishBtn.disabled = true;
+    flipBtn.disabled = true;
+    sellBtn.disabled = true;
+    fishBtn.textContent = '고양이 추격 중…';
+    fishScore.textContent = '어? 어디 갔지?';
+    heatStatus.textContent = '길고양이가 노리고 있습니다!';
+    caseStatus.textContent = 'STATUS · 고등어 도난';
+    review.innerHTML = `굽기 ${Math.round(cook)}%에서 돌발상황. <strong>길고양이가 거의 다 익은 고등어를 훔쳐갔습니다.</strong>`;
+    speech.innerHTML = '<strong>구구?! 제 고등어!</strong>방금 고양이가 물고 갔는데요?!';
+    thoughtTitle.textContent = '저 고양이 단골 아닌가요?';
+    thoughtBody.textContent = '딱 먹기 좋을 때를 아는 걸 보니 한두 번 해본 솜씨가 아닙니다. 구구.';
+    setMood('grumpy');
+    stage.dataset.state = 'stolen';
+    makeCatThief();
+
+    later(() => {
+      cleanupCat();
+      clearGrill();
+      fishBtn.textContent = '새 고등어 올리기';
+      caseStatus.textContent = 'STATUS · 손님은 아직 기다리는 중';
+      heatStatus.textContent = '불판 준비 완료';
+    }, CAT_DURATION + 180);
+  }
+
   function tick(now) {
     if (!cooking) return;
     if (!lastTime) lastTime = now;
@@ -211,6 +309,10 @@
 
     if (runawayArmed && cook >= runawayAt) {
       triggerRunaway();
+      return;
+    }
+    if (catArmed && cook >= catAt) {
+      triggerCatSteal();
       return;
     }
 
@@ -231,20 +333,27 @@
   function startFish() {
     if (cooking || transitioning) return;
     cancelPending();
+    cleanupCat();
     if (runawayAnimation) {
       runawayAnimation.cancel();
       runawayAnimation = null;
     }
-    const oldBubble = stage.querySelector('.fish-runaway-bubble');
-    if (oldBubble) oldBubble.remove();
+    removeRunawayBubble();
+    fish.style.opacity = '';
 
     cook = 0;
     flips = 0;
     lastTime = 0;
     cooking = true;
-    runawayArmed = Math.random() < RUNAWAY_CHANCE;
+
+    const eventRoll = Math.random();
+    runawayArmed = eventRoll < RUNAWAY_CHANCE;
+    catArmed = !runawayArmed && eventRoll < RUNAWAY_CHANCE + CAT_STEAL_CHANCE;
     runawayAt = runawayArmed
       ? RUNAWAY_MIN_COOK + Math.random() * (RUNAWAY_MAX_COOK - RUNAWAY_MIN_COOK)
+      : Infinity;
+    catAt = catArmed
+      ? CAT_MIN_COOK + Math.random() * (CAT_MAX_COOK - CAT_MIN_COOK)
       : Infinity;
 
     fish.classList.remove('flipped', 'tossing', 'served');
@@ -261,7 +370,6 @@
 
   function flipFish() {
     if (!cooking) return;
-    // Restart only this short animation; repeated taps still count as before.
     if (tossTimer) { clearTimeout(tossTimer); pending.delete(tossTimer); }
     fish.style.setProperty('--flip-from', flips % 2 ? '180deg' : '0deg');
     flips++;
@@ -278,13 +386,13 @@
 
   function evaluate() {
     const picky = Number(pickiness.value) / 100;
-    const distance = Math.abs(cook - 70);
-    let quality = Math.max(0, 100 - distance * (2.2 + picky * 1.5));
-    if (flips === 1) quality += 12;
-    else if (flips === 0) quality -= 8 + 18 * picky;
-    else quality -= Math.min(24, (flips - 1) * (5 + 8 * picky));
-    if (cook < 32) quality -= 35;
-    if (cook > 96) quality -= 40;
+    const distance = Math.abs(cook - PERFECT_CENTER);
+    let quality = Math.max(0, 100 - distance * (4.8 + picky * 2.4));
+    if (flips === 1) quality += 8;
+    else if (flips === 0) quality -= 10 + 20 * picky;
+    else quality -= Math.min(28, (flips - 1) * (7 + 9 * picky));
+    if (cook < 45) quality -= 38;
+    if (cook > 88) quality -= 45;
     return clamp(quality, 0, 100);
   }
 
@@ -316,6 +424,7 @@
   function endFish(soldFish) {
     cooking = false; transitioning = true;
     runawayArmed = false;
+    catArmed = false;
     cancelAnimationFrame(frame); lastTime = 0;
     if (tossTimer) { clearTimeout(tossTimer); pending.delete(tossTimer); tossTimer = 0; }
     fish.classList.remove('tossing');
@@ -341,12 +450,15 @@
     cook = 0; flips = 0; transitioning = false;
     runawayArmed = false;
     runawayAt = Infinity;
+    catArmed = false;
+    catAt = Infinity;
     if (runawayAnimation) {
       runawayAnimation.cancel();
       runawayAnimation = null;
     }
-    const oldBubble = stage.querySelector('.fish-runaway-bubble');
-    if (oldBubble) oldBubble.remove();
+    cleanupCat();
+    removeRunawayBubble();
+    fish.style.opacity = '';
     fish.classList.remove('active', 'flipped', 'tossing', 'served');
     salePop.classList.remove('visible');
     fishBtn.disabled = false;
@@ -367,8 +479,10 @@
   function resetShop() {
     cooking = false;
     runawayArmed = false;
+    catArmed = false;
     cancelAnimationFrame(frame);
     cancelPending();
+    cleanupCat();
     if (runawayAnimation) {
       runawayAnimation.cancel();
       runawayAnimation = null;
@@ -395,8 +509,17 @@
   $('reset-btn').addEventListener('click', resetShop);
   pickiness.addEventListener('input', e => setPickiness(e.target.value));
   presets.forEach(b => b.addEventListener('click', () => setPickiness(b.dataset.value)));
-  // Avoid a visual jump after returning from another tab.
   document.addEventListener('visibilitychange', () => { lastTime = 0; });
+
+  // Make the visual target match the new, much narrower scoring window.
+  if (meterTrack) {
+    meterTrack.style.background = 'linear-gradient(90deg,#dedce6 0 67%,#d5ef93 67% 75%,#f5d3b9 75% 90%,#db8b7b 90%)';
+  }
+  if (meterTarget) {
+    meterTarget.style.left = PERFECT_MIN + '%';
+    meterTarget.style.width = (PERFECT_MAX - PERFECT_MIN) + '%';
+  }
+
   setPickiness(35);
   renderCook();
 })();
