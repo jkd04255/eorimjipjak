@@ -66,7 +66,7 @@
         <div class="control-head"><label for="indecision">우유부단함</label><output for="indecision"><span id="indecision-value">55</span><small>%</small></output></div>
         <input id="indecision" class="range" type="range" min="0" max="100" step="1" value="55">
         <div class="range-ends"><span>확고함</span><span>갈팡질팡</span></div>
-        <p class="helper" id="rate-help">지금은 대략 8~13초마다 마음이 바뀝니다.</p>
+        <p class="helper" id="rate-help">지금은 대략 6~10초마다 마음이 바뀝니다.</p>
       </div>
 
       <section class="mood" aria-live="polite">
@@ -140,11 +140,11 @@
   }
 
   function intervalRange(value=Number(els.slider.value)){
-    if(value<=20) return [24,38];
-    if(value<=40) return [14,24];
-    if(value<=60) return [8,13];
-    if(value<=80) return [4,8];
-    return [1.8,4];
+    if(value<=20) return [16,24];
+    if(value<=40) return [10,16];
+    if(value<=60) return [6,10];
+    if(value<=80) return [3.5,6];
+    return [1.5,3.5];
   }
 
   function intervalText(){
