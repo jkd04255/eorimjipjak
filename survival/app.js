@@ -5,22 +5,25 @@ const addWood=document.getElementById('addWood');
 const dayNightToggle=document.getElementById('dayNightToggle');
 const skyModeLabel=document.getElementById('skyModeLabel');
 const skyStateText=document.getElementById('skyStateText');
+const weatherStateText=document.getElementById('weatherStateText');
+const weatherBadge=document.getElementById('weatherBadge');
 const islandScene=document.getElementById('islandScene');
 const fireGlow=document.querySelector('.fire-glow');
 const survivalMessage=document.getElementById('survivalMessage');
 const newPlan=document.getElementById('newPlan');
 const toast=document.getElementById('toast');
+const fanButton=document.getElementById('fanButton');
 
 const plans=[
   '해 떨어지기 전에 장작부터 챙깁니다.',
-  '오늘의 목표는 불을 60% 아래로 안 떨어뜨리는 것입니다.',
-  '윌슨에게 상황 브리핑을 하고 장작을 다시 모읍니다.',
-  '바람 불기 전에 불씨부터 안정시킵니다.',
-  '구조 신호보다 먼저 모닥불 상태부터 점검합니다.',
-  '불이 살아 있으면 오늘도 아직 희망은 있습니다.'
+  '비구름이 오기 전에 불 세기부터 채워둡니다.',
+  '윌슨 옆에서 마시멜로를 태우지 않을 만큼만 불을 유지합니다.',
+  '비가 오면 선풍기로 구름부터 치웁니다.',
+  '오늘의 목표는 불을 50% 아래로 오래 두지 않는 것입니다.',
+  '야자수 그늘은 좋지만, 지금 더 중요한 건 모닥불입니다.'
 ];
 
-const state={fire:88,isDay:true,manualSky:false,toastTimer:null};
+const state={fire:88,isDay:true,manualSky:false,isRaining:false,canStorm:true,toastTimer:null};
 
 function clamp(v,min,max){return Math.min(max,Math.max(min,v));}
 function realTimeIsDay(){const h=new Date().getHours();return h>=6&&h<18;}
@@ -31,30 +34,30 @@ function applySky(isDay,{animate=false}={}){
   state.isDay=isDay;
   document.body.classList.toggle('is-day',isDay);
   document.body.classList.toggle('is-night',!isDay);
-
-  // 낮→밤일 때 회전값을 줄여 반시계 방향으로 원호를 그리게 합니다.
   islandScene.style.setProperty('--sun-rotation',isDay?'60deg':'-120deg');
   islandScene.style.setProperty('--moon-rotation',isDay?'140deg':'-40deg');
-
   skyStateText.textContent=isDay?'낮':'밤';
   skyModeLabel.textContent=`${state.manualSky?'수동':'실시간'} ${isDay?'낮':'밤'}`;
   dayNightToggle.textContent=isDay?'🌙 밤으로 전환':'☀️ 낮으로 전환';
   if(animate)showToast(isDay?'해가 다시 떠올랐습니다.':'해가 지고 초승달이 떠오릅니다.');
 }
 
+function renderWeather(){
+  islandScene.classList.toggle('rainy',state.isRaining);
+  weatherStateText.textContent=state.isRaining?'비 오는 중':'맑음';
+  weatherBadge.textContent=state.isRaining?'먹구름 + 비':'맑음';
+}
+
 function renderFire(){
   state.fire=clamp(state.fire,0,100);
   const level=Math.round(state.fire);
   const ratio=level/100;
-
-  // 불 세기가 떨어지면 불꽃 크기, 광량, 불티가 동시에 눈에 띄게 감소합니다.
   islandScene.style.setProperty('--fire-scale',(ratio*1.17).toFixed(3));
   islandScene.style.setProperty('--glow-scale',(0.18+ratio*1.02).toFixed(3));
   islandScene.style.setProperty('--fire-brightness',(0.35+ratio*0.95).toFixed(3));
   islandScene.style.setProperty('--spark-opacity',ratio.toFixed(3));
   islandScene.style.setProperty('--ember-opacity',(0.10+ratio*0.90).toFixed(3));
   fireGlow.style.opacity=(0.05+ratio*0.82).toFixed(3);
-
   fireValue.textContent=`${level}%`;
   fireMeter.style.width=`${level}%`;
 
@@ -65,13 +68,45 @@ function renderFire(){
   else{fireStatus.textContent='재만 남음';fireStatus.className='status danger';}
 }
 
+function startStorm(){
+  if(state.isRaining)return;
+  state.isRaining=true;
+  islandScene.classList.remove('clearing');
+  renderWeather();
+  showToast('먹구름이 몰려와 비가 내리기 시작했습니다.');
+}
+
+function clearStorm(){
+  fanButton.classList.add('spinning');
+  setTimeout(()=>fanButton.classList.remove('spinning'),1100);
+
+  if(!state.isRaining){showToast('선풍기만 열심히 돌고 있습니다. 먹구름은 없습니다.');return;}
+
+  state.isRaining=false;
+  state.canStorm=false;
+  islandScene.classList.add('clearing');
+  renderWeather();
+  showToast('선풍기 바람으로 먹구름을 날려버렸습니다.');
+
+  setTimeout(()=>islandScene.classList.remove('clearing'),1100);
+  setTimeout(()=>{state.canStorm=true;},6500);
+}
+
 function decayFire(){
   if(state.fire<=0)return;
   const before=state.fire;
-  state.fire=clamp(state.fire-6,0,100);
+  const decay=state.isRaining?12:6;
+  state.fire=clamp(state.fire-decay,0,100);
   renderFire();
-  if(before>18&&state.fire<=18)showToast('불이 거의 꺼져갑니다. 장작이 필요합니다.');
+
+  if(!state.isRaining&&before>18&&state.fire<=18)showToast('불이 거의 꺼져갑니다. 장작이 필요합니다.');
+  if(state.isRaining&&before>24&&state.fire<=24)showToast('비 때문에 불이 더 빠르게 죽고 있습니다.');
   if(state.fire===0)showToast('불이 꺼졌습니다. 잔불만 남았습니다.');
+}
+
+function maybeStartStorm(){
+  if(!state.canStorm||state.isRaining)return;
+  if(Math.random()<0.28)startStorm();
 }
 
 addWood.addEventListener('click',()=>{
@@ -81,6 +116,8 @@ addWood.addEventListener('click',()=>{
   showToast(wasOut?'불씨가 다시 살아났습니다.':'장작 투입. 불이 확 살아납니다.');
 });
 
+fanButton.addEventListener('click',clearStorm);
+
 dayNightToggle.addEventListener('click',()=>{
   state.manualSky=true;
   applySky(!state.isDay,{animate:true});
@@ -89,10 +126,12 @@ dayNightToggle.addEventListener('click',()=>{
 newPlan.addEventListener('click',()=>{setRandomPlan();showToast('오늘의 생존계획을 다시 정했습니다.');});
 
 applySky(realTimeIsDay());
+renderWeather();
 renderFire();
 setRandomPlan();
 
 setInterval(decayFire,1200);
+setInterval(maybeStartStorm,12000);
 setInterval(()=>{
   if(state.manualSky)return;
   const nowDay=realTimeIsDay();
