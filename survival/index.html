@@ -21,8 +21,8 @@
     <main>
       <section class="hero">
         <p class="eyebrow">STILL ALIVE. PROBABLY.</p>
-        <h1>오늘도 일단은<br>불부터 살려둡니다.</h1>
-        <p class="lead">물은 잠시 잊었습니다. 지금은 모닥불에 집중합니다. 장작을 넣어 불을 살리고, 불 옆에 세워둔 윌슨과 함께 구조대를 기다려보세요.</p>
+        <h1>불을 살리고,<br>비구름은 날려버립니다.</h1>
+        <p class="lead">바다와 야자수 사이에서 불을 지키고 있습니다. 랜덤으로 먹구름이 몰려와 비를 뿌리면 불이 더 빨리 꺼집니다. 그때는 불 옆 선풍기를 터치해서 구름을 날려버리세요.</p>
       </section>
 
       <section class="focus-panel">
@@ -33,12 +33,21 @@
 
         <div class="main-scene" id="islandScene" aria-label="무인도 모닥불 장면">
           <button class="sky-toggle" id="dayNightToggle" type="button">🌙 밤으로 전환</button>
+          <div class="weather-badge" id="weatherBadge">맑음</div>
+          <div class="rain-layer" aria-hidden="true"></div>
+          <div class="storm-cloud" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
 
           <div class="stars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
           <div class="sky-orbit sun-orbit" aria-hidden="true"><div class="sun"></div></div>
           <div class="sky-orbit moon-orbit" aria-hidden="true"><div class="moon"></div></div>
           <div class="cloud cloud-a"></div><div class="cloud cloud-b"></div>
+
+          <div class="sea"></div>
+          <div class="wave wave-a"></div><div class="wave wave-b"></div>
           <div class="island-ground"></div><div class="shore-line"></div>
+
+          <div class="palm palm-left" aria-hidden="true"><div class="trunk"></div><div class="leaf l1"></div><div class="leaf l2"></div><div class="leaf l3"></div><div class="leaf l4"></div><div class="leaf l5"></div></div>
+          <div class="palm palm-right" aria-hidden="true"><div class="trunk"></div><div class="leaf l1"></div><div class="leaf l2"></div><div class="leaf l3"></div><div class="leaf l4"></div><div class="leaf l5"></div></div>
 
           <div class="camp-area">
             <div class="fire-glow"></div>
@@ -53,25 +62,29 @@
             <div class="wilson-stand" aria-label="막대기에 세워둔 윌슨">
               <div class="stick"></div>
               <div class="wilson-ball"><span class="eye eye-left"></span><span class="eye eye-right"></span><span class="mouth"></span></div>
-              <span class="wilson-name">WILSON</span>
             </div>
+
+            <div class="marshmallow-stick" aria-hidden="true"><div class="skewer"></div><div class="marshmallow"></div></div>
+
+            <button class="fan-button" id="fanButton" type="button" aria-label="선풍기로 먹구름 날리기">
+              <span class="fan-body">
+                <span class="fan-head"><span class="fan-grid"></span><span class="fan-blades blade-a"></span><span class="fan-blades blade-b"></span><span class="fan-blades blade-c"></span></span>
+                <span class="fan-neck"></span><span class="fan-base"></span>
+              </span>
+            </button>
           </div>
         </div>
 
-        <div class="fire-action-zone">
-          <button class="action primary" id="addWood" type="button">🪵 장작 한 개 넣기</button>
-        </div>
+        <div class="fire-action-zone"><button class="action primary" id="addWood" type="button">🪵 장작 한 개 넣기</button></div>
 
         <div class="controls-grid">
           <article class="stat-card"><span>불 세기</span><strong id="fireValue">88%</strong><div class="meter"><span id="fireMeter"></span></div></article>
           <article class="stat-card"><span>하늘 상태</span><strong id="skyStateText">낮</strong><p>접속할 때 현재 시간을 기준으로 시작합니다.</p></article>
-          <article class="stat-card"><span>불 감소</span><strong>1.2초마다 -6%</strong><p>눈 돌리면 진짜 꺼집니다.</p></article>
+          <article class="stat-card"><span>날씨</span><strong id="weatherStateText">맑음</strong><p>비가 오면 불이 더 빨리 줄고, 선풍기를 누르면 구름이 날아갑니다.</p></article>
         </div>
 
-        <div class="action-row">
-          <button class="action ghost" id="newPlan" type="button">오늘의 생존계획 ↻</button>
-        </div>
-        <p class="tiny">불 세기가 내려갈수록 불꽃·빛·불티가 함께 작아집니다. 0%가 되면 잔불만 남습니다.</p>
+        <div class="action-row"><button class="action ghost" id="newPlan" type="button">오늘의 생존계획 ↻</button></div>
+        <p class="tiny">먹구름은 랜덤으로 찾아옵니다. 비가 오는 동안에는 불 감소 속도가 두 배가 되니 선풍기로 구름을 밀어내세요.</p>
       </section>
 
       <section class="note-card"><span class="panel-kicker">TODAY'S PLAN</span><strong id="survivalMessage">해 떨어지기 전에 장작부터 챙깁니다.</strong></section>
