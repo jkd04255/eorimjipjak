@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f0f0f4">
+  <meta name="description" content="긴급함은 100%, 소리는 0%. 경광등만 열심히 돌아가는, 소리 나지 않는 소방 사이렌 쉿.">
+  <title>쉿 — 소리 나지 않는 소방 사이렌</title>
+  <link rel="stylesheet" href="styles.css?v=1">
+  <script defer src="core.js?v=1"></script>
+  <script defer src="app.js?v=1"></script>
+</head>
+<body>
+  <div class="shell">
+    <header class="page-header">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">!</span>
+        <div><h1>쉿</h1><p>소리 나지 않는 소방 사이렌</p></div>
+      </div>
+      <span class="edition">THE COMPLETELY SILENT SIREN</span>
+      <a class="home-button" href="../" aria-label="홈으로 돌아가기" title="홈으로 돌아가기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5M5 9v12h14V9M9 21v-7h6v7"/></svg></a>
+    </header>
+
+    <main>
+      <section class="instrument" aria-label="무음 소방 사이렌">
+        <div class="siren-case" id="siren-case" data-running="false" data-reduced="false">
+          <div class="case-top"><span>SHHH / 005</span><span class="sticker">긴급함은 100%</span></div>
+          <div class="display">
+            <div class="display-top"><span class="display-label">SILENT ALARM</span><span class="state-tag" id="state-tag">대기 중</span></div>
+            <div class="sound-text" aria-hidden="true"><span class="standby-text">···</span><span class="active-text"><span class="wee">위—</span> <span class="woo">우—</span></span></div>
+            <div class="display-bottom"><span id="display-caption">눌러도 아무도 안 놀랍니다.</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m11 5-6 4H2v6h3l6 4V5Zm6 4 5 6m0-6-5 6"/></svg></div>
+          </div>
+
+          <div class="beacon-stage" aria-hidden="true">
+            <span class="signal-ring ring-one"></span><span class="signal-ring ring-two"></span>
+            <div class="beacon-light"></div>
+            <img class="beacon" src="beacon.webp?v=1" width="1024" height="1024" alt="" fetchpriority="high">
+            <span class="stage-caption" id="stage-caption">고요할 준비 완료</span>
+          </div>
+
+          <button class="alarm-button" id="toggle" type="button" aria-pressed="false" aria-label="사이렌 작동" disabled><span class="button-symbol" aria-hidden="true"></span><span id="toggle-label">조용히 울리기</span></button>
+
+          <div class="device-readout">
+            <div><span>작동 시간</span><output id="elapsed" aria-label="작동 시간">00:00</output></div>
+            <div><span>실제 소리</span><strong class="zero-output">0<small>%</small></strong></div>
+            <div><span>출동 횟수</span><output id="starts" aria-label="출동 횟수">00</output></div>
+          </div>
+          <p class="case-bottom">FIRE SIREN <span>소리 부품은 마음속에.</span></p>
+        </div>
+        <p class="keyboard-note"><kbd>Space</kbd> 시작·정지 <span>·</span> <kbd>Esc</kbd> 정지</p>
+        <p class="sr-only" id="announcement" role="status" aria-live="polite"></p>
+        <noscript><p class="noscript-note">사이렌을 작동하려면 브라우저에서 JavaScript를 켜주세요.</p></noscript>
+      </section>
+
+      <aside class="settings" aria-labelledby="settings-title">
+        <p class="eyebrow">A LITTLE QUIET EMERGENCY</p>
+        <h2 id="settings-title">얼마나 요란할까요?</h2>
+        <p class="intro">불빛은 다급하게.<br>소리는 마음속으로.</p>
+        <div class="control-card">
+          <div class="control-head"><label for="urgency">긴급도</label><output class="control-value" for="urgency"><span id="urgency-value">60</span><small>%</small></output></div>
+          <input class="range" id="urgency" type="range" min="0" max="100" step="5" value="60" aria-describedby="urgency-help">
+          <div class="range-ends"><span>느긋하게</span><span>아주 다급하게</span></div>
+          <div class="presets" role="group" aria-label="긴급도 빠른 설정"><button type="button" data-urgency="20" aria-pressed="false">훈련 중</button><button type="button" data-urgency="60" aria-pressed="true">출동 중</button><button type="button" data-urgency="100" aria-pressed="false">초긴급</button></div>
+          <p class="helper" id="urgency-help">높일수록 불빛과 글자가 바빠져요.</p>
+          <div class="volume-control">
+            <div class="control-head"><label for="volume">음량</label><output class="volume-value" for="volume"><span id="volume-value">80</span><small>%</small></output></div>
+            <input class="range" id="volume" type="range" min="0" max="100" step="5" value="80" aria-describedby="volume-help">
+            <div class="range-ends"><span>무음</span><span>아주 큰 무음</span></div>
+            <p class="helper" id="volume-help">끝까지 올려도 소리는 나지 않아요.</p>
+          </div>
+          <label class="motion-control"><span>움직임 줄이기</span><input id="reduced-motion" type="checkbox" role="switch"></label>
+        </div>
+        <section class="thought" aria-labelledby="thought-title">
+          <p class="thought-label"><span aria-hidden="true">“</span> 사이렌의 한마디</p>
+          <h3 id="thought-title">목청은 마음속에 있어요.</h3>
+          <p id="thought-copy">긴급한 분위기는 제가 낼게요.<br>평온한 분위기도 제가 낼게요.</p>
+        </section>
+        <p class="quiet-note"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="m11 5-6 4H2v6h3l6 4V5Zm6 4 5 6m0-6-5 6"/></svg> 기기 음량은 그대로 두셔도 돼요.</p>
+      </aside>
+    </main>
+    <footer class="site-footer"><span>아무도 깨우지 않는 비상사태.</span><span>쉿 · 개똥도 쓸모는 있겠지</span></footer>
+    <div class="feedback-bar"><a href="mailto:jkd04255@khu.ac.kr?subject=%5B%EC%89%BF%5D%20%EB%AC%B8%EC%9D%98%20%C2%B7%20%EC%98%A4%EB%A5%98%20%EC%A0%9C%EB%B3%B4">✉ 문의 · 오류 제보</a></div>
+  </div>
+</body>
+</html>
