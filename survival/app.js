@@ -6,6 +6,7 @@ const dayNightToggle=document.getElementById('dayNightToggle');
 const skyModeLabel=document.getElementById('skyModeLabel');
 const skyStateText=document.getElementById('skyStateText');
 const islandScene=document.getElementById('islandScene');
+const fireGlow=document.querySelector('.fire-glow');
 const survivalMessage=document.getElementById('survivalMessage');
 const newPlan=document.getElementById('newPlan');
 const toast=document.getElementById('toast');
@@ -31,8 +32,7 @@ function applySky(isDay,{animate=false}={}){
   document.body.classList.toggle('is-day',isDay);
   document.body.classList.toggle('is-night',!isDay);
 
-  // 해와 달은 같은 원형 궤도를 반시계 방향으로 이동합니다.
-  // 낮→밤: 해는 오른쪽 위에서 왼쪽 아래로 지고, 초승달은 오른쪽 아래에서 왼쪽 위로 떠오릅니다.
+  // 낮→밤일 때 회전값을 줄여 반시계 방향으로 원호를 그리게 합니다.
   islandScene.style.setProperty('--sun-rotation',isDay?'60deg':'-120deg');
   islandScene.style.setProperty('--moon-rotation',isDay?'140deg':'-40deg');
 
@@ -47,11 +47,13 @@ function renderFire(){
   const level=Math.round(state.fire);
   const ratio=level/100;
 
-  islandScene.style.setProperty('--fire-scale',(0.12+ratio*1.05).toFixed(3));
+  // 불 세기가 떨어지면 불꽃 크기, 광량, 불티가 동시에 눈에 띄게 감소합니다.
+  islandScene.style.setProperty('--fire-scale',(ratio*1.17).toFixed(3));
   islandScene.style.setProperty('--glow-scale',(0.18+ratio*1.02).toFixed(3));
   islandScene.style.setProperty('--fire-brightness',(0.35+ratio*0.95).toFixed(3));
-  islandScene.style.setProperty('--spark-opacity',(0.02+ratio*0.98).toFixed(3));
+  islandScene.style.setProperty('--spark-opacity',ratio.toFixed(3));
   islandScene.style.setProperty('--ember-opacity',(0.10+ratio*0.90).toFixed(3));
+  fireGlow.style.opacity=(0.05+ratio*0.82).toFixed(3);
 
   fireValue.textContent=`${level}%`;
   fireMeter.style.width=`${level}%`;
