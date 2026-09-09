@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#202127">
-  <meta name="description" content="모닥불을 지키고 물을 정수하며 버티는 작은 무인도 생존 웹사이트.">
+  <meta name="description" content="모닥불을 지키며 버티는 작은 무인도 생존 웹사이트.">
   <title>살아는 있겠지 — 무인도 생존소</title>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -13,111 +13,70 @@
     <header class="topbar">
       <a class="brand" href="../" aria-label="도구 상자로 돌아가기">
         <span class="brand-mark">?</span>
-        <span><strong>개똥도 쓸모는 있겠지</strong><small>무인도 생존소</small></span>
+        <span class="brand-text"><strong>개똥도 쓸모는 있겠지</strong><small>무인도 생존소</small></span>
       </a>
-      <span class="edition">ISLAND SURVIVAL · DAY <b id="dayCount">1</b></span>
+      <div class="header-actions">
+        <button class="sky-toggle" id="dayNightToggle" type="button">🌙 밤으로 전환</button>
+        <span class="edition">ISLAND SURVIVAL · <b id="skyModeLabel">실시간 낮</b></span>
+      </div>
     </header>
 
     <main>
       <section class="hero">
         <p class="eyebrow">STILL ALIVE. PROBABLY.</p>
-        <h1>일단 불은 있고,<br>물도 걸러지고 있습니다.</h1>
-        <p class="lead">구조대는 아직 안 보입니다. 모닥불이 꺼지지 않게 장작을 넣고, 바닷물 말고 주워온 물을 정수해서 오늘도 어떻게든 버텨보세요.</p>
+        <h1>오늘도 일단은<br>불부터 살려둡니다.</h1>
+        <p class="lead">물은 잠시 잊었습니다. 지금은 모닥불에 집중합니다. 장작을 넣어 불을 살리고, 불 옆에 세워둔 윌슨과 함께 구조대를 기다려보세요.</p>
       </section>
 
-      <section class="survival-grid" aria-label="생존 장비">
-        <article class="panel fire-panel">
-          <div class="panel-heading">
-            <div>
-              <span class="panel-kicker">01 · FIRE</span>
-              <h2>모닥불</h2>
-            </div>
-            <span class="status alive" id="fireStatus">타닥타닥</span>
-          </div>
+      <section class="focus-panel">
+        <div class="panel-head">
+          <div><span class="panel-kicker">ONLY ONE PRIORITY</span><h2>모닥불 생존 구역</h2></div>
+          <span class="status alive" id="fireStatus">활활</span>
+        </div>
 
-          <div class="scene fire-scene" id="fireScene" aria-label="타오르는 모닥불 애니메이션">
-            <div class="moon"></div>
-            <div class="ground"></div>
+        <div class="main-scene" id="islandScene" aria-label="무인도 모닥불 장면">
+          <div class="stars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="sky-orbit sun-orbit" aria-hidden="true"><div class="sun"></div></div>
+          <div class="sky-orbit moon-orbit" aria-hidden="true"><div class="moon"></div></div>
+          <div class="cloud cloud-a"></div><div class="cloud cloud-b"></div>
+          <div class="island-ground"></div><div class="shore-line"></div>
+
+          <div class="camp-area">
             <div class="fire-glow"></div>
-            <div class="sparks" aria-hidden="true">
-              <i></i><i></i><i></i><i></i><i></i><i></i>
-            </div>
+            <div class="embers" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+            <div class="sparks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
             <div class="campfire" aria-hidden="true">
-              <div class="flame flame-back"></div>
-              <div class="flame flame-mid"></div>
-              <div class="flame flame-front"></div>
-              <div class="log log-a"></div>
-              <div class="log log-b"></div>
+              <div class="flame flame-back"></div><div class="flame flame-mid"></div><div class="flame flame-front"></div>
+              <div class="log log-a"></div><div class="log log-b"></div>
               <div class="stones"><i></i><i></i><i></i><i></i><i></i></div>
             </div>
-          </div>
 
-          <div class="meter-row">
-            <div>
-              <span>불 세기</span>
-              <strong id="fireValue">78%</strong>
-            </div>
-            <div class="meter"><span id="fireMeter" style="width:78%"></span></div>
-          </div>
-          <button class="action primary" id="addWood" type="button">🪵 장작 한 개 넣기</button>
-          <p class="tiny">아무것도 안 하면 불은 조금씩 약해집니다. 무인도에서도 방치는 금물.</p>
-        </article>
-
-        <article class="panel water-panel">
-          <div class="panel-heading">
-            <div>
-              <span class="panel-kicker">02 · WATER</span>
-              <h2>임시 정수장치</h2>
-            </div>
-            <span class="status" id="waterStatus">대기 중</span>
-          </div>
-
-          <div class="scene purifier-scene" id="purifierScene" aria-label="정수 장치 애니메이션">
-            <div class="purifier" aria-hidden="true">
-              <div class="dirty-tank">
-                <span class="tank-label">주워온 물</span>
-                <div class="dirty-water" id="dirtyWater"></div>
-              </div>
-              <div class="pipe pipe-left"></div>
-              <div class="filter-body">
-                <div class="filter-layer gravel"></div>
-                <div class="filter-layer charcoal"></div>
-                <div class="filter-layer sand"></div>
-                <div class="filter-label">돌 · 숯 · 모래</div>
-              </div>
-              <div class="pipe pipe-right"></div>
-              <div class="drop" id="drop"></div>
-              <div class="clean-cup">
-                <div class="clean-water" id="cleanWater"></div>
-                <span>깨끗한 물</span>
-              </div>
+            <div class="wilson-stand" aria-label="막대기에 세워둔 윌슨">
+              <div class="stick"></div>
+              <div class="wilson-ball"><span class="eye eye-left"></span><span class="eye eye-right"></span><span class="mouth"></span></div>
+              <span class="wilson-name">WILSON</span>
             </div>
           </div>
-
-          <div class="water-stats">
-            <div><span>정수 전</span><strong id="dirtyValue">1.5 L</strong></div>
-            <div><span>보관 중</span><strong id="cleanValue">0.4 L</strong></div>
-          </div>
-          <button class="action secondary" id="filterWater" type="button">💧 0.5L 정수하기</button>
-          <p class="tiny">이건 분위기용 가상 정수장치입니다. 실제 생존 상황에서는 적절한 정수·살균 절차가 필요합니다.</p>
-        </article>
-      </section>
-
-      <section class="note-card">
-        <div>
-          <span class="panel-kicker">TODAY'S PLAN</span>
-          <strong id="survivalMessage">불을 지키고 물을 모읍니다.</strong>
         </div>
-        <button id="newPlan" type="button">오늘의 생존계획 ↻</button>
+
+        <div class="controls-grid">
+          <article class="stat-card"><span>불 세기</span><strong id="fireValue">88%</strong><div class="meter"><span id="fireMeter"></span></div></article>
+          <article class="stat-card"><span>하늘 상태</span><strong id="skyStateText">낮</strong><p>접속할 때 현재 시간을 기준으로 시작합니다.</p></article>
+          <article class="stat-card"><span>불 감소</span><strong>1.2초마다 -6%</strong><p>눈 돌리면 진짜 꺼집니다.</p></article>
+        </div>
+
+        <div class="action-row">
+          <button class="action primary" id="addWood" type="button">🪵 장작 한 개 넣기</button>
+          <button class="action ghost" id="newPlan" type="button">오늘의 생존계획 ↻</button>
+        </div>
+        <p class="tiny">불 세기가 내려갈수록 불꽃·빛·불티가 함께 작아집니다. 0%가 되면 잔불만 남습니다.</p>
       </section>
+
+      <section class="note-card"><span class="panel-kicker">TODAY'S PLAN</span><strong id="survivalMessage">해 떨어지기 전에 장작부터 챙깁니다.</strong></section>
     </main>
 
-    <footer>
-      <span>← <a href="../">이상한 도구 상자로 돌아가기</a></span>
-      <span>구조 신호 수신 확률: 알 수 없음</span>
-    </footer>
+    <footer><span>← <a href="../">이상한 도구 상자로 돌아가기</a></span><span>구조 신호 수신 확률: 알 수 없음</span></footer>
   </div>
-
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="app.js"></script>
 </body>
