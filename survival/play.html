@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#202127">
+  <meta name="description" content="모닥불을 지키며 버티는 작은 무인도 생존 웹사이트.">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>살아는 있겠지 — 무인도 생존소</title>
+  <link rel="stylesheet" href="styles.css?v=20260909-6">
+  <style>
+    /* play.html 전용: 요청 요소가 확실히 보이도록 강조 */
+    .main-scene{min-height:500px;box-shadow:inset 0 -28px 50px #00152a18}
+    .sea{height:142px;bottom:112px;background:linear-gradient(180deg,#7ee8ff 0%,#25abd4 42%,#0879ac 100%);opacity:1;z-index:1}
+    .wave{z-index:2;height:9px;background:linear-gradient(90deg,transparent 0 4%,#ffffffc7 9% 19%,transparent 25% 34%,#ffffff9c 42% 58%,transparent 67% 75%,#ffffffad 82% 94%,transparent 100%);border-radius:999px;animation:waveMove 3.4s ease-in-out infinite alternate}
+    .wave-a{bottom:214px;left:-10%;right:-2%}.wave-b{bottom:184px;left:-2%;right:-12%;animation-duration:4.2s;animation-direction:alternate-reverse}
+    .island-ground,.shore-line{z-index:3}
+    .palm{z-index:6;filter:drop-shadow(0 13px 7px #0004)}
+    .palm-left{left:52px;transform:scale(1.18)}
+    .palm-right{right:68px;transform:scale(.98) scaleX(-1)}
+    .camp-area{z-index:9}
+    .marshmallow-stick{z-index:10}
+    .fan-button{z-index:12;transform:scale(1.12);transform-origin:bottom center;filter:drop-shadow(0 8px 7px #0005)}
+    .fan-button:after{content:"비 오면 터치";position:absolute;left:50%;bottom:-18px;transform:translateX(-50%);white-space:nowrap;padding:2px 6px;border-radius:8px;background:#ffffffd9;color:#3a4050;font-size:9px;font-weight:900;letter-spacing:-.2px;box-shadow:0 3px 8px #0002}
+    .rainy .fan-button:after{content:"구름 날리기";background:#dfff86;color:#34410c;animation:hintPulse .8s ease-in-out infinite alternate}
+    .storm-cloud{z-index:16;filter:drop-shadow(0 15px 18px #0008)}
+    .rain-layer{z-index:15;background-image:repeating-linear-gradient(102deg,transparent 0 13px,rgba(215,238,255,.92) 13px 16px,transparent 16px 28px)}
+    .rainy .rain-layer{opacity:.92}
+    .rainy .main-scene{filter:saturate(.88) brightness(.9);transition:filter .8s ease}
+    .main-scene:not(.rainy){filter:none;transition:filter .8s ease}
+    .weather-badge{z-index:20}
+    .sky-toggle{z-index:20}
+    @keyframes waveMove{from{transform:translateX(-16px) scaleX(1)}to{transform:translateX(22px) scaleX(1.04)}}
+    @keyframes hintPulse{from{transform:translateX(-50%) scale(.95)}to{transform:translateX(-50%) scale(1.08)}}
+    @media(max-width:720px){
+      .main-scene{min-height:470px}
+      .sea{height:132px;bottom:108px}.wave-a{bottom:205px}.wave-b{bottom:178px}
+      .palm-left{left:22px;transform:scale(.9)}.palm-right{right:20px;transform:scale(.73) scaleX(-1)}
+      .fan-button{transform:scale(1.02)}
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="../" aria-label="도구 상자로 돌아가기">
+        <span class="brand-mark">?</span>
+        <span class="brand-text"><strong>개똥도 쓸모는 있겠지</strong><small>무인도 생존소</small></span>
+      </a>
+      <span class="edition">ISLAND SURVIVAL · <b id="skyModeLabel">실시간 낮</b></span>
+    </header>
+
+    <main>
+      <section class="hero">
+        <p class="eyebrow">STILL ALIVE. PROBABLY.</p>
+        <h1>불을 살리고,<br>비구름은 날려버립니다.</h1>
+        <p class="lead">바다와 파도, 야자수 사이에서 모닥불을 지킵니다. 먹구름이 랜덤으로 몰려와 비를 뿌리면 불이 두 배 빠르게 약해집니다. 그때는 불 옆의 작은 선풍기를 터치해 구름을 날려버리세요.</p>
+      </section>
+
+      <section class="focus-panel">
+        <div class="panel-head">
+          <div><span class="panel-kicker">ONLY ONE PRIORITY</span><h2>모닥불 생존 구역</h2></div>
+          <span class="status alive" id="fireStatus">활활</span>
+        </div>
+
+        <div class="main-scene" id="islandScene" aria-label="무인도 모닥불 장면">
+          <button class="sky-toggle" id="dayNightToggle" type="button">🌙 밤으로 전환</button>
+          <div class="weather-badge" id="weatherBadge">맑음</div>
+          <div class="rain-layer" aria-hidden="true"></div>
+          <div class="storm-cloud" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+
+          <div class="stars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="sky-orbit sun-orbit" aria-hidden="true"><div class="sun"></div></div>
+          <div class="sky-orbit moon-orbit" aria-hidden="true"><div class="moon"></div></div>
+          <div class="cloud cloud-a"></div><div class="cloud cloud-b"></div>
+
+          <div class="sea"></div>
+          <div class="wave wave-a"></div><div class="wave wave-b"></div>
+          <div class="island-ground"></div><div class="shore-line"></div>
+
+          <div class="palm palm-left" aria-hidden="true"><div class="trunk"></div><div class="leaf l1"></div><div class="leaf l2"></div><div class="leaf l3"></div><div class="leaf l4"></div><div class="leaf l5"></div></div>
+          <div class="palm palm-right" aria-hidden="true"><div class="trunk"></div><div class="leaf l1"></div><div class="leaf l2"></div><div class="leaf l3"></div><div class="leaf l4"></div><div class="leaf l5"></div></div>
+
+          <div class="camp-area">
+            <div class="fire-glow"></div>
+            <div class="embers" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+            <div class="sparks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="campfire" aria-hidden="true">
+              <div class="flame flame-back"></div><div class="flame flame-mid"></div><div class="flame flame-front"></div>
+              <div class="log log-a"></div><div class="log log-b"></div>
+              <div class="stones"><i></i><i></i><i></i><i></i><i></i></div>
+            </div>
+
+            <div class="wilson-stand" aria-label="막대기에 세워둔 윌슨">
+              <div class="stick"></div>
+              <div class="wilson-ball"><span class="eye eye-left"></span><span class="eye eye-right"></span><span class="mouth"></span></div>
+            </div>
+
+            <div class="marshmallow-stick" aria-hidden="true"><div class="skewer"></div><div class="marshmallow"></div></div>
+
+            <button class="fan-button" id="fanButton" type="button" aria-label="선풍기로 먹구름 날리기">
+              <span class="fan-body">
+                <span class="fan-head"><span class="fan-grid"></span><span class="fan-blades blade-a"></span><span class="fan-blades blade-b"></span><span class="fan-blades blade-c"></span></span>
+                <span class="fan-neck"></span><span class="fan-base"></span>
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <div class="fire-action-zone"><button class="action primary" id="addWood" type="button">🪵 장작 한 개 넣기</button></div>
+
+        <div class="controls-grid">
+          <article class="stat-card"><span>불 세기</span><strong id="fireValue">88%</strong><div class="meter"><span id="fireMeter"></span></div></article>
+          <article class="stat-card"><span>하늘 상태</span><strong id="skyStateText">낮</strong><p>접속할 때 현재 시간을 기준으로 시작합니다.</p></article>
+          <article class="stat-card"><span>날씨</span><strong id="weatherStateText">맑음</strong><p>비가 오면 불이 두 배 빠르게 줄고, 선풍기를 누르면 구름이 날아갑니다.</p></article>
+        </div>
+
+        <div class="action-row"><button class="action ghost" id="newPlan" type="button">오늘의 생존계획 ↻</button></div>
+        <p class="tiny">첫 먹구름은 랜덤한 시간 뒤 반드시 한 번 찾아옵니다. 비가 오면 선풍기를 터치해 먹구름을 화면 밖으로 날려보내세요.</p>
+      </section>
+
+      <section class="note-card"><span class="panel-kicker">TODAY'S PLAN</span><strong id="survivalMessage">해 떨어지기 전에 장작부터 챙깁니다.</strong></section>
+    </main>
+
+    <footer><span>← <a href="../">이상한 도구 상자로 돌아가기</a></span><span>구조 신호 수신 확률: 알 수 없음</span></footer>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js?v=20260909-6"></script>
+  <script>
+    // 기존 12초 확률 체크와 별개로, 새 페이지에서는 첫 폭풍이 6~12초 사이에 반드시 한 번 옵니다.
+    const guaranteedFirstStormMs = 6000 + Math.floor(Math.random() * 6001);
+    setTimeout(() => {
+      if (!state.isRaining) startStorm();
+    }, guaranteedFirstStormMs);
+  </script>
+</body>
+</html>
