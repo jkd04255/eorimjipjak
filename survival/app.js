@@ -1,132 +1,98 @@
-const fireValue = document.getElementById('fireValue');
-const fireMeter = document.getElementById('fireMeter');
-const fireStatus = document.getElementById('fireStatus');
-const fireScene = document.getElementById('fireScene');
-const addWood = document.getElementById('addWood');
-const waterStatus = document.getElementById('waterStatus');
-const dirtyValue = document.getElementById('dirtyValue');
-const cleanValue = document.getElementById('cleanValue');
-const dirtyWater = document.getElementById('dirtyWater');
-const cleanWater = document.getElementById('cleanWater');
-const purifierScene = document.getElementById('purifierScene');
-const filterWater = document.getElementById('filterWater');
-const toast = document.getElementById('toast');
-const survivalMessage = document.getElementById('survivalMessage');
-const newPlan = document.getElementById('newPlan');
-const dayCount = document.getElementById('dayCount');
+const fireValue=document.getElementById('fireValue');
+const fireMeter=document.getElementById('fireMeter');
+const fireStatus=document.getElementById('fireStatus');
+const addWood=document.getElementById('addWood');
+const dayNightToggle=document.getElementById('dayNightToggle');
+const skyModeLabel=document.getElementById('skyModeLabel');
+const skyStateText=document.getElementById('skyStateText');
+const islandScene=document.getElementById('islandScene');
+const survivalMessage=document.getElementById('survivalMessage');
+const newPlan=document.getElementById('newPlan');
+const toast=document.getElementById('toast');
 
-let fire = 78;
-let dirty = 1.5;
-let clean = 0.4;
-let purifying = false;
-let day = 1;
-
-const plans = [
-  '불을 지키고 물을 모읍니다.',
-  '그늘을 만들고 구조 신호를 준비합니다.',
-  '쓸 만한 나뭇가지를 모읍니다.',
-  '오늘도 코코넛은 과신하지 않습니다.',
-  '해 질 무렵 연기 신호를 준비합니다.',
-  '체력을 아끼고 물부터 확보합니다.'
+const plans=[
+  '해 떨어지기 전에 장작부터 챙깁니다.',
+  '오늘의 목표는 불을 60% 아래로 안 떨어뜨리는 것입니다.',
+  '윌슨에게 상황 브리핑을 하고 장작을 다시 모읍니다.',
+  '바람 불기 전에 불씨부터 안정시킵니다.',
+  '구조 신호보다 먼저 모닥불 상태부터 점검합니다.',
+  '불이 살아 있으면 오늘도 아직 희망은 있습니다.'
 ];
 
-function clamp(value, min, max) {
-  return Math.min(max, Math.max(min, value));
+const state={fire:88,isDay:true,manualSky:false,toastTimer:null};
+
+function clamp(v,min,max){return Math.min(max,Math.max(min,v));}
+function realTimeIsDay(){const h=new Date().getHours();return h>=6&&h<18;}
+function showToast(message){toast.textContent=message;toast.classList.add('show');clearTimeout(state.toastTimer);state.toastTimer=setTimeout(()=>toast.classList.remove('show'),1700);}
+function setRandomPlan(){let next=plans[Math.floor(Math.random()*plans.length)];if(next===survivalMessage.textContent)next=plans[(plans.indexOf(next)+1)%plans.length];survivalMessage.textContent=next;}
+
+function applySky(isDay,{animate=false}={}){
+  state.isDay=isDay;
+  document.body.classList.toggle('is-day',isDay);
+  document.body.classList.toggle('is-night',!isDay);
+
+  // 해와 달은 같은 원형 궤도를 반시계 방향으로 이동합니다.
+  // 낮→밤: 해는 오른쪽 위에서 왼쪽 아래로 지고, 초승달은 오른쪽 아래에서 왼쪽 위로 떠오릅니다.
+  islandScene.style.setProperty('--sun-rotation',isDay?'60deg':'-120deg');
+  islandScene.style.setProperty('--moon-rotation',isDay?'140deg':'-40deg');
+
+  skyStateText.textContent=isDay?'낮':'밤';
+  skyModeLabel.textContent=`${state.manualSky?'수동':'실시간'} ${isDay?'낮':'밤'}`;
+  dayNightToggle.textContent=isDay?'🌙 밤으로 전환':'☀️ 낮으로 전환';
+  if(animate)showToast(isDay?'해가 다시 떠올랐습니다.':'해가 지고 초승달이 떠오릅니다.');
 }
 
-function showToast(message) {
-  toast.textContent = message;
-  toast.classList.add('show');
-  clearTimeout(showToast.timer);
-  showToast.timer = setTimeout(() => toast.classList.remove('show'), 1800);
+function renderFire(){
+  state.fire=clamp(state.fire,0,100);
+  const level=Math.round(state.fire);
+  const ratio=level/100;
+
+  islandScene.style.setProperty('--fire-scale',(0.12+ratio*1.05).toFixed(3));
+  islandScene.style.setProperty('--glow-scale',(0.18+ratio*1.02).toFixed(3));
+  islandScene.style.setProperty('--fire-brightness',(0.35+ratio*0.95).toFixed(3));
+  islandScene.style.setProperty('--spark-opacity',(0.02+ratio*0.98).toFixed(3));
+  islandScene.style.setProperty('--ember-opacity',(0.10+ratio*0.90).toFixed(3));
+
+  fireValue.textContent=`${level}%`;
+  fireMeter.style.width=`${level}%`;
+
+  if(level>=75){fireStatus.textContent='활활';fireStatus.className='status alive';}
+  else if(level>=40){fireStatus.textContent='타닥타닥';fireStatus.className='status alive';}
+  else if(level>=15){fireStatus.textContent='약해짐';fireStatus.className='status warning';}
+  else if(level>0){fireStatus.textContent='꺼져감';fireStatus.className='status danger';}
+  else{fireStatus.textContent='재만 남음';fireStatus.className='status danger';}
 }
 
-function renderFire() {
-  fire = clamp(fire, 0, 100);
-  fireValue.textContent = `${Math.round(fire)}%`;
-  fireMeter.style.width = `${fire}%`;
-  fireScene.classList.toggle('fire-low', fire > 0 && fire < 35);
-  fireScene.classList.toggle('fire-dead', fire <= 0);
-
-  if (fire <= 0) {
-    fireStatus.textContent = '꺼짐';
-    fireStatus.classList.remove('alive');
-  } else if (fire < 35) {
-    fireStatus.textContent = '위태위태';
-    fireStatus.classList.remove('alive');
-  } else if (fire > 85) {
-    fireStatus.textContent = '활활';
-    fireStatus.classList.add('alive');
-  } else {
-    fireStatus.textContent = '타닥타닥';
-    fireStatus.classList.add('alive');
-  }
-}
-
-function renderWater() {
-  dirtyValue.textContent = `${dirty.toFixed(1)} L`;
-  cleanValue.textContent = `${clean.toFixed(1)} L`;
-  dirtyWater.style.height = `${clamp((dirty / 1.5) * 62, 0, 62)}%`;
-  cleanWater.style.height = `${clamp((clean / 2.0) * 88, 8, 88)}%`;
-}
-
-addWood.addEventListener('click', () => {
-  const before = fire;
-  fire = clamp(fire + 22, 0, 100);
+function decayFire(){
+  if(state.fire<=0)return;
+  const before=state.fire;
+  state.fire=clamp(state.fire-6,0,100);
   renderFire();
-  showToast(before >= 98 ? '이미 충분히 뜨겁습니다.' : '장작 투입. 불이 다시 살아납니다.');
-});
+  if(before>18&&state.fire<=18)showToast('불이 거의 꺼져갑니다. 장작이 필요합니다.');
+  if(state.fire===0)showToast('불이 꺼졌습니다. 잔불만 남았습니다.');
+}
 
-filterWater.addEventListener('click', () => {
-  if (purifying) return;
-  if (dirty < 0.5) {
-    showToast('정수할 물이 부족합니다.');
-    return;
-  }
-
-  purifying = true;
-  filterWater.disabled = true;
-  purifierScene.classList.add('purifying');
-  waterStatus.textContent = '정수 중…';
-  waterStatus.classList.add('alive');
-
-  setTimeout(() => {
-    dirty = clamp(dirty - 0.5, 0, 9.9);
-    clean = clamp(clean + 0.45, 0, 9.9);
-    renderWater();
-    purifierScene.classList.remove('purifying');
-    waterStatus.textContent = '완료';
-    filterWater.disabled = false;
-    purifying = false;
-    showToast('0.45L 확보. 약간의 손실은 생존의 맛입니다.');
-
-    setTimeout(() => {
-      if (!purifying) {
-        waterStatus.textContent = '대기 중';
-        waterStatus.classList.remove('alive');
-      }
-    }, 1300);
-  }, 1800);
-});
-
-newPlan.addEventListener('click', () => {
-  let next = plans[Math.floor(Math.random() * plans.length)];
-  if (next === survivalMessage.textContent) {
-    next = plans[(plans.indexOf(next) + 1) % plans.length];
-  }
-  survivalMessage.textContent = next;
-  showToast('생존계획을 다시 세웠습니다.');
-});
-
-setInterval(() => {
-  fire -= fire > 0 ? 1 : 0;
+addWood.addEventListener('click',()=>{
+  const wasOut=state.fire<=0;
+  state.fire=clamp(state.fire+24,0,100);
   renderFire();
-}, 8000);
+  showToast(wasOut?'불씨가 다시 살아났습니다.':'장작 투입. 불이 확 살아납니다.');
+});
 
-setInterval(() => {
-  day += 1;
-  dayCount.textContent = day;
-}, 120000);
+dayNightToggle.addEventListener('click',()=>{
+  state.manualSky=true;
+  applySky(!state.isDay,{animate:true});
+});
 
+newPlan.addEventListener('click',()=>{setRandomPlan();showToast('오늘의 생존계획을 다시 정했습니다.');});
+
+applySky(realTimeIsDay());
 renderFire();
-renderWater();
+setRandomPlan();
+
+setInterval(decayFire,1200);
+setInterval(()=>{
+  if(state.manualSky)return;
+  const nowDay=realTimeIsDay();
+  if(nowDay!==state.isDay)applySky(nowDay,{animate:true});
+},60000);
