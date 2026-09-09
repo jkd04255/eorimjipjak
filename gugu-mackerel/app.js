@@ -25,6 +25,13 @@
 
   // Keep the original cooking speed, quality thresholds and prices.
   const COOK_SPEED = 0.0068;
+
+  // Random gag event. If armed, it only happens while the fish is still raw.
+  const RUNAWAY_CHANCE = 0.18;
+  const RUNAWAY_MIN_COOK = 3;
+  const RUNAWAY_MAX_COOK = 18;
+  const RUNAWAY_DURATION = 1050;
+
   let cooking = false;
   let transitioning = false;
   let cook = 0;
@@ -37,6 +44,9 @@
   let customerNo = 1;
   let lastPercent = -1;
   let tossTimer = 0;
+  let runawayArmed = false;
+  let runawayAt = Infinity;
+  let runawayAnimation = null;
   const pending = new Set();
 
   const customers = [
@@ -109,6 +119,88 @@
     heatStatus.textContent = !cooking ? '불판 준비 완료' : cook > 100 ? '연기가 심상치 않아요' : cook > 82 ? '서둘러 꺼내주세요' : cook >= 58 ? '지금 판매하면 좋아요' : '지글지글 굽는 중';
   }
 
+  function makeRunawayBubble() {
+    const oldBubble = stage.querySelector('.fish-runaway-bubble');
+    if (oldBubble) oldBubble.remove();
+
+    const bubble = document.createElement('div');
+    bubble.className = 'fish-runaway-bubble';
+    bubble.textContent = '앗 뜨거!';
+    Object.assign(bubble.style, {
+      position: 'absolute',
+      zIndex: '9',
+      left: '54%',
+      top: '21%',
+      transform: 'translate(-50%, -50%) rotate(-5deg)',
+      padding: '7px 12px',
+      border: '2px solid #2d2138',
+      borderRadius: '14px 14px 14px 3px',
+      background: '#fffaf5',
+      color: '#3d2b47',
+      boxShadow: '3px 4px 0 #2d2138',
+      font: '800 17px/1.2 var(--tb-font)',
+      whiteSpace: 'nowrap',
+      pointerEvents: 'none'
+    });
+    stage.appendChild(bubble);
+    bubble.animate([
+      { opacity: 0, transform: 'translate(-50%, -30%) scale(.75) rotate(-7deg)' },
+      { opacity: 1, transform: 'translate(-50%, -50%) scale(1.08) rotate(-4deg)', offset: 0.2 },
+      { opacity: 1, transform: 'translate(-50%, -58%) scale(1) rotate(-4deg)', offset: 0.65 },
+      { opacity: 0, transform: 'translate(-20%, -95%) scale(.92) rotate(7deg)' }
+    ], { duration: 850, easing: 'ease-out', fill: 'forwards' });
+    later(() => bubble.remove(), 900);
+  }
+
+  function triggerRunaway() {
+    if (!cooking || transitioning) return;
+    cooking = false;
+    transitioning = true;
+    runawayArmed = false;
+    cancelAnimationFrame(frame);
+    lastTime = 0;
+
+    if (tossTimer) {
+      clearTimeout(tossTimer);
+      pending.delete(tossTimer);
+      tossTimer = 0;
+    }
+    fish.classList.remove('tossing');
+    fishBtn.disabled = true;
+    flipBtn.disabled = true;
+    sellBtn.disabled = true;
+    fishBtn.textContent = '고등어 추격 중…';
+    fishScore.textContent = '앗 뜨거!';
+    heatStatus.textContent = '생고등어가 도망갑니다!';
+    caseStatus.textContent = 'STATUS · 고등어 탈주';
+    review.innerHTML = `굽기 ${Math.round(cook)}%에서 돌발상황. <strong>생고등어가 불판을 박차고 도망갔습니다.</strong>`;
+    speech.innerHTML = '<strong>구구?! 방금 생선이 뛰어갔는데요?</strong>저는 여기서 기다리고 있겠습니다.';
+    thoughtTitle.textContent = '저 생선... 살아 있었나요?';
+    thoughtBody.textContent = '굽기도 전에 도망가다니 오늘 장사는 신선하군요. 구구.';
+    setMood('grumpy');
+    stage.dataset.state = 'escaped';
+    makeRunawayBubble();
+
+    runawayAnimation = fish.animate([
+      { opacity: 1, transform: 'translate(-50%,-50%) rotate(0deg) scale(1)' },
+      { opacity: 1, transform: 'translate(-38%,-96%) rotate(-11deg) scale(1.02)', offset: 0.26 },
+      { opacity: 1, transform: 'translate(28%,-74%) rotate(10deg) scale(.98)', offset: 0.48 },
+      { opacity: 1, transform: 'translate(125%,-115%) rotate(-5deg) scale(.86)', offset: 0.72 },
+      { opacity: 0, transform: 'translate(300%,-155%) rotate(18deg) scale(.68)' }
+    ], { duration: RUNAWAY_DURATION, easing: 'cubic-bezier(.25,.7,.2,1)', fill: 'forwards' });
+
+    later(() => {
+      if (runawayAnimation) {
+        runawayAnimation.cancel();
+        runawayAnimation = null;
+      }
+      clearGrill();
+      fishBtn.textContent = '새 고등어 올리기';
+      caseStatus.textContent = 'STATUS · 손님은 아직 기다리는 중';
+      heatStatus.textContent = '불판 준비 완료';
+    }, RUNAWAY_DURATION + 180);
+  }
+
   function tick(now) {
     if (!cooking) return;
     if (!lastTime) lastTime = now;
@@ -116,6 +208,12 @@
     lastTime = now;
     cook += dt * COOK_SPEED;
     renderCook();
+
+    if (runawayArmed && cook >= runawayAt) {
+      triggerRunaway();
+      return;
+    }
+
     if (cook >= 112) {
       burned++;
       $('burn-count').textContent = burned + '마리';
@@ -133,7 +231,22 @@
   function startFish() {
     if (cooking || transitioning) return;
     cancelPending();
-    cook = 0; flips = 0; lastTime = 0; cooking = true;
+    if (runawayAnimation) {
+      runawayAnimation.cancel();
+      runawayAnimation = null;
+    }
+    const oldBubble = stage.querySelector('.fish-runaway-bubble');
+    if (oldBubble) oldBubble.remove();
+
+    cook = 0;
+    flips = 0;
+    lastTime = 0;
+    cooking = true;
+    runawayArmed = Math.random() < RUNAWAY_CHANCE;
+    runawayAt = runawayArmed
+      ? RUNAWAY_MIN_COOK + Math.random() * (RUNAWAY_MAX_COOK - RUNAWAY_MIN_COOK)
+      : Infinity;
+
     fish.classList.remove('flipped', 'tossing', 'served');
     fish.classList.add('active');
     salePop.classList.remove('visible');
@@ -202,6 +315,7 @@
 
   function endFish(soldFish) {
     cooking = false; transitioning = true;
+    runawayArmed = false;
     cancelAnimationFrame(frame); lastTime = 0;
     if (tossTimer) { clearTimeout(tossTimer); pending.delete(tossTimer); tossTimer = 0; }
     fish.classList.remove('tossing');
@@ -225,6 +339,14 @@
 
   function clearGrill() {
     cook = 0; flips = 0; transitioning = false;
+    runawayArmed = false;
+    runawayAt = Infinity;
+    if (runawayAnimation) {
+      runawayAnimation.cancel();
+      runawayAnimation = null;
+    }
+    const oldBubble = stage.querySelector('.fish-runaway-bubble');
+    if (oldBubble) oldBubble.remove();
     fish.classList.remove('active', 'flipped', 'tossing', 'served');
     salePop.classList.remove('visible');
     fishBtn.disabled = false;
@@ -244,8 +366,13 @@
 
   function resetShop() {
     cooking = false;
+    runawayArmed = false;
     cancelAnimationFrame(frame);
     cancelPending();
+    if (runawayAnimation) {
+      runawayAnimation.cancel();
+      runawayAnimation = null;
+    }
     money = 0; sold = 0; burned = 0; customerNo = 1; lastTime = 0;
     clearGrill();
     pigeonWrap.classList.remove('away');
