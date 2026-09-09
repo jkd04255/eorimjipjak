@@ -32,14 +32,14 @@
   const PERFECT_MIN = 67;
   const PERFECT_MAX = 75;
 
-  // Temporarily disabled while visually checking the cat event.
-  const RUNAWAY_CHANCE = 0;
+  // Random gag event 1: raw fish bolts from the grill.
+  const RUNAWAY_CHANCE = 0.18;
   const RUNAWAY_MIN_COOK = 3;
   const RUNAWAY_MAX_COOK = 18;
   const RUNAWAY_DURATION = 1050;
 
-  // Temporary test mode: the stray-cat steal event happens every round.
-  const CAT_STEAL_CHANCE = 1;
+  // Random gag event 2: a stray cat steals an almost-cooked fish.
+  const CAT_STEAL_CHANCE = 0.14;
   const CAT_MIN_COOK = 64;
   const CAT_MAX_COOK = 69;
   const CAT_DURATION = 1450;
