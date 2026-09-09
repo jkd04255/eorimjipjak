@@ -59,36 +59,20 @@ function realTimeIsDay(){const h=new Date().getHours();return h>=6&&h<18;}
 function showToast(message){if(!toast)return;toast.textContent=message;toast.classList.add('show');clearTimeout(state.toastTimer);state.toastTimer=setTimeout(()=>toast.classList.remove('show'),1700);}
 function setRandomPlan(){if(!survivalMessage)return;let next=plans[Math.floor(Math.random()*plans.length)];if(next===survivalMessage.textContent)next=plans[(plans.indexOf(next)+1)%plans.length];survivalMessage.textContent=next;}
 
-function installFeedbackBar(){
-  const footer=document.querySelector('.shell > footer');
-  if(!footer||document.querySelector('.feedback-bar'))return;
-
-  const bar=document.createElement('div');
-  bar.className='feedback-bar';
-  bar.innerHTML='<a class="feedback-link" href="mailto:jkd04255@khu.ac.kr?subject=%5B%EA%B0%9C%EB%98%A5%EB%8F%84%20%EC%93%B8%EB%AA%A8%EB%8A%94%20%EC%9E%88%EA%B2%A0%EC%A7%80%5D%20%EB%AC%B8%EC%9D%98%20%C2%B7%20%EC%98%A4%EB%A5%98%20%EC%A0%9C%EB%B3%B4">✉ 문의 · 오류 제보</a>';
-  footer.insertAdjacentElement('afterend',bar);
-
-  const style=document.createElement('style');
-  style.textContent=`
-    .feedback-bar{min-height:52px;display:flex;align-items:center;justify-content:center;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
-    .feedback-link{font-weight:650;color:inherit;text-decoration:none;transition:color .15s ease}
-    .feedback-link:hover{color:var(--purple);text-decoration:underline}
-    .feedback-link:focus-visible{outline:3px solid var(--purple);outline-offset:3px;border-radius:4px}
-  `;
-  document.head.appendChild(style);
-}
-
 function applySky(isDay,{animate=false}={}){
   state.isDay=isDay;
   document.body.classList.toggle('is-day',isDay);
   document.body.classList.toggle('is-night',!isDay);
   if(islandScene){
-    islandScene.style.setProperty('--sun-rotation',isDay?'60deg':'-120deg');
-    islandScene.style.setProperty('--moon-rotation',isDay?'140deg':'-40deg');
+    islandScene.style.setProperty('--sun-rotation',isDay?'45deg':'-135deg');
+    islandScene.style.setProperty('--moon-rotation',isDay?'135deg':'-45deg');
   }
   if(skyStateText)skyStateText.textContent=isDay?'낮':'밤';
   if(skyModeLabel)skyModeLabel.textContent=`${state.manualSky?'수동':'실시간'} ${isDay?'낮':'밤'}`;
-  if(dayNightToggle)dayNightToggle.textContent=isDay?'🌙 밤으로 전환':'☀️ 낮으로 전환';
+  if(dayNightToggle){
+    dayNightToggle.textContent=isDay?'🌙 밤으로 전환':'☀️ 낮으로 전환';
+    dayNightToggle.setAttribute('aria-pressed',String(!isDay));
+  }
   if(animate)showToast(isDay?'해가 다시 떠올랐습니다.':'해가 지고 초승달이 떠오릅니다.');
 }
 
@@ -156,6 +140,8 @@ function applyTuning({persist=false}={}){
 
 function renderWeather(){
   if(islandScene)islandScene.classList.toggle('rainy',state.isRaining);
+  const fanCaption=fanButton?.querySelector('.fan-caption');
+  if(fanCaption)fanCaption.textContent=state.isRaining?'구름 날려버리기':'선풍기 돌리기';
   const rainText=state.isRaining?`비 오는 중 · ${state.rainIntensity}%`:'맑음';
   if(weatherStateText)weatherStateText.textContent=rainText;
   if(weatherBadge)weatherBadge.textContent=state.isRaining?`먹구름 + 비 ${state.rainIntensity}%`:'맑음';
@@ -166,6 +152,8 @@ function renderFire(){
   const level=Math.round(state.fire);
   const ratio=level/100;
   if(islandScene){
+    islandScene.style.setProperty('--fire-ratio',ratio.toFixed(3));
+    islandScene.classList.toggle('fire-out',level===0);
     islandScene.style.setProperty('--fire-scale',(ratio*1.17).toFixed(3));
     islandScene.style.setProperty('--glow-scale',(0.18+ratio*1.02).toFixed(3));
     islandScene.style.setProperty('--fire-brightness',(0.35+ratio*0.95).toFixed(3));
@@ -174,7 +162,12 @@ function renderFire(){
   }
   if(fireGlow)fireGlow.style.opacity=(0.05+ratio*0.82).toFixed(3);
   if(fireValue)fireValue.textContent=`${level}%`;
-  if(fireMeter)fireMeter.style.width=`${level}%`;
+  if(fireMeter){
+    fireMeter.style.width=`${level}%`;
+    fireMeter.parentElement.setAttribute('aria-valuenow',String(level));
+  }
+  const fireCaption=document.getElementById('fireCaption');
+  if(fireCaption)fireCaption.textContent=level>=75?'아직은 따뜻합니다.':level>=40?'장작 하나쯤 더 넣을까요?':level>0?'윌슨도 추워 보입니다.':'지금 필요한 건 장작입니다.';
 
   if(!fireStatus)return;
   if(level>=75){fireStatus.textContent='활활';fireStatus.className='status alive';}
@@ -234,6 +227,11 @@ function maybeStartStorm(){
 
 if(addWood)addWood.addEventListener('click',()=>{
   const wasOut=state.fire<=0;
+  if(islandScene){
+    islandScene.classList.add('wood-added');
+    clearTimeout(state.woodTimer);
+    state.woodTimer=setTimeout(()=>islandScene.classList.remove('wood-added'),700);
+  }
   state.fire=clamp(state.fire+24,0,100);
   renderFire();
   showToast(wasOut?'불씨가 다시 살아났습니다.':'장작 투입. 불이 확 살아납니다.');
@@ -275,7 +273,6 @@ applyTuning();
 renderWeather();
 renderFire();
 setRandomPlan();
-installFeedbackBar();
 
 setInterval(decayFire,1200);
 setInterval(maybeStartStorm,12000);

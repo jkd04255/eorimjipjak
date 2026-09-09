@@ -3,175 +3,61 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#202127">
-  <meta name="description" content="모닥불을 지키며 버티는 작은 무인도 생존 웹사이트.">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
+  <meta name="theme-color" content="#292a34">
+  <meta name="description" content="작은 무인도에서 모닥불을 지키세요. 장작을 넣고, 비구름은 선풍기로 날려버립니다.">
   <title>살아는 있겠지 — 무인도 생존소</title>
-  <link rel="stylesheet" href="styles.css?v=20260909-7">
-  <style>
-    /* play.html 전용 완성도 보강 */
-    .main-scene{min-height:500px;box-shadow:inset 0 -28px 50px #00152a18}
-    .sea{height:142px;bottom:112px;background:linear-gradient(180deg,#7ee8ff 0%,#25abd4 42%,#0879ac 100%);opacity:1;z-index:1}
-    .wave{z-index:2;height:9px;background:linear-gradient(90deg,transparent 0 4%,#ffffffc7 9% 19%,transparent 25% 34%,#ffffff9c 42% 58%,transparent 67% 75%,#ffffffad 82% 94%,transparent 100%);border-radius:999px;animation:waveMove 3.4s ease-in-out infinite alternate}
-    .wave-a{bottom:214px;left:-10%;right:-2%}.wave-b{bottom:184px;left:-2%;right:-12%;animation-duration:4.2s;animation-direction:alternate-reverse}
-    .island-ground,.shore-line{z-index:3}
-
-    /* 야자수: 줄기 양쪽으로 잎이 퍼지도록 재배치 */
-    .palm{z-index:6;filter:drop-shadow(0 13px 7px #0004)}
-    .palm-left{left:52px;transform:scale(1.18)}
-    .palm-right{right:68px;transform:scale(.98) scaleX(-1)}
-    .palm .leaf{bottom:120px;width:88px;height:28px;border-radius:100px;background:linear-gradient(90deg,#277947 0%,#48b96d 58%,#62ca7e 100%);box-shadow:inset 0 -5px 7px #0b5c3430;transform-origin:8px 14px;clip-path:polygon(0 50%,10% 30%,22% 18%,40% 8%,64% 6%,100% 20%,70% 48%,100% 74%,64% 92%,40% 88%,22% 80%,10% 68%)}
-    .palm .leaf:after{content:"";position:absolute;left:8px;right:10px;top:13px;height:1px;background:#d6f6c957;transform:rotate(-1deg);transform-origin:left center}
-    .palm .l1,.palm .l2,.palm .l6{left:-78px;background:linear-gradient(270deg,#277947 0%,#48b96d 58%,#62ca7e 100%);transform-origin:80px 14px;clip-path:polygon(100% 50%,90% 30%,78% 18%,60% 8%,36% 6%,0 20%,30% 48%,0 74%,36% 92%,60% 88%,78% 80%,90% 68%)}
-    .palm .l1{transform:rotate(39deg)}.palm .l2{transform:rotate(8deg)}.palm .l6{transform:rotate(-25deg)}
-    .palm .l3,.palm .l4,.palm .l5{left:8px}
-    .palm .l3{transform:rotate(-42deg)}.palm .l4{transform:rotate(-10deg)}.palm .l5{transform:rotate(25deg)}
-
-    .camp-area{z-index:9}
-    .marshmallow-stick{z-index:10}
-
-    /* 선풍기: 머리-목-받침이 한 몸처럼 겹치도록 연결 */
-    .fan-button{z-index:12;transform:scale(1.12);transform-origin:bottom center;filter:drop-shadow(0 8px 7px #0005)}
-    .fan-body{height:112px}
-    .fan-head{z-index:3}
-    .fan-neck{top:46px;height:48px;z-index:2;background:linear-gradient(90deg,#657487,#8b9bac 48%,#657487)}
-    .fan-neck:after{content:"";position:absolute;left:50%;top:5px;width:10px;height:10px;border-radius:50%;background:#aebdcc;border:2px solid #5d6c7e;transform:translateX(-50%)}
-    .fan-base{height:20px;bottom:0;z-index:3;box-shadow:inset 0 2px 0 #ffffff2b}
-    .fan-button:after{content:"비 오면 터치";position:absolute;left:50%;bottom:-18px;transform:translateX(-50%);white-space:nowrap;padding:2px 6px;border-radius:8px;background:#ffffffd9;color:#3a4050;font-size:9px;font-weight:900;letter-spacing:-.2px;box-shadow:0 3px 8px #0002}
-    .rainy .fan-button:after{content:"구름 날리기";background:#dfff86;color:#34410c;animation:hintPulse .8s ease-in-out infinite alternate}
-
-    /* 비는 먹구름 안에 들어 있어 구름과 함께 움직입니다. */
-    .storm-cloud{z-index:16;filter:drop-shadow(0 15px 18px #0008)}
-    .storm-cloud span{z-index:3}
-    .storm-cloud:before{content:"";position:absolute;left:24px;right:18px;bottom:5px;height:28px;border-radius:50%;background:linear-gradient(180deg,#5f6c80,#3b4556);opacity:.96;z-index:2}
-    .rain-layer{inset:auto;left:8px;top:62px;width:194px;height:302px;z-index:1;overflow:hidden;opacity:0;pointer-events:none;transform:skewX(-4deg);transform-origin:top center;transition:opacity .38s ease;background-image:linear-gradient(104deg,transparent 42%,rgba(238,249,255,.82) 46%,rgba(176,215,241,.56) 51%,transparent 55%),linear-gradient(103deg,transparent 45%,rgba(128,184,224,.34) 48%,rgba(225,244,255,.58) 51%,transparent 54%);background-size:var(--rain-spacing,32px) 54px,var(--rain-spacing-2,49px) 72px;background-position:0 0,13px 21px;filter:blur(.15px);-webkit-mask-image:linear-gradient(180deg,#000 0%,#000 78%,transparent 100%);mask-image:linear-gradient(180deg,#000 0%,#000 78%,transparent 100%)}
-    .rain-layer:before{content:"";position:absolute;left:5%;right:5%;top:-4px;height:34px;background:linear-gradient(180deg,rgba(197,224,242,.36),rgba(197,224,242,0));filter:blur(4px)}
-    .rain-layer:after{content:"";position:absolute;left:8%;right:4%;bottom:10px;height:14px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(210,235,251,.25),transparent 68%);filter:blur(3px)}
-    .rainy .rain-layer{opacity:var(--rain-opacity,.58);animation:cloudRain var(--rain-speed,.56s) linear infinite;transition-delay:.35s}
-    .clearing .rain-layer{opacity:0;transition-delay:0s}
-    .rainy .main-scene{filter:saturate(.88) brightness(.9);transition:filter .8s ease}
-    .main-scene:not(.rainy){filter:none;transition:filter .8s ease}
-    .weather-badge{z-index:20}
-    .sky-toggle{z-index:20}
-
-    /* 어림짐작/깜빡 스타일을 가져온 강도 조절 카드 */
-    .tuning-panel{margin-top:18px;padding:22px;border:1px solid #ececf1;border-radius:24px;background:#f8f8fb}
-    .tuning-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:16px}
-    .tuning-head h3{margin:3px 0 0;font-size:22px;letter-spacing:-.8px}
-    .tuning-head p{margin:0;color:var(--muted);font-size:12px;text-align:right}
-    .tuning-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-    .tuning-card{padding:20px;border:1px solid var(--line);border-radius:18px;background:var(--paper)}
-    .tune-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:10px}
-    .tune-label{display:block;font-size:14px;font-weight:800}.tune-caption{display:block;margin-top:2px;color:var(--muted);font-size:12px}
-    .tune-value{flex-shrink:0;color:var(--purple);font:700 34px/1 ui-monospace,"SFMono-Regular",Consolas,monospace;letter-spacing:-2px}.tune-value small{font-size:16px;margin-left:2px}
-    .tune-range{width:100%;height:26px;margin:7px 0;appearance:none;-webkit-appearance:none;background:transparent;accent-color:var(--purple);cursor:pointer}
-    .tune-range::-webkit-slider-runnable-track{height:6px;border-radius:10px;background:linear-gradient(to right,var(--purple) 0%,var(--purple) var(--fill,55%),#e9e6f4 var(--fill,55%),#e9e6f4 100%)}
-    .tune-range::-moz-range-track{height:6px;border-radius:10px;background:#e9e6f4}.tune-range::-moz-range-progress{height:6px;border-radius:10px;background:var(--purple)}
-    .tune-range::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;width:22px;height:22px;margin-top:-8px;background:white;border:6px solid var(--purple);border-radius:50%;box-shadow:0 2px 4px #6045db25}
-    .tune-range::-moz-range-thumb{width:12px;height:12px;background:white;border:6px solid var(--purple);border-radius:50%}
-    .range-ends{display:flex;justify-content:space-between;color:var(--muted);font-size:11px}
-    .tune-presets{display:flex;gap:7px;margin-top:13px}.tune-presets button{flex:1;padding:7px 5px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);font-size:12px;cursor:pointer}.tune-presets button[aria-pressed="true"]{border-color:#c7bbf6;background:#ede9ff;color:#4d33c5;font-weight:750}
-    .tune-help{margin:11px 0 0;color:var(--muted);font-size:11px;line-height:1.55}
-    .is-night .tuning-panel{background:#1a1f2c;border-color:#303748}.is-night .tuning-card{background:#202532}.is-night .tune-range::-webkit-slider-runnable-track{background:linear-gradient(to right,#8d75ef 0%,#8d75ef var(--fill,55%),#343b4e var(--fill,55%),#343b4e 100%)}.is-night .tune-presets button{background:#252b3a}.is-night .tune-presets button[aria-pressed="true"]{background:#373150;color:#d8d0ff;border-color:#7062aa}
-
-    @keyframes waveMove{from{transform:translateX(-16px) scaleX(1)}to{transform:translateX(22px) scaleX(1.04)}}
-    @keyframes hintPulse{from{transform:translateX(-50%) scale(.95)}to{transform:translateX(-50%) scale(1.08)}}
-    @keyframes cloudRain{from{background-position:0 -58px,13px -86px}to{background-position:18px 8px,31px 10px}}
-
-    @media(max-width:840px){.tuning-grid{grid-template-columns:1fr}.tuning-head{align-items:flex-start}.tuning-head p{text-align:left}}
-    @media(max-width:720px){
-      .main-scene{min-height:470px}
-      .sea{height:132px;bottom:108px}.wave-a{bottom:205px}.wave-b{bottom:178px}
-      .palm-left{left:22px;transform:scale(.9)}.palm-right{right:20px;transform:scale(.73) scaleX(-1)}
-      .fan-button{transform:scale(1.02)}
-      .rain-layer{height:286px}
-      .tuning-panel{padding:16px}.tuning-head{display:block}.tuning-head p{margin-top:5px}.tuning-card{padding:17px}
-    }
-  </style>
+  <link rel="stylesheet" href="../shared/toolbox.css?v=20260909-1">
+  <link rel="stylesheet" href="styles.css?v=20260910-art1">
+  <link rel="preload" href="assets/island.webp" as="image">
 </head>
 <body>
-  <div class="shell">
-    <header class="topbar">
-      <a class="brand" href="../" aria-label="도구 상자로 돌아가기">
-        <span class="brand-mark">?</span>
-        <span class="brand-text"><strong>개똥도 쓸모는 있겠지</strong><small>무인도 생존소</small></span>
+  <div class="shell tb-shell">
+    <header class="tb-header">
+      <a class="tb-brand" href="./play.html" aria-label="살아는 있겠지 처음으로">
+        <span class="tb-logo" aria-hidden="true">🔥</span>
+        <span class="tb-brand-copy"><h1 class="tb-title">살아는 있겠지</h1><span class="tb-subtitle">무인도 생존소</span></span>
       </a>
-      <span class="edition">ISLAND SURVIVAL · <b id="skyModeLabel">실시간 낮</b></span>
+      <span class="tb-edition">STILL ALIVE. PROBABLY.</span>
+      <a class="tb-home" href="../" aria-label="도구 상자 홈" title="홈으로">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z"/></svg>
+      </a>
     </header>
 
-    <main>
-      <section class="hero">
-        <p class="eyebrow">STILL ALIVE. PROBABLY.</p>
-        <h1>불을 살리고,<br>비구름은 날려버립니다.</h1>
-        <p class="lead">바다와 파도, 야자수 사이에서 모닥불을 지킵니다. 먹구름이 몰려오면 구름 아래로 빗줄기가 떨어지고 불은 더 빨리 약해집니다. 불이 얼마나 빨리 사그라들지, 비가 얼마나 세게 내릴지는 직접 정할 수 있습니다.</p>
-      </section>
-
-      <section class="focus-panel">
-        <div class="panel-head">
-          <div><span class="panel-kicker">ONLY ONE PRIORITY</span><h2>모닥불 생존 구역</h2></div>
-          <span class="status alive" id="fireStatus">활활</span>
-        </div>
-
-        <div class="main-scene" id="islandScene" aria-label="무인도 모닥불 장면">
-          <button class="sky-toggle" id="dayNightToggle" type="button">🌙 밤으로 전환</button>
-          <div class="weather-badge" id="weatherBadge">맑음</div>
-          <div class="storm-cloud" aria-hidden="true">
-            <span></span><span></span><span></span><span></span>
-            <div class="rain-layer"></div>
-          </div>
-
-          <div class="stars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-          <div class="sky-orbit sun-orbit" aria-hidden="true"><div class="sun"></div></div>
-          <div class="sky-orbit moon-orbit" aria-hidden="true"><div class="moon"></div></div>
-          <div class="cloud cloud-a"></div><div class="cloud cloud-b"></div>
-
-          <div class="sea"></div>
-          <div class="wave wave-a"></div><div class="wave wave-b"></div>
-          <div class="island-ground"></div><div class="shore-line"></div>
-
-          <div class="palm palm-left" aria-hidden="true"><div class="trunk"></div><div class="leaf l1"></div><div class="leaf l2"></div><div class="leaf l3"></div><div class="leaf l4"></div><div class="leaf l5"></div><div class="leaf l6"></div></div>
-          <div class="palm palm-right" aria-hidden="true"><div class="trunk"></div><div class="leaf l1"></div><div class="leaf l2"></div><div class="leaf l3"></div><div class="leaf l4"></div><div class="leaf l5"></div><div class="leaf l6"></div></div>
-
-          <div class="camp-area">
+    <main class="tb-main">
+      <div class="intro"><div><p class="tb-eyebrow">불멍할 틈은 없습니다.</p><h2>오늘도, 불부터 살립니다.</h2></div><p>장작을 넣고, 비구름은 선풍기로 날려보내세요.</p></div>
+      <section class="focus-panel" aria-label="모닥불 생존 구역">
+        <div class="panel-head"><span class="panel-kicker">나의 작은 무인도</span><span id="skyModeLabel">실시간 낮</span></div>
+        <div class="main-scene" id="islandScene" aria-label="파도가 밀려오는 무인도. 모닥불 옆에는 윌슨과 선풍기가 있습니다.">
+          <div class="scene-art" aria-hidden="true">
+            <img class="scene-landscape" src="assets/island.webp" alt="" width="1536" height="1024" fetchpriority="high" draggable="false">
+            <div class="night-wash"></div>
+            <div class="stars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="sky-orbit sun-orbit"><div class="sun"></div></div>
+            <div class="sky-orbit moon-orbit"><div class="moon"></div></div>
+            <div class="sea-shimmer"></div>
             <div class="fire-glow"></div>
-            <div class="embers" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
-            <div class="sparks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-            <div class="campfire" aria-hidden="true">
-              <div class="flame flame-back"></div><div class="flame flame-mid"></div><div class="flame flame-front"></div>
-              <div class="log log-a"></div><div class="log log-b"></div>
-              <div class="stones"><i></i><i></i><i></i><i></i><i></i></div>
-            </div>
-
-            <div class="wilson-stand" aria-label="막대기에 세워둔 윌슨">
-              <div class="stick"></div>
-              <div class="wilson-ball"><span class="eye eye-left"></span><span class="eye eye-right"></span><span class="mouth"></span></div>
-            </div>
-
-            <div class="marshmallow-stick" aria-hidden="true"><div class="skewer"></div><div class="marshmallow"></div></div>
-
-            <button class="fan-button" id="fanButton" type="button" aria-label="선풍기로 먹구름 날리기">
-              <span class="fan-body">
-                <span class="fan-head"><span class="fan-grid"></span><span class="fan-blades blade-a"></span><span class="fan-blades blade-b"></span><span class="fan-blades blade-c"></span></span>
-                <span class="fan-neck"></span><span class="fan-base"></span>
-              </span>
-            </button>
+            <div class="campfire"><div class="flame-sprite"></div></div>
+            <div class="embers"><span></span><span></span><span></span><span></span><span></span></div>
+            <div class="sparks"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="prop wilson-stand"></div>
+            <div class="prop marshmallow-stick"></div>
           </div>
+          <div class="storm-cloud" aria-hidden="true"><div class="rain-layer"></div><div class="prop cloud-art"></div></div>
+          <div class="weather-badge" id="weatherBadge">맑음</div>
+          <button class="sky-toggle" id="dayNightToggle" type="button">🌙 밤으로 전환</button>
+          <button class="fan-button" id="fanButton" type="button" aria-label="선풍기로 먹구름 날리기"><span class="prop fan-art" aria-hidden="true"></span><span class="fan-caption">선풍기 돌리기</span></button>
+          <p class="scene-caption">구조는 모르겠고,<br><strong>불은 살려야죠.</strong></p>
         </div>
-
-        <div class="fire-action-zone"><button class="action primary" id="addWood" type="button">🪵 장작 한 개 넣기</button></div>
-
-        <div class="controls-grid">
-          <article class="stat-card"><span>불 세기</span><strong id="fireValue">88%</strong><div class="meter"><span id="fireMeter"></span></div></article>
-          <article class="stat-card"><span>하늘 상태</span><strong id="skyStateText">낮</strong><p>접속할 때 현재 시간을 기준으로 시작합니다.</p></article>
-          <article class="stat-card"><span>날씨</span><strong id="weatherStateText">맑음</strong><p>먹구름이 오면 구름 아래로 비가 내리고, 선풍기를 누르면 함께 날아갑니다.</p></article>
+        <div class="fire-console">
+          <div class="fire-readout"><div class="fire-label"><span>불 세기</span><span class="status alive" id="fireStatus">활활</span></div><div class="fire-number"><strong id="fireValue">88%</strong><span id="fireCaption">아직은 따뜻합니다.</span></div><div class="meter" role="progressbar" aria-label="불 세기" aria-valuemin="0" aria-valuemax="100" aria-valuenow="88"><span id="fireMeter"></span></div></div>
+          <button class="action primary" id="addWood" type="button"><span aria-hidden="true">🪵</span><span>장작 한 개 넣기<small>불 세기 +24%</small></span><span class="wood-plus" aria-hidden="true">+</span></button>
         </div>
-
+        <div class="scene-details"><span>하늘 <b id="skyStateText">낮</b></span><span>날씨 <b id="weatherStateText">맑음</b></span><span>윌슨 <b>묵묵히 함께하는 중</b></span></div>
+      </section>
         <section class="tuning-panel" aria-labelledby="tuningTitle">
           <div class="tuning-head">
             <div><span class="panel-kicker">HOW UNLUCKY TODAY?</span><h3 id="tuningTitle">오늘 섬의 억까 정도</h3></div>
-            <p>바꾸는 즉시 장면과 생존 난이도에 반영됩니다.</p>
+            <p>지금 바꾸면, 지금부터 험난해집니다.</p>
           </div>
           <div class="tuning-grid">
             <article class="tuning-card">
@@ -197,22 +83,18 @@
               <div class="tune-presets" aria-label="비 세기 빠른 설정">
                 <button type="button" data-rain-intensity="20">이슬비</button><button type="button" data-rain-intensity="55">보통</button><button type="button" data-rain-intensity="90">폭우</button>
               </div>
-              <p class="tune-help">빗줄기의 투명도·밀도·속도와 비가 불을 약하게 만드는 정도가 함께 바뀝니다.</p>
+              <p class="tune-help">빗줄기의 밀도와 속도, 불이 약해지는 정도가 함께 바뀝니다.</p>
             </article>
           </div>
         </section>
 
-        <div class="action-row"><button class="action ghost" id="newPlan" type="button">오늘의 생존계획 ↻</button></div>
-        <p class="tiny">첫 먹구름은 랜덤한 시간 뒤 반드시 한 번 찾아옵니다. 비가 오면 선풍기를 터치해 먹구름을 화면 밖으로 날려보내세요.</p>
-      </section>
 
-      <section class="note-card"><span class="panel-kicker">TODAY'S PLAN</span><strong id="survivalMessage">해 떨어지기 전에 장작부터 챙깁니다.</strong></section>
+      <section class="note-card"><div><span class="panel-kicker">오늘의 생존계획</span><p id="survivalMessage">해 떨어지기 전에 장작부터 챙깁니다.</p></div><button class="action ghost" id="newPlan" type="button" aria-label="오늘의 생존계획 다시 정하기">계획 다시 세우기 ↻</button></section>
     </main>
-
-    <footer><span>← <a href="../">이상한 도구 상자로 돌아가기</a></span><span>구조 신호 수신 확률: 알 수 없음</span></footer>
+    <footer class="tb-footer"><span>개똥도 쓸모는 있겠지 · 무인도 생존소</span><span>구조 신호 수신 확률: 알 수 없음</span></footer>
+    <div class="tb-contact"><a href="mailto:jkd04255@khu.ac.kr?subject=%5B%EC%82%B4%EC%95%84%EB%8A%94%20%EC%9E%88%EA%B2%A0%EC%A7%80%5D%20%EB%AC%B8%EC%9D%98">✉ 문의 · 오류 제보</a></div>
   </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-  <script src="app.js?v=20260909-7"></script>
+  <script src="app.js?v=20260910-art1"></script>
 </body>
 </html>
