@@ -59,6 +59,25 @@ function realTimeIsDay(){const h=new Date().getHours();return h>=6&&h<18;}
 function showToast(message){if(!toast)return;toast.textContent=message;toast.classList.add('show');clearTimeout(state.toastTimer);state.toastTimer=setTimeout(()=>toast.classList.remove('show'),1700);}
 function setRandomPlan(){if(!survivalMessage)return;let next=plans[Math.floor(Math.random()*plans.length)];if(next===survivalMessage.textContent)next=plans[(plans.indexOf(next)+1)%plans.length];survivalMessage.textContent=next;}
 
+function installFeedbackBar(){
+  const footer=document.querySelector('.shell > footer');
+  if(!footer||document.querySelector('.feedback-bar'))return;
+
+  const bar=document.createElement('div');
+  bar.className='feedback-bar';
+  bar.innerHTML='<a class="feedback-link" href="mailto:jkd04255@khu.ac.kr?subject=%5B%EA%B0%9C%EB%98%A5%EB%8F%84%20%EC%93%B8%EB%AA%A8%EB%8A%94%20%EC%9E%88%EA%B2%A0%EC%A7%80%5D%20%EB%AC%B8%EC%9D%98%20%C2%B7%20%EC%98%A4%EB%A5%98%20%EC%A0%9C%EB%B3%B4">✉ 문의 · 오류 제보</a>';
+  footer.insertAdjacentElement('afterend',bar);
+
+  const style=document.createElement('style');
+  style.textContent=`
+    .feedback-bar{min-height:52px;display:flex;align-items:center;justify-content:center;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
+    .feedback-link{font-weight:650;color:inherit;text-decoration:none;transition:color .15s ease}
+    .feedback-link:hover{color:var(--purple);text-decoration:underline}
+    .feedback-link:focus-visible{outline:3px solid var(--purple);outline-offset:3px;border-radius:4px}
+  `;
+  document.head.appendChild(style);
+}
+
 function applySky(isDay,{animate=false}={}){
   state.isDay=isDay;
   document.body.classList.toggle('is-day',isDay);
@@ -256,6 +275,7 @@ applyTuning();
 renderWeather();
 renderFire();
 setRandomPlan();
+installFeedbackBar();
 
 setInterval(decayFire,1200);
 setInterval(maybeStartStorm,12000);
