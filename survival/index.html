@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#202127">
+  <meta name="description" content="모닥불을 지키고 물을 정수하며 버티는 작은 무인도 생존 웹사이트.">
+  <title>살아는 있겠지 — 무인도 생존소</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="../" aria-label="도구 상자로 돌아가기">
+        <span class="brand-mark">?</span>
+        <span><strong>개똥도 쓸모는 있겠지</strong><small>무인도 생존소</small></span>
+      </a>
+      <span class="edition">ISLAND SURVIVAL · DAY <b id="dayCount">1</b></span>
+    </header>
+
+    <main>
+      <section class="hero">
+        <p class="eyebrow">STILL ALIVE. PROBABLY.</p>
+        <h1>일단 불은 있고,<br>물도 걸러지고 있습니다.</h1>
+        <p class="lead">구조대는 아직 안 보입니다. 모닥불이 꺼지지 않게 장작을 넣고, 바닷물 말고 주워온 물을 정수해서 오늘도 어떻게든 버텨보세요.</p>
+      </section>
+
+      <section class="survival-grid" aria-label="생존 장비">
+        <article class="panel fire-panel">
+          <div class="panel-heading">
+            <div>
+              <span class="panel-kicker">01 · FIRE</span>
+              <h2>모닥불</h2>
+            </div>
+            <span class="status alive" id="fireStatus">타닥타닥</span>
+          </div>
+
+          <div class="scene fire-scene" id="fireScene" aria-label="타오르는 모닥불 애니메이션">
+            <div class="moon"></div>
+            <div class="ground"></div>
+            <div class="fire-glow"></div>
+            <div class="sparks" aria-hidden="true">
+              <i></i><i></i><i></i><i></i><i></i><i></i>
+            </div>
+            <div class="campfire" aria-hidden="true">
+              <div class="flame flame-back"></div>
+              <div class="flame flame-mid"></div>
+              <div class="flame flame-front"></div>
+              <div class="log log-a"></div>
+              <div class="log log-b"></div>
+              <div class="stones"><i></i><i></i><i></i><i></i><i></i></div>
+            </div>
+          </div>
+
+          <div class="meter-row">
+            <div>
+              <span>불 세기</span>
+              <strong id="fireValue">78%</strong>
+            </div>
+            <div class="meter"><span id="fireMeter" style="width:78%"></span></div>
+          </div>
+          <button class="action primary" id="addWood" type="button">🪵 장작 한 개 넣기</button>
+          <p class="tiny">아무것도 안 하면 불은 조금씩 약해집니다. 무인도에서도 방치는 금물.</p>
+        </article>
+
+        <article class="panel water-panel">
+          <div class="panel-heading">
+            <div>
+              <span class="panel-kicker">02 · WATER</span>
+              <h2>임시 정수장치</h2>
+            </div>
+            <span class="status" id="waterStatus">대기 중</span>
+          </div>
+
+          <div class="scene purifier-scene" id="purifierScene" aria-label="정수 장치 애니메이션">
+            <div class="purifier" aria-hidden="true">
+              <div class="dirty-tank">
+                <span class="tank-label">주워온 물</span>
+                <div class="dirty-water" id="dirtyWater"></div>
+              </div>
+              <div class="pipe pipe-left"></div>
+              <div class="filter-body">
+                <div class="filter-layer gravel"></div>
+                <div class="filter-layer charcoal"></div>
+                <div class="filter-layer sand"></div>
+                <div class="filter-label">돌 · 숯 · 모래</div>
+              </div>
+              <div class="pipe pipe-right"></div>
+              <div class="drop" id="drop"></div>
+              <div class="clean-cup">
+                <div class="clean-water" id="cleanWater"></div>
+                <span>깨끗한 물</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="water-stats">
+            <div><span>정수 전</span><strong id="dirtyValue">1.5 L</strong></div>
+            <div><span>보관 중</span><strong id="cleanValue">0.4 L</strong></div>
+          </div>
+          <button class="action secondary" id="filterWater" type="button">💧 0.5L 정수하기</button>
+          <p class="tiny">이건 분위기용 가상 정수장치입니다. 실제 생존 상황에서는 적절한 정수·살균 절차가 필요합니다.</p>
+        </article>
+      </section>
+
+      <section class="note-card">
+        <div>
+          <span class="panel-kicker">TODAY'S PLAN</span>
+          <strong id="survivalMessage">불을 지키고 물을 모읍니다.</strong>
+        </div>
+        <button id="newPlan" type="button">오늘의 생존계획 ↻</button>
+      </section>
+    </main>
+
+    <footer>
+      <span>← <a href="../">이상한 도구 상자로 돌아가기</a></span>
+      <span>구조 신호 수신 확률: 알 수 없음</span>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
