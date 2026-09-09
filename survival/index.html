@@ -15,10 +15,7 @@
         <span class="brand-mark">?</span>
         <span class="brand-text"><strong>개똥도 쓸모는 있겠지</strong><small>무인도 생존소</small></span>
       </a>
-      <div class="header-actions">
-        <button class="sky-toggle" id="dayNightToggle" type="button">🌙 밤으로 전환</button>
-        <span class="edition">ISLAND SURVIVAL · <b id="skyModeLabel">실시간 낮</b></span>
-      </div>
+      <span class="edition">ISLAND SURVIVAL · <b id="skyModeLabel">실시간 낮</b></span>
     </header>
 
     <main>
@@ -35,6 +32,8 @@
         </div>
 
         <div class="main-scene" id="islandScene" aria-label="무인도 모닥불 장면">
+          <button class="sky-toggle" id="dayNightToggle" type="button">🌙 밤으로 전환</button>
+
           <div class="stars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
           <div class="sky-orbit sun-orbit" aria-hidden="true"><div class="sun"></div></div>
           <div class="sky-orbit moon-orbit" aria-hidden="true"><div class="moon"></div></div>
@@ -59,6 +58,10 @@
           </div>
         </div>
 
+        <div class="fire-action-zone">
+          <button class="action primary" id="addWood" type="button">🪵 장작 한 개 넣기</button>
+        </div>
+
         <div class="controls-grid">
           <article class="stat-card"><span>불 세기</span><strong id="fireValue">88%</strong><div class="meter"><span id="fireMeter"></span></div></article>
           <article class="stat-card"><span>하늘 상태</span><strong id="skyStateText">낮</strong><p>접속할 때 현재 시간을 기준으로 시작합니다.</p></article>
@@ -66,7 +69,6 @@
         </div>
 
         <div class="action-row">
-          <button class="action primary" id="addWood" type="button">🪵 장작 한 개 넣기</button>
           <button class="action ghost" id="newPlan" type="button">오늘의 생존계획 ↻</button>
         </div>
         <p class="tiny">불 세기가 내려갈수록 불꽃·빛·불티가 함께 작아집니다. 0%가 되면 잔불만 남습니다.</p>
