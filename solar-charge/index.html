@@ -1,313 +1,59 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#f0f0f4">
-  <meta name="description" content="주변 밝기를 받아 앱 속 가상 배터리를 충전하는 햇빛 충전기">
-  <title>쨍 — 햇빛 충전기</title>
-  <link rel="stylesheet" href="../shared/toolbox.css">
-  <style>
-    .solar-stage{min-height:470px;padding:34px 24px;display:grid;place-items:center;text-align:center;position:relative;overflow:hidden;background:linear-gradient(180deg,#eef6ff 0%,#fffbe6 55%,#fff 100%)}
-    .sky-glow{position:absolute;inset:-120px -80px auto auto;width:330px;height:330px;border-radius:50%;background:radial-gradient(circle,#fff7ac 0 25%,#ffe97888 44%,transparent 68%);filter:blur(2px);pointer-events:none;transform:scale(var(--sun-scale,1));opacity:var(--sun-opacity,.7);transition:opacity .45s ease,transform .45s ease}
-    .sun{position:absolute;right:34px;top:32px;width:74px;height:74px;border-radius:50%;background:#ffd94f;box-shadow:0 0 0 12px #ffe98a55,0 0 46px #ffd84e88;animation:sunPulse 2.6s ease-in-out infinite;opacity:var(--sun-opacity,.7);transition:opacity .45s ease}
-    @keyframes sunPulse{50%{transform:scale(1.055)}}
-    .charger{position:relative;z-index:2;width:min(100%,430px);display:grid;justify-items:center}
-    .meter{display:flex;align-items:center;gap:10px;margin-bottom:20px;padding:7px 12px;border:1px solid #ded7a2;border-radius:999px;background:#fffdf0;color:#71611b;font-size:12px;font-weight:800}
-    .meter-dot{width:9px;height:9px;border-radius:50%;background:#c7b87e;box-shadow:0 0 0 3px #c7b87e22}.meter.is-live .meter-dot{background:#f1c40f;box-shadow:0 0 0 4px #f1c40f28;animation:blink 1s ease-in-out infinite}@keyframes blink{50%{opacity:.35}}
-    .battery-wrap{position:relative;width:min(76vw,286px);height:154px;margin:3px 0 18px}
-    .battery{position:absolute;inset:0 17px 0 0;border:8px solid #2b2d36;border-radius:26px;background:#fff;overflow:hidden;box-shadow:0 16px 35px -26px #22232caa}
-    .battery::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 49%,#ffffff77 50%,transparent 52%);opacity:.8;pointer-events:none}
-    .battery-cap{position:absolute;right:0;top:50%;width:18px;height:56px;border-radius:0 8px 8px 0;background:#2b2d36;transform:translateY(-50%)}
-    .battery-fill{position:absolute;left:0;bottom:0;width:var(--charge,34%);height:100%;background:linear-gradient(90deg,#dfff86,#ffe56b);transition:width .65s ease,filter .35s ease;filter:saturate(calc(.75 + var(--light,0)*.006))}
-    .battery-fill::before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 0 35%,#ffffff99 48%,transparent 62%);transform:translateX(-120%);animation:shine 2.3s linear infinite;opacity:calc(var(--light,0)*.01)}
-    @keyframes shine{to{transform:translateX(140%)}}
-    .charge-number{position:absolute;inset:0 17px 0 0;display:grid;place-items:center;color:#292a34;font:800 48px/1 var(--tb-mono);letter-spacing:-2px;z-index:3;text-shadow:0 1px #fff}
-    .charge-number small{font-size:20px;margin-left:2px}.light-copy{margin:0;color:#4f505c;font-size:14px}.light-copy strong{color:#2e2f38}.charge-rate{min-height:25px;margin:10px 0 0;color:#6045db;font-size:13px;font-weight:800}
-    .action-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px}.privacy-note{margin:12px 0 0;color:#858690;font-size:11px;line-height:1.6}
-    .sunbar{width:min(100%,360px);margin:22px auto 0;padding:14px 16px;border:1px solid var(--tb-line);border-radius:14px;background:#fafafd;text-align:left}.sunbar-head{display:flex;justify-content:space-between;gap:16px;margin-bottom:8px;font-size:12px}.sunbar-head strong{font-size:13px}.sunbar-track{height:10px;border-radius:999px;background:#e9e9ef;overflow:hidden}.sunbar-fill{width:var(--light,0%);height:100%;border-radius:inherit;background:linear-gradient(90deg,#cbd4dc,#ffd84f);transition:width .4s ease}.sunbar-scale{display:flex;justify-content:space-between;margin-top:7px;color:#8b8c96;font-size:10px}
-    .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{padding:15px 12px;border:1px solid var(--tb-line);border-radius:12px;background:#fafafd;text-align:center}.stat strong{display:block;font:760 22px/1.2 var(--tb-mono);color:#2c2d36}.stat span{display:block;margin-top:6px;color:var(--tb-muted);font-size:11px}
-    .manual-control{margin-top:16px;padding-top:16px;border-top:1px solid var(--tb-line)}.manual-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;font-size:13px;font-weight:750}.manual-head output{font:800 14px var(--tb-mono);color:var(--tb-purple)}
-    .notice{margin-top:14px;padding:11px 12px;border-radius:10px;background:#fff6dd;color:#6f5812;font-size:12px;line-height:1.6}
-    .video-probe{position:fixed;width:2px;height:2px;opacity:.001;pointer-events:none;left:-10px;top:-10px}
-    @media(max-width:720px){.solar-stage{min-height:440px;padding:28px 16px}.sun{width:62px;height:62px;right:18px;top:22px}.battery-wrap{height:136px;width:min(80vw,270px)}.charge-number{font-size:43px}.stat-grid{grid-template-columns:1fr}.stat{display:flex;align-items:center;justify-content:space-between;text-align:left}.stat span{margin-top:0}}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="theme-color" content="#f0f0f4">
+<meta name="description" content="햇빛으로 가상 배터리를 충전하고, 빛이 없으면 방전되는 앱">
+<title>쨍 — 햇빛 충전기</title>
+<link rel="stylesheet" href="../shared/toolbox.css">
+<style>
+.solar-stage{min-height:470px;padding:34px 24px;display:grid;place-items:center;text-align:center;position:relative;overflow:hidden;background:linear-gradient(180deg,#eef6ff 0%,#fffbe6 55%,#fff 100%)}
+.sky-glow{position:absolute;inset:-120px -80px auto auto;width:330px;height:330px;border-radius:50%;background:radial-gradient(circle,#fff7ac 0 25%,#ffe97888 44%,transparent 68%);filter:blur(2px);pointer-events:none;transform:scale(var(--sun-scale,1));opacity:var(--sun-opacity,.7);transition:opacity .45s ease,transform .45s ease}
+.sun{position:absolute;right:34px;top:32px;width:74px;height:74px;border-radius:50%;background:#ffd94f;box-shadow:0 0 0 12px #ffe98a55,0 0 46px #ffd84e88;animation:sunPulse 2.6s ease-in-out infinite;opacity:var(--sun-opacity,.7);transition:opacity .45s ease}
+@keyframes sunPulse{50%{transform:scale(1.055)}}
+.charger{position:relative;z-index:2;width:min(100%,430px);display:grid;justify-items:center}.meter{display:flex;align-items:center;gap:10px;margin-bottom:20px;padding:7px 12px;border:1px solid #ded7a2;border-radius:999px;background:#fffdf0;color:#71611b;font-size:12px;font-weight:800}.meter-dot{width:9px;height:9px;border-radius:50%;background:#c7b87e;box-shadow:0 0 0 3px #c7b87e22}.meter.is-live .meter-dot{background:#f1c40f;box-shadow:0 0 0 4px #f1c40f28;animation:blink 1s ease-in-out infinite}@keyframes blink{50%{opacity:.35}}
+.battery-wrap{position:relative;width:min(76vw,286px);height:154px;margin:3px 0 18px}.battery{position:absolute;inset:0 17px 0 0;border:8px solid #2b2d36;border-radius:26px;background:#fff;overflow:hidden;box-shadow:0 16px 35px -26px #22232caa}.battery::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 49%,#ffffff77 50%,transparent 52%);opacity:.8;pointer-events:none}.battery-cap{position:absolute;right:0;top:50%;width:18px;height:56px;border-radius:0 8px 8px 0;background:#2b2d36;transform:translateY(-50%)}.battery-fill{position:absolute;left:0;bottom:0;width:var(--charge,34%);height:100%;background:linear-gradient(90deg,#dfff86,#ffe56b);transition:width .65s ease,filter .35s ease;filter:saturate(calc(.75 + var(--light,0)*.006))}.battery-fill::before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 0 35%,#ffffff99 48%,transparent 62%);transform:translateX(-120%);animation:shine 2.3s linear infinite;opacity:calc(var(--light,0)*.01)}@keyframes shine{to{transform:translateX(140%)}}
+.charge-number{position:absolute;inset:0 17px 0 0;display:grid;place-items:center;color:#292a34;font:800 48px/1 var(--tb-mono);letter-spacing:-2px;z-index:3;text-shadow:0 1px #fff}.charge-number small{font-size:20px;margin-left:2px}.light-copy{margin:0;color:#4f505c;font-size:14px}.light-copy strong{color:#2e2f38}.charge-rate{min-height:25px;margin:10px 0 0;color:#6045db;font-size:13px;font-weight:800}.action-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px}.privacy-note{margin:12px 0 0;color:#858690;font-size:11px;line-height:1.6}
+.sunbar{width:min(100%,360px);margin:22px auto 0;padding:14px 16px;border:1px solid var(--tb-line);border-radius:14px;background:#fafafd;text-align:left}.sunbar-head{display:flex;justify-content:space-between;gap:16px;margin-bottom:8px;font-size:12px}.sunbar-head strong{font-size:13px}.sunbar-track{height:10px;border-radius:999px;background:#e9e9ef;overflow:hidden}.sunbar-fill{width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#cbd4dc,#ffd84f);transition:width .4s ease}.sunbar-scale{display:flex;justify-content:space-between;margin-top:7px;color:#8b8c96;font-size:10px}
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.stat{padding:15px 12px;border:1px solid var(--tb-line);border-radius:12px;background:#fafafd;text-align:center}.stat strong{display:block;font:760 22px/1.2 var(--tb-mono);color:#2c2d36}.stat span{display:block;margin-top:6px;color:var(--tb-muted);font-size:11px}
+.manual-control{margin-top:16px;padding-top:16px;border-top:1px solid var(--tb-line)}.manual-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;font-size:13px;font-weight:750}.manual-head output{font:800 14px var(--tb-mono);color:var(--tb-purple)}.notice{margin-top:14px;padding:11px 12px;border-radius:10px;background:#fff6dd;color:#6f5812;font-size:12px;line-height:1.6}.video-probe{position:fixed;width:2px;height:2px;opacity:.001;pointer-events:none;left:-10px;top:-10px}
+@media(max-width:720px){.solar-stage{min-height:440px;padding:28px 16px}.sun{width:62px;height:62px;right:18px;top:22px}.battery-wrap{height:136px;width:min(80vw,270px)}.charge-number{font-size:43px}.stat-grid{grid-template-columns:1fr}.stat{display:flex;align-items:center;justify-content:space-between;text-align:left}.stat span{margin-top:0}}
+</style>
 </head>
 <body>
-  <div class="tb-shell">
-    <header class="tb-header">
-      <div class="tb-brand">
-        <span class="tb-logo" aria-hidden="true">☀</span>
-        <div class="tb-brand-copy">
-          <h1 class="tb-title">쨍</h1>
-          <p class="tb-subtitle">햇빛은 무료니까 일단 받아둡니다</p>
-        </div>
-      </div>
-      <span class="tb-edition">ATTIC TOOL / 010</span>
-      <a class="tb-home" href="../" aria-label="홈으로 돌아가기" title="홈">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-7h6v7"/></svg>
-      </a>
-    </header>
-
-    <main class="tb-main">
-      <div class="tb-grid">
-        <section class="tb-workspace" aria-labelledby="charge-title">
-          <div class="tb-case">
-            <div class="tb-case-top"><span>SOLAR CHARGER / 010</span><span class="tb-sticker">무 료 전 기</span></div>
-            <div class="tb-case-paper">
-              <div class="solar-stage" id="solarStage">
-                <div class="sky-glow"></div><div class="sun" aria-hidden="true"></div>
-                <div class="charger">
-                  <div class="meter" id="meter"><span class="meter-dot"></span><span id="sensorState">빛 감지 대기 중</span></div>
-                  <div class="battery-wrap" aria-label="가상 배터리 잔량">
-                    <div class="battery"><div class="battery-fill" id="batteryFill"></div></div><div class="battery-cap"></div>
-                    <div class="charge-number"><span id="charge-title">34</span><small>%</small></div>
-                  </div>
-                  <p class="light-copy"><strong id="lightLabel">그늘</strong> · 밝기 <span id="lightValue">18</span>%</p>
-                  <p class="charge-rate" id="chargeRate">햇빛이 조금 부족합니다.</p>
-                  <div class="action-row">
-                    <button class="tb-btn tb-btn-primary" type="button" id="cameraBtn">☀ 빛 감지 시작</button>
-                    <button class="tb-btn tb-btn-secondary" type="button" id="boostBtn">햇빛 한 줌</button>
-                  </div>
-                  <p class="privacy-note">카메라 모드는 주변 밝기만 기기 안에서 계산합니다. 영상은 저장하거나 전송하지 않습니다.<br>카메라를 태양에 직접 오래 향하게 하지는 마세요.</p>
-                  <div class="sunbar">
-                    <div class="sunbar-head"><strong>현재 햇빛 세기</strong><span id="sunHint">창가 정도면 충전 시작</span></div>
-                    <div class="sunbar-track"><div class="sunbar-fill" id="sunbarFill"></div></div>
-                    <div class="sunbar-scale"><span>방 안</span><span>창가</span><span>쨍쨍</span></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="tb-case-bottom"><span id="statusText">STATUS · WAITING FOR SUN</span><span>실제 휴대폰 배터리에는 아무 일도 일어나지 않습니다</span></div>
-          </div>
-
-          <section class="tb-section">
-            <div class="tb-section-heading"><div><p class="tb-eyebrow">TODAY'S HARVEST</p><h2 class="tb-heading">오늘 모은 햇빛</h2></div><button class="tb-btn tb-btn-secondary" type="button" id="resetBtn">초기화</button></div>
-            <div class="tb-card">
-              <div class="stat-grid">
-                <div class="stat"><strong id="harvestStat">0.0</strong><span>가상 햇빛 Wh</span></div>
-                <div class="stat"><strong id="peakStat">18%</strong><span>최고 밝기</span></div>
-                <div class="stat"><strong id="sunTimeStat">0초</strong><span>충전 시간</span></div>
-              </div>
-            </div>
-          </section>
-        </section>
-
-        <aside class="tb-settings" aria-labelledby="settings-title">
-          <p class="tb-eyebrow">SUNLIGHT LAB</p>
-          <h2 id="settings-title" class="tb-heading">얼마나 쉽게 충전할까요?</h2>
-          <p class="tb-intro">카메라를 켜면 주변 밝기로 자동 충전합니다. 카메라를 쓰지 않을 때는 아래 슬라이더가 가상의 햇빛 세기가 됩니다.</p>
-          <div class="tb-control-card">
-            <div class="tb-control-head"><label for="sensitivity">충전 민감도</label><output class="tb-control-value" for="sensitivity"><span id="sensitivityValue">55</span><small>%</small></output></div>
-            <input id="sensitivity" class="tb-range" type="range" min="10" max="100" step="5" value="55" style="--fill:50%">
-            <div class="tb-range-ends"><span>까다로운 패널</span><span>손전등도 태양</span></div>
-            <p class="tb-helper">민감도가 높을수록 약한 빛에서도 더 빠르게 충전됩니다.</p>
-
-            <div class="manual-control">
-              <div class="manual-head"><label for="manualLight">수동 햇빛</label><output id="manualLightValue" for="manualLight">18%</output></div>
-              <input id="manualLight" class="tb-range" type="range" min="0" max="100" step="1" value="18" style="--fill:18%">
-              <div class="tb-range-ends"><span>서랍 속</span><span>한여름 정오</span></div>
-            </div>
-            <div class="notice" id="modeNotice">현재는 수동 모드입니다. 실제 주변 밝기를 쓰려면 ‘빛 감지 시작’을 눌러주세요.</div>
-          </div>
-
-          <section class="tb-thought" aria-label="충전기의 한마디">
-            <p class="tb-thought-label">“ 태양광 패널의 한마디</p>
-            <h3 id="thoughtTitle">조금 더 밝은 데로 가볼까요?</h3>
-            <p id="thoughtBody">지금은 충전보다 광합성 구경에 가깝습니다.</p>
-          </section>
-        </aside>
-      </div>
-    </main>
-
-    <footer class="tb-footer"><span>다락방 뒷편 공구 상자</span><span>쓸모없어 보여도 일단 만들어보기</span></footer>
-  </div>
-  <div class="tb-contact"><a href="mailto:jkd04255@khu.ac.kr?subject=%5B%EB%8B%A4%EB%9D%BD%EB%B0%A9%20%EB%92%B7%ED%8E%B8%20%EA%B3%B5%EA%B5%AC%20%EC%83%81%EC%9E%90%5D%20%EC%A8%8D%20%EB%AC%B8%EC%9D%98%20%C2%B7%20%EC%98%A4%EB%A5%98%20%EC%A0%9C%EB%B3%B4">✉ 문의 · 오류 제보</a></div>
-
-  <video id="video" class="video-probe" playsinline muted></video>
-  <canvas id="probe" width="24" height="24" class="video-probe" aria-hidden="true"></canvas>
-
-  <script>
-    (() => {
-      const root = document.documentElement;
-      const stage = document.getElementById('solarStage');
-      const meter = document.getElementById('meter');
-      const sensorState = document.getElementById('sensorState');
-      const chargeText = document.getElementById('charge-title');
-      const lightLabel = document.getElementById('lightLabel');
-      const lightValue = document.getElementById('lightValue');
-      const chargeRate = document.getElementById('chargeRate');
-      const cameraBtn = document.getElementById('cameraBtn');
-      const boostBtn = document.getElementById('boostBtn');
-      const resetBtn = document.getElementById('resetBtn');
-      const statusText = document.getElementById('statusText');
-      const harvestStat = document.getElementById('harvestStat');
-      const peakStat = document.getElementById('peakStat');
-      const sunTimeStat = document.getElementById('sunTimeStat');
-      const sensitivity = document.getElementById('sensitivity');
-      const sensitivityValue = document.getElementById('sensitivityValue');
-      const manualLight = document.getElementById('manualLight');
-      const manualLightValue = document.getElementById('manualLightValue');
-      const modeNotice = document.getElementById('modeNotice');
-      const thoughtTitle = document.getElementById('thoughtTitle');
-      const thoughtBody = document.getElementById('thoughtBody');
-      const sunHint = document.getElementById('sunHint');
-      const video = document.getElementById('video');
-      const canvas = document.getElementById('probe');
-      const ctx = canvas.getContext('2d', {willReadFrequently:true});
-
-      let charge = Number(localStorage.getItem('solar-charge-level') || 34);
-      let harvest = Number(localStorage.getItem('solar-harvest') || 0);
-      let peak = Number(localStorage.getItem('solar-peak') || 18);
-      let sunSeconds = Number(localStorage.getItem('solar-seconds') || 0);
-      let light = Number(manualLight.value);
-      let stream = null;
-      let cameraMode = false;
-      let lastFrameAt = 0;
-      let lastTick = performance.now();
-
-      const clamp = (n,min,max) => Math.max(min,Math.min(max,n));
-
-      function labelForLight(n){
-        if(n < 12) return ['서랍 속','빛을 찾는 중…','STATUS · TOO DARK'];
-        if(n < 30) return ['그늘','햇빛이 조금 부족합니다.','STATUS · WAITING FOR SUN'];
-        if(n < 52) return ['창가','천천히 충전 중입니다.','STATUS · SLOW CHARGE'];
-        if(n < 76) return ['맑음','제법 잘 들어옵니다.','STATUS · CHARGING'];
-        return ['쨍쨍','태양을 제대로 주웠습니다.','STATUS · MAXIMUM SUN'];
-      }
-
-      function render(){
-        const [label,message,status] = labelForLight(light);
-        const sensitivityFactor = Number(sensitivity.value) / 55;
-        const effective = clamp((light - 20) * sensitivityFactor,0,100);
-        root.style.setProperty('--charge', `${charge}%`);
-        root.style.setProperty('--light', light);
-        stage.style.setProperty('--sun-opacity', String(.22 + light * .0073));
-        stage.style.setProperty('--sun-scale', String(.82 + light * .003));
-        document.getElementById('sunbarFill').style.setProperty('--light', `${light}%`);
-        chargeText.textContent = Math.floor(charge);
-        lightValue.textContent = Math.round(light);
-        lightLabel.textContent = label;
-        statusText.textContent = charge >= 100 ? 'STATUS · FULL OF SUN' : status;
-        peakStat.textContent = `${Math.round(peak)}%`;
-        harvestStat.textContent = harvest.toFixed(1);
-        sunTimeStat.textContent = sunSeconds < 60 ? `${Math.floor(sunSeconds)}초` : `${Math.floor(sunSeconds/60)}분 ${Math.floor(sunSeconds%60)}초`;
-        sensitivityValue.textContent = sensitivity.value;
-        sensitivity.style.setProperty('--fill', `${(Number(sensitivity.value)-10)/90*100}%`);
-        manualLightValue.textContent = `${manualLight.value}%`;
-        manualLight.style.setProperty('--fill', `${manualLight.value}%`);
-
-        if(charge >= 100){
-          chargeRate.textContent = '가상 배터리가 햇빛으로 가득 찼습니다.';
-          thoughtTitle.textContent = '그만 쬐어도 됩니다.';
-          thoughtBody.textContent = '이 앱이 받을 수 있는 햇빛은 다 받았습니다.';
-        }else if(effective <= 0){
-          chargeRate.textContent = message;
-          thoughtTitle.textContent = light < 12 ? '여긴 밤인가요?' : '조금 더 밝은 데로 가볼까요?';
-          thoughtBody.textContent = light < 12 ? '태양광 패널도 이 정도는 무리입니다.' : '지금은 충전보다 광합성 구경에 가깝습니다.';
-        }else{
-          const rate = effective * .018;
-          chargeRate.textContent = `가상 충전 속도 +${rate.toFixed(2)}% / 초`;
-          thoughtTitle.textContent = light > 75 ? '이게 태양이지.' : '오, 들어옵니다.';
-          thoughtBody.textContent = light > 75 ? '휴대폰은 그대로지만 저는 아주 만족스럽습니다.' : '창가도 생각보다 제법 쓸 만하네요.';
-        }
-        sunHint.textContent = light < 30 ? '창가 정도면 충전 시작' : light < 70 ? '햇빛을 더 받으면 빨라져요' : '지금은 아주 좋습니다';
-      }
-
-      function sampleBrightness(now){
-        if(!cameraMode || !stream || video.readyState < 2 || now - lastFrameAt < 650) return;
-        lastFrameAt = now;
-        try{
-          ctx.drawImage(video,0,0,24,24);
-          const data = ctx.getImageData(0,0,24,24).data;
-          let total = 0;
-          for(let i=0;i<data.length;i+=4) total += data[i]*.2126 + data[i+1]*.7152 + data[i+2]*.0722;
-          const avg = total / (data.length/4) / 255 * 100;
-          light = clamp(avg * 1.35,0,100);
-          peak = Math.max(peak,light);
-        }catch(e){}
-      }
-
-      function tick(now){
-        const dt = Math.min((now-lastTick)/1000,1);
-        lastTick = now;
-        sampleBrightness(now);
-        if(!cameraMode){ light = Number(manualLight.value); peak = Math.max(peak,light); }
-        const sensitivityFactor = Number(sensitivity.value)/55;
-        const effective = clamp((light-20)*sensitivityFactor,0,100);
-        if(effective > 0 && charge < 100){
-          const gain = effective * .018 * dt;
-          charge = clamp(charge + gain,0,100);
-          harvest += gain * .12;
-          sunSeconds += dt;
-        }
-        localStorage.setItem('solar-charge-level',charge.toFixed(3));
-        localStorage.setItem('solar-harvest',harvest.toFixed(3));
-        localStorage.setItem('solar-peak',peak.toFixed(2));
-        localStorage.setItem('solar-seconds',sunSeconds.toFixed(1));
-        render();
-        requestAnimationFrame(tick);
-      }
-
-      async function toggleCamera(){
-        if(cameraMode){ stopCamera(); return; }
-        if(!navigator.mediaDevices?.getUserMedia){
-          modeNotice.textContent = '이 브라우저에서는 카메라 밝기 감지를 지원하지 않습니다. 수동 햇빛 슬라이더를 사용해주세요.';
-          return;
-        }
-        try{
-          stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});
-          video.srcObject = stream;
-          await video.play();
-          cameraMode = true;
-          meter.classList.add('is-live');
-          sensorState.textContent = '주변 빛 감지 중';
-          cameraBtn.textContent = '■ 빛 감지 끄기';
-          modeNotice.textContent = '카메라 밝기 감지 모드입니다. 화면 영상은 표시·저장·전송하지 않고 밝기 평균만 계산합니다.';
-          manualLight.disabled = true;
-        }catch(err){
-          modeNotice.textContent = '카메라 권한을 사용할 수 없습니다. 수동 햇빛 슬라이더로 계속 사용할 수 있습니다.';
-          cameraMode = false;
-        }
-      }
-
-      function stopCamera(){
-        stream?.getTracks().forEach(track => track.stop());
-        stream = null;
-        video.srcObject = null;
-        cameraMode = false;
-        meter.classList.remove('is-live');
-        sensorState.textContent = '수동 햇빛 사용 중';
-        cameraBtn.textContent = '☀ 빛 감지 시작';
-        modeNotice.textContent = '현재는 수동 모드입니다. 실제 주변 밝기를 쓰려면 ‘빛 감지 시작’을 눌러주세요.';
-        manualLight.disabled = false;
-        light = Number(manualLight.value);
-      }
-
-      cameraBtn.addEventListener('click',toggleCamera);
-      boostBtn.addEventListener('click',() => {
-        if(cameraMode) return;
-        manualLight.value = Math.min(100,Number(manualLight.value)+18);
-        light = Number(manualLight.value);
-        render();
-        boostBtn.textContent = '받았다 ☀';
-        setTimeout(() => boostBtn.textContent = '햇빛 한 줌',700);
-      });
-      resetBtn.addEventListener('click',() => {
-        charge = 34; harvest = 0; peak = Number(manualLight.value); sunSeconds = 0;
-        localStorage.removeItem('solar-charge-level');
-        localStorage.removeItem('solar-harvest');
-        localStorage.removeItem('solar-peak');
-        localStorage.removeItem('solar-seconds');
-        render();
-      });
-      sensitivity.addEventListener('input',render);
-      manualLight.addEventListener('input',() => { if(!cameraMode){ light = Number(manualLight.value); render(); } });
-      window.addEventListener('pagehide',() => stream?.getTracks().forEach(track => track.stop()));
-
-      render();
-      requestAnimationFrame(tick);
-    })();
-  </script>
+<div class="tb-shell">
+<header class="tb-header"><div class="tb-brand"><span class="tb-logo" aria-hidden="true">☀</span><div class="tb-brand-copy"><h1 class="tb-title">쨍</h1><p class="tb-subtitle">햇빛은 무료니까 일단 받아둡니다</p></div></div><span class="tb-edition">ATTIC TOOL / 010</span><a class="tb-home" href="../" aria-label="홈으로 돌아가기" title="홈"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-7h6v7"/></svg></a></header>
+<main class="tb-main"><div class="tb-grid">
+<section class="tb-workspace" aria-labelledby="charge-title"><div class="tb-case"><div class="tb-case-top"><span>SOLAR CHARGER / 010</span><span class="tb-sticker">무 료 전 기</span></div><div class="tb-case-paper"><div class="solar-stage" id="solarStage"><div class="sky-glow"></div><div class="sun" aria-hidden="true"></div><div class="charger"><div class="meter" id="meter"><span class="meter-dot"></span><span id="sensorState">빛 감지 대기 중</span></div><div class="battery-wrap" aria-label="가상 배터리 잔량"><div class="battery"><div class="battery-fill" id="batteryFill"></div></div><div class="battery-cap"></div><div class="charge-number"><span id="charge-title">34</span><small>%</small></div></div><p class="light-copy"><strong id="lightLabel">그늘</strong> · 밝기 <span id="lightValue">18</span>%</p><p class="charge-rate" id="chargeRate">햇빛이 부족해 가상 배터리가 조금씩 줄어듭니다.</p><div class="action-row"><button class="tb-btn tb-btn-primary" type="button" id="cameraBtn">☀ 빛 감지 시작</button><button class="tb-btn tb-btn-secondary" type="button" id="boostBtn">햇빛 한 줌</button></div><p class="privacy-note">카메라 모드는 주변 밝기만 기기 안에서 계산합니다. 영상은 저장하거나 전송하지 않습니다.<br>카메라를 태양에 직접 오래 향하게 하지는 마세요.</p><div class="sunbar"><div class="sunbar-head"><strong>현재 햇빛 세기</strong><span id="sunHint">창가 정도면 충전 시작</span></div><div class="sunbar-track"><div class="sunbar-fill" id="sunbarFill"></div></div><div class="sunbar-scale"><span>방 안</span><span>창가</span><span>쨍쨍</span></div></div></div></div></div><div class="tb-case-bottom"><span id="statusText">STATUS · SLOW DISCHARGE</span><span>빛이 부족하면 이 앱 배터리도 슬쩍 방전됩니다</span></div></div>
+<section class="tb-section"><div class="tb-section-heading"><div><p class="tb-eyebrow">TODAY'S HARVEST</p><h2 class="tb-heading">오늘 모은 햇빛</h2></div><button class="tb-btn tb-btn-secondary" type="button" id="resetBtn">초기화</button></div><div class="tb-card"><div class="stat-grid"><div class="stat"><strong id="harvestStat">0.0</strong><span>가상 햇빛 Wh</span></div><div class="stat"><strong id="peakStat">18%</strong><span>최고 밝기</span></div><div class="stat"><strong id="sunTimeStat">0초</strong><span>충전 시간</span></div><div class="stat"><strong id="drainTimeStat">0초</strong><span>방전 시간</span></div></div></div></section></section>
+<aside class="tb-settings" aria-labelledby="settings-title"><p class="tb-eyebrow">SUNLIGHT LAB</p><h2 id="settings-title" class="tb-heading">얼마나 쉽게 충전할까요?</h2><p class="tb-intro">카메라를 켜면 주변 밝기로 자동 충전합니다. 빛이 충분하지 않으면 가상 배터리가 조금씩 방전됩니다. 카메라를 쓰지 않을 때는 아래 슬라이더가 가상의 햇빛 세기가 됩니다.</p><div class="tb-control-card"><div class="tb-control-head"><label for="sensitivity">충전 민감도</label><output class="tb-control-value" for="sensitivity"><span id="sensitivityValue">55</span><small>%</small></output></div><input id="sensitivity" class="tb-range" type="range" min="10" max="100" step="5" value="55" style="--fill:50%"><div class="tb-range-ends"><span>까다로운 패널</span><span>손전등도 태양</span></div><p class="tb-helper">민감도가 높을수록 약한 빛에서도 더 빠르게 충전됩니다.</p><div class="manual-control"><div class="manual-head"><label for="manualLight">수동 햇빛</label><output id="manualLightValue" for="manualLight">18%</output></div><input id="manualLight" class="tb-range" type="range" min="0" max="100" step="1" value="18" style="--fill:18%"><div class="tb-range-ends"><span>서랍 속</span><span>한여름 정오</span></div></div><div class="notice" id="modeNotice">현재는 수동 모드입니다. 실제 주변 밝기를 쓰려면 ‘빛 감지 시작’을 눌러주세요.</div></div><section class="tb-thought" aria-label="충전기의 한마디"><p class="tb-thought-label">“ 태양광 패널의 한마디</p><h3 id="thoughtTitle">조금 더 밝은 데로 가볼까요?</h3><p id="thoughtBody">지금은 충전보다 방전에 더 가깝습니다.</p></section></aside>
+</div></main><footer class="tb-footer"><span>다락방 뒷편 공구 상자</span><span>쓸모없어 보여도 일단 만들어보기</span></footer></div><div class="tb-contact"><a href="mailto:jkd04255@khu.ac.kr?subject=%5B%EB%8B%A4%EB%9D%BD%EB%B0%A9%20%EB%92%B7%ED%8E%B8%20%EA%B3%B5%EA%B5%AC%20%EC%83%81%EC%9E%90%5D%20%EC%A8%8D%20%EB%AC%B8%EC%9D%98%20%C2%B7%20%EC%98%A4%EB%A5%98%20%EC%A0%9C%EB%B3%B4">✉ 문의 · 오류 제보</a></div>
+<video id="video" class="video-probe" playsinline muted></video><canvas id="probe" width="24" height="24" class="video-probe" aria-hidden="true"></canvas>
+<script>
+(()=>{
+const $=s=>document.querySelector(s),root=document.documentElement,stage=$('#solarStage'),meter=$('#meter'),sensorState=$('#sensorState'),chargeText=$('#charge-title'),lightLabel=$('#lightLabel'),lightValue=$('#lightValue'),chargeRate=$('#chargeRate'),cameraBtn=$('#cameraBtn'),boostBtn=$('#boostBtn'),resetBtn=$('#resetBtn'),statusText=$('#statusText'),harvestStat=$('#harvestStat'),peakStat=$('#peakStat'),sunTimeStat=$('#sunTimeStat'),drainTimeStat=$('#drainTimeStat'),sensitivity=$('#sensitivity'),sensitivityValue=$('#sensitivityValue'),manualLight=$('#manualLight'),manualLightValue=$('#manualLightValue'),modeNotice=$('#modeNotice'),thoughtTitle=$('#thoughtTitle'),thoughtBody=$('#thoughtBody'),sunHint=$('#sunHint'),sunbarFill=$('#sunbarFill'),video=$('#video'),canvas=$('#probe'),ctx=canvas.getContext('2d',{willReadFrequently:true});
+let charge=+(localStorage.getItem('solar-charge-level')||34),harvest=+(localStorage.getItem('solar-harvest')||0),peak=+(localStorage.getItem('solar-peak')||18),sunSeconds=+(localStorage.getItem('solar-seconds')||0),drainSeconds=+(localStorage.getItem('solar-drain-seconds')||0),light=+(localStorage.getItem('solar-last-manual-light')||18),stream=null,cameraMode=false,lastFrameAt=0,lastTick=performance.now();
+manualLight.value=light;
+const clamp=(n,min,max)=>Math.max(min,Math.min(max,n)),fmt=s=>s<60?`${Math.floor(s)}초`:`${Math.floor(s/60)}분 ${Math.floor(s%60)}초`;
+function label(n){if(n<10)return['암흑','STATUS · FAST DISCHARGE'];if(n<20)return['그늘','STATUS · SLOW DISCHARGE'];if(n<35)return['흐림','STATUS · IDLING'];if(n<58)return['창가','STATUS · SLOW CHARGE'];if(n<80)return['맑음','STATUS · CHARGING'];return['쨍쨍','STATUS · MAXIMUM SUN']}
+function save(){localStorage.setItem('solar-charge-level',charge.toFixed(3));localStorage.setItem('solar-harvest',harvest.toFixed(3));localStorage.setItem('solar-peak',peak.toFixed(2));localStorage.setItem('solar-seconds',sunSeconds.toFixed(1));localStorage.setItem('solar-drain-seconds',drainSeconds.toFixed(1));localStorage.setItem('solar-last-manual-light',manualLight.value)}
+function render(){const [lab,status]=label(light),sf=+sensitivity.value/55,chg=clamp((light-24)*sf,0,100),dr=clamp((26-light)/26,0,1),chgRate=chg*.018,drRate=(0.05+dr*.45)*(charge>0?1:0);root.style.setProperty('--charge',`${charge}%`);root.style.setProperty('--light',light);stage.style.setProperty('--sun-opacity',String(.18+light*.0076));stage.style.setProperty('--sun-scale',String(.80+light*.0032));sunbarFill.style.width=`${light}%`;chargeText.textContent=Math.floor(charge);lightValue.textContent=Math.round(light);lightLabel.textContent=lab;statusText.textContent=charge>=100?'STATUS · FULL OF SUN':status;peakStat.textContent=`${Math.round(peak)}%`;harvestStat.textContent=harvest.toFixed(1);sunTimeStat.textContent=fmt(sunSeconds);drainTimeStat.textContent=fmt(drainSeconds);sensitivityValue.textContent=sensitivity.value;sensitivity.style.setProperty('--fill',`${((+sensitivity.value)-10)/90*100}%`);manualLightValue.textContent=`${manualLight.value}%`;manualLight.style.setProperty('--fill',`${manualLight.value}%`);
+if(charge>=100){chargeRate.textContent='가상 배터리가 햇빛으로 가득 찼습니다.';thoughtTitle.textContent='그만 쬐어도 됩니다.';thoughtBody.textContent='이 앱이 받을 수 있는 햇빛은 다 받았습니다.'}
+else if(charge<=0){chargeRate.textContent='가상 배터리가 완전히 방전됐습니다.';thoughtTitle.textContent='해를 다시 찾아야 합니다.';thoughtBody.textContent='무료 전기도 빛이 있어야 들어옵니다.';statusText.textContent='STATUS · EMPTY'}
+else if(chg>0){chargeRate.textContent=`가상 충전 속도 +${chgRate.toFixed(2)}% / 초`;thoughtTitle.textContent=light>75?'이게 태양이지.':'오, 들어옵니다.';thoughtBody.textContent=light>75?'지금은 아주 만족스럽게 차오르고 있습니다.':'창가도 생각보다 제법 쓸 만하네요.'}
+else if(light>=20){chargeRate.textContent='충전도 방전도 거의 없는 애매한 밝기입니다.';thoughtTitle.textContent='애매하게 밝네요.';thoughtBody.textContent='쬐고는 있는데 크게 달라지진 않습니다.'}
+else{chargeRate.textContent=`가상 방전 속도 -${drRate.toFixed(2)}% / 초`;thoughtTitle.textContent=light<10?'여긴 밤인가요?':'조금 더 밝은 데로 가볼까요?';thoughtBody.textContent=light<10?'지금은 충전이 아니라 꽤 빠르게 방전 중입니다.':'빛이 부족해서 가상 배터리가 조금씩 줄어듭니다.'}
+sunHint.textContent=light<24?'지금은 방전 쪽에 가깝습니다':light<60?'햇빛을 더 받으면 빨라져요':'지금은 아주 좋습니다'}
+function sample(now){if(!cameraMode||!stream||video.readyState<2||now-lastFrameAt<650)return;lastFrameAt=now;try{ctx.drawImage(video,0,0,24,24);const data=ctx.getImageData(0,0,24,24).data;let total=0;for(let i=0;i<data.length;i+=4)total+=data[i]*.2126+data[i+1]*.7152+data[i+2]*.0722;light=clamp(total/(data.length/4)/255*100*1.35,0,100);peak=Math.max(peak,light)}catch(e){}}
+function tick(now){const dt=Math.min((now-lastTick)/1000,1);lastTick=now;sample(now);if(!cameraMode){light=+manualLight.value;peak=Math.max(peak,light)}const sf=+sensitivity.value/55,chg=clamp((light-24)*sf,0,100),dr=clamp((26-light)/26,0,1);if(chg>0&&charge<100){const gain=chg*.018*dt;charge=clamp(charge+gain,0,100);harvest+=gain*.12;sunSeconds+=dt}else if(light<20&&charge>0){const loss=(0.05+dr*.45)*dt;charge=clamp(charge-loss,0,100);drainSeconds+=dt}save();render();requestAnimationFrame(tick)}
+async function toggleCamera(){if(cameraMode)return stopCamera();if(!navigator.mediaDevices?.getUserMedia){modeNotice.textContent='이 브라우저에서는 카메라 밝기 감지를 지원하지 않습니다. 수동 햇빛 슬라이더를 사용해주세요.';return}try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});video.srcObject=stream;await video.play();cameraMode=true;meter.classList.add('is-live');sensorState.textContent='주변 빛 감지 중';cameraBtn.textContent='■ 빛 감지 끄기';modeNotice.textContent='카메라 밝기 감지 모드입니다. 화면 영상은 표시·저장·전송하지 않고 밝기 평균만 계산합니다.';manualLight.disabled=true}catch(e){modeNotice.textContent='카메라 권한을 사용할 수 없습니다. 수동 햇빛 슬라이더로 계속 사용할 수 있습니다.';cameraMode=false}}
+function stopCamera(){stream?.getTracks().forEach(t=>t.stop());stream=null;video.srcObject=null;cameraMode=false;meter.classList.remove('is-live');sensorState.textContent='수동 햇빛 사용 중';cameraBtn.textContent='☀ 빛 감지 시작';modeNotice.textContent='현재는 수동 모드입니다. 실제 주변 밝기를 쓰려면 ‘빛 감지 시작’을 눌러주세요.';manualLight.disabled=false;light=+manualLight.value}
+cameraBtn.addEventListener('click',toggleCamera);boostBtn.addEventListener('click',()=>{if(cameraMode)return;manualLight.value=Math.min(100,+manualLight.value+18);light=+manualLight.value;save();render();boostBtn.textContent='받았다 ☀';setTimeout(()=>boostBtn.textContent='햇빛 한 줌',700)});resetBtn.addEventListener('click',()=>{charge=34;harvest=0;peak=+manualLight.value;sunSeconds=0;drainSeconds=0;['solar-charge-level','solar-harvest','solar-peak','solar-seconds','solar-drain-seconds'].forEach(k=>localStorage.removeItem(k));render()});sensitivity.addEventListener('input',()=>{save();render()});manualLight.addEventListener('input',()=>{if(!cameraMode){light=+manualLight.value;save();render()}});window.addEventListener('pagehide',()=>stream?.getTracks().forEach(t=>t.stop()));render();requestAnimationFrame(tick)
+})();
+</script>
 </body>
 </html>
