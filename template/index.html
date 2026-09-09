@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f0f0f4">
+  <meta name="description" content="다락방 뒷편 공구 상자 공통 앱 템플릿">
+  <title>새 앱 — 다락방 뒷편 공구 상자</title>
+  <link rel="stylesheet" href="../shared/toolbox.css">
+</head>
+<body>
+  <div class="tb-shell">
+    <header class="tb-header">
+      <div class="tb-brand">
+        <span class="tb-logo" aria-hidden="true">?</span>
+        <div class="tb-brand-copy">
+          <h1 class="tb-title">새 앱</h1>
+          <p class="tb-subtitle">앱을 한 문장으로 설명합니다</p>
+        </div>
+      </div>
+
+      <span class="tb-edition">ATTIC TOOL / 000</span>
+
+      <a class="tb-home" href="../" aria-label="홈으로 돌아가기" title="홈">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 10.5 12 3l9 7.5"/>
+          <path d="M5 9.5V21h14V9.5"/>
+          <path d="M9 21v-7h6v7"/>
+        </svg>
+      </a>
+    </header>
+
+    <main class="tb-main">
+      <div class="tb-grid">
+        <section class="tb-workspace" aria-labelledby="demo-title">
+          <div class="tb-case">
+            <div class="tb-case-top">
+              <span>NEW TOOL / 000</span>
+              <span class="tb-sticker">여기에 앱의 농담.</span>
+            </div>
+
+            <div class="tb-case-paper">
+              <div style="padding:32px 24px;min-height:280px;display:grid;place-items:center;text-align:center">
+                <div>
+                  <p class="tb-eyebrow">MAIN EXPERIENCE</p>
+                  <h2 id="demo-title" class="tb-heading">앱의 핵심 기능이 들어가는 자리</h2>
+                  <p class="tb-intro" style="margin-bottom:0">깜빡·어림짐작처럼 한눈에 이해되는 핵심 경험을 이 영역에 배치합니다.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="tb-case-bottom">
+              <span>STATUS · READY</span>
+              <span>완벽하지 않아도 괜찮아</span>
+            </div>
+          </div>
+
+          <section class="tb-section">
+            <div class="tb-section-heading">
+              <div>
+                <p class="tb-eyebrow">ONE MORE THING</p>
+                <h2 class="tb-heading">보조 기능</h2>
+              </div>
+              <button class="tb-btn tb-btn-secondary" type="button">＋ 추가</button>
+            </div>
+            <div class="tb-card">
+              <p class="tb-muted">앱마다 필요한 목록, 결과, 기록 등의 보조 콘텐츠를 넣는 공통 카드입니다.</p>
+            </div>
+          </section>
+        </section>
+
+        <aside class="tb-settings" aria-labelledby="settings-title">
+          <p class="tb-eyebrow">A LITTLE IMPERFECT TOOL</p>
+          <h2 id="settings-title" class="tb-heading">얼마나 이상하게 할까요?</h2>
+          <p class="tb-intro">의도적으로 이상하게 동작하는 기능의 확률이나 강도는 이 영역에서 조절합니다.</p>
+
+          <div class="tb-control-card">
+            <div class="tb-control-head">
+              <label for="weirdness">이상함</label>
+              <output class="tb-control-value" for="weirdness"><span id="weirdness-value">35</span><small>%</small></output>
+            </div>
+            <input id="weirdness" class="tb-range" type="range" min="0" max="100" step="5" value="35" style="--fill:35%">
+            <div class="tb-range-ends"><span>멀쩡함</span><span>완전 이상함</span></div>
+            <div class="tb-presets" aria-label="이상함 빠른 설정">
+              <button type="button" data-value="0">0%</button>
+              <button type="button" data-value="35" aria-pressed="true">35%</button>
+              <button type="button" data-value="100">100%</button>
+            </div>
+            <p class="tb-helper">앱의 핵심 장난 기능은 값 하나만 바꾸면 조절되도록 만드는 것을 기본 원칙으로 합니다.</p>
+          </div>
+
+          <section class="tb-thought" aria-label="앱의 한마디">
+            <p class="tb-thought-label">“ 앱의 한마디</p>
+            <h3>아직 아무것도 안 했어요.</h3>
+            <p>그래도 모양은 제법 앱 같죠.</p>
+          </section>
+        </aside>
+      </div>
+    </main>
+
+    <footer class="tb-footer">
+      <span>다락방 뒷편 공구 상자</span>
+      <span>쓸모없어 보여도 일단 만들어보기</span>
+    </footer>
+  </div>
+
+  <div class="tb-contact">
+    <a href="mailto:jkd04255@khu.ac.kr?subject=%5B%EB%8B%A4%EB%9D%BD%EB%B0%A9%20%EB%92%B7%ED%8E%B8%20%EA%B3%B5%EA%B5%AC%20%EC%83%81%EC%9E%90%5D%20%EB%AC%B8%EC%9D%98%20%C2%B7%20%EC%98%A4%EB%A5%98%20%EC%A0%9C%EB%B3%B4">✉ 문의 · 오류 제보</a>
+  </div>
+
+  <script>
+    (() => {
+      const range = document.getElementById('weirdness');
+      const value = document.getElementById('weirdness-value');
+      const presets = [...document.querySelectorAll('.tb-presets button')];
+
+      function render(next) {
+        const n = Number(next);
+        range.value = n;
+        range.style.setProperty('--fill', `${n}%`);
+        value.textContent = n;
+        presets.forEach(button => button.setAttribute('aria-pressed', String(Number(button.dataset.value) === n)));
+      }
+
+      range.addEventListener('input', event => render(event.target.value));
+      presets.forEach(button => button.addEventListener('click', () => render(button.dataset.value)));
+    })();
+  </script>
+</body>
+</html>
