@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f0f0f4">
+  <meta name="description" content="점심과 저녁 메뉴를 추천해놓고 자꾸 마음을 바꾸는 결정장애 메뉴 추천기. 우유부단함을 직접 조절해 보세요.">
+  <title>음… 뭐 먹지? — 결정장애 메뉴 추천기</title>
+  <style>
+    :root{color-scheme:light;--bg:#f0f0f4;--paper:#fff;--ink:#22232c;--muted:#6b6b79;--line:#dcdce6;--purple:#6045db;--purple-dark:#4931b7;--soft:#ede9ff;--lime:#dfff86;--case:#292a34;--radius:18px;--warm:#fff3df}
+    *{box-sizing:border-box}html{min-height:100%}body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font:400 16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR","Malgun Gothic",sans-serif;word-break:keep-all}button,input{font:inherit}button{cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;color:inherit}button:focus-visible,input:focus-visible{outline:3px solid var(--purple);outline-offset:3px}button{transition:background .15s,transform .15s,border-color .15s}button:active:not(:disabled){transform:translateY(1px)}[hidden]{display:none!important}h1,h2,h3,p{margin:0}h1,h2,h3{letter-spacing:-.04em;line-height:1.35}.shell{width:min(1180px,calc(100% - 64px));margin:auto}.page-header{min-height:108px;display:flex;align-items:center;gap:20px;border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:14px}.brand-mark{display:grid;place-items:center;background:var(--ink);color:#fff;width:44px;height:44px;border-radius:13px;font-size:18px;font-weight:850;line-height:1;transform:rotate(-7deg)}.brand h1{font-size:24px}.brand p{color:var(--muted);font-size:14px}.edition{font-size:12px;letter-spacing:1.2px;color:var(--muted);margin-left:auto}.home-link{min-height:42px;padding:8px 14px;border:1px solid var(--line);border-radius:9px;background:#fff;text-decoration:none;color:var(--ink);font-size:13px;font-weight:650;display:inline-flex;align-items:center}.home-link:hover{background:var(--soft)}main{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:32px;align-items:start;padding:38px 0 42px}.stage{min-width:0}.machine{padding:22px 22px 0;border:1px solid #1d1e27;background:var(--case);border-radius:25px;box-shadow:0 6px 0 #171820,0 20px 34px -24px #22233266;overflow:hidden}.machine-top,.machine-bottom{display:flex;justify-content:space-between;align-items:center;gap:12px;color:#c9c9d4;font-size:12px;letter-spacing:1.4px}.machine-top{padding-bottom:20px}.machine-bottom{padding:13px 0 15px}.sticker{background:var(--lime);color:#2c3d0c;font-size:13px;font-weight:750;letter-spacing:0;border-radius:4px;padding:3px 10px;transform:rotate(3deg)}.paper{position:relative;min-height:540px;background:var(--paper);border-radius:12px;padding:34px 34px 28px;overflow:hidden}.paper:after{content:"";position:absolute;inset:auto 0 0;height:7px;background:repeating-linear-gradient(90deg,#e8e8ef 0 15px,transparent 15px 24px);opacity:.65}.meal-meta{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding-bottom:22px;border-bottom:1px solid var(--line)}.eyebrow{color:var(--purple);font-size:12px;font-weight:750;letter-spacing:1px;margin-bottom:7px}.meal-meta h2{font-size:clamp(25px,4vw,35px)}.clock{text-align:right;color:var(--muted);font:500 13px/1.5 ui-monospace,Consolas,monospace}.clock strong{display:block;color:var(--ink);font-size:18px}.recommendation{min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:38px 10px 26px}.thinking{min-height:28px;color:var(--muted);font-size:16px;margin-bottom:10px}.thinking.active:after{content:"";display:inline-block;width:20px;text-align:left;animation:dots 1.2s steps(4,end) infinite}.thinking.active:after{content:"…"}@keyframes dots{0%{opacity:.15}50%{opacity:1}100%{opacity:.15}}.dish-emoji{font-size:64px;line-height:1;margin-bottom:16px;filter:drop-shadow(0 7px 6px #2222);transition:transform .22s,opacity .22s}.dish-name{font-size:clamp(42px,8vw,76px);line-height:1.05;letter-spacing:-.07em;transition:transform .22s,opacity .22s}.dish-name.changing,.dish-emoji.changing{opacity:0;transform:translateY(7px) scale(.97)}.hesitation{min-height:30px;margin-top:16px;color:#756d87;font-size:15px}.decision-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.btn{border:1px solid transparent;border-radius:9px;min-height:46px;padding:10px 17px;font-size:14px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:6px}.primary{background:var(--purple);color:#fff}.primary:hover{background:var(--purple-dark)}.secondary{background:#fff;border-color:var(--line)}.secondary:hover{background:var(--soft)}.primary.locked{background:#3e7a4a}.history{margin-top:22px;border:1px solid var(--line);border-radius:15px;background:#fff;overflow:hidden}.history-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 17px;border-bottom:1px solid var(--line)}.history-head strong{font-size:14px}.history-head span{font-size:12px;color:var(--muted)}.history-list{min-height:80px;padding:10px 17px 13px}.history-row{display:flex;align-items:center;gap:9px;min-height:34px;font-size:14px;color:var(--muted);border-bottom:1px dashed #ececf2}.history-row:last-child{border-bottom:0}.history-row s{opacity:.72}.history-row strong{color:var(--ink);font-weight:650}.history-empty{display:grid;place-items:center;min-height:56px;color:#9898a5;font-size:13px}.settings{padding-top:4px}.settings h2{font-size:27px}.intro{color:var(--muted);font-size:15px;line-height:1.9;margin:10px 0 22px}.control-card{padding:21px;background:#fff;border:1px solid var(--line);border-radius:var(--radius)}.mode-label{display:block;font-size:13px;font-weight:700;margin-bottom:9px}.mode-switch{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:22px}.mode-switch button{border:1px solid var(--line);border-radius:8px;background:#fff;min-height:38px;font-size:13px}.mode-switch button[aria-pressed="true"]{background:var(--soft);border-color:#c8bdf2;color:var(--purple-dark);font-weight:750}.control-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:19px;border-top:1px solid var(--line)}.control-head label{font-size:14px;font-weight:700}.control-head output{color:var(--purple);font:650 38px/1.3 ui-monospace,Consolas,monospace;letter-spacing:-2px}.control-head small{font-size:17px;margin-left:2px}.range{appearance:none;-webkit-appearance:none;width:100%;height:28px;background:transparent;margin:15px 0 5px;accent-color:var(--purple);cursor:pointer}.range::-webkit-slider-runnable-track{height:6px;border-radius:10px;background:linear-gradient(to right,var(--purple) var(--fill,55%),#e9e6f4 var(--fill,55%))}.range::-moz-range-track{height:6px;background:#e9e6f4;border-radius:10px}.range::-moz-range-progress{height:6px;background:var(--purple);border-radius:10px}.range::-webkit-slider-thumb{appearance:none;-webkit-appearance:none;background:#fff;border:6px solid var(--purple);border-radius:50%;width:23px;height:23px;margin-top:-8px}.range::-moz-range-thumb{background:#fff;border:6px solid var(--purple);border-radius:50%;width:11px;height:11px}.range-ends{display:flex;justify-content:space-between;color:var(--muted);font-size:12px}.helper{font-size:12px;color:var(--muted);line-height:1.7;margin-top:11px}.mood{margin-top:18px;padding:18px;border:1px dashed #c4badf;border-radius:var(--radius);background:#eae5fa}.mood .eyebrow{color:#786c9f;font-weight:400;letter-spacing:0}.mood h3{font-size:19px}.mood p:last-child{font-size:13px;line-height:1.8;margin-top:8px;color:#76688c}.spec-note{margin-top:18px;padding:17px 18px;border-radius:14px;background:var(--warm);border:1px solid #ead8bc;font-size:13px;color:#756044;line-height:1.8}.spec-note strong{display:block;color:#584327;margin-bottom:4px}footer{border-top:1px solid var(--line);padding:20px 0 28px;display:flex;justify-content:space-between;gap:15px;font-size:12px;color:var(--muted)}.shake{animation:shake .34s ease}@keyframes shake{0%,100%{transform:translateX(0)}30%{transform:translateX(-5px) rotate(-.3deg)}70%{transform:translateX(5px) rotate(.3deg)}}.flash{animation:flash .7s ease}@keyframes flash{0%{background:#eef8d5}100%{background:#fff}}
+    @media(max-width:820px){.shell{width:min(520px,calc(100% - 28px))}.page-header{min-height:92px}.edition{display:none}.home-link{padding:7px 10px}main{grid-template-columns:1fr;gap:26px;padding-top:26px}.paper{min-height:490px;padding:25px 18px 24px}.machine{padding:15px 15px 0;border-radius:22px}.machine-top{padding-bottom:15px}.meal-meta{align-items:center}.recommendation{min-height:285px;padding-inline:0}.dish-emoji{font-size:56px}.settings{padding-top:0}.history{margin-top:17px}footer{display:block}.page-header .brand p{font-size:12px}}
+    @media(max-width:390px){.shell{width:calc(100% - 20px)}.page-header{gap:10px}.brand{gap:10px}.brand-mark{width:40px;height:40px}.brand h1{font-size:20px}.home-link{font-size:0;width:42px;padding:0;justify-content:center}.home-link:after{content:"⌂";font-size:20px}.machine{padding:10px 10px 0}.machine-top{padding:4px 3px 13px}.sticker{font-size:11px}.paper{padding:21px 14px}.meal-meta h2{font-size:23px}.clock strong{font-size:16px}.dish-name{font-size:45px}.decision-actions .btn{width:100%}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition:none!important}}
+  </style>
+</head>
+<body>
+<div class="shell">
+  <header class="page-header">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">음</span><div><h1>음… 뭐 먹지?</h1><p>결정을 못 내리는 메뉴 추천기</p></div></div>
+    <span class="edition">THE VERY INDECISIVE MENU PICKER</span>
+    <a class="home-link" href="../">도구 상자로</a>
+  </header>
+
+  <main>
+    <section class="stage" aria-label="메뉴 추천 결과">
+      <div class="machine" id="machine">
+        <div class="machine-top"><span>MENU PICKER / 006</span><span class="sticker" id="top-sticker">거의 정했어요. 아마도.</span></div>
+        <div class="paper" id="paper">
+          <div class="meal-meta">
+            <div><p class="eyebrow">오늘의 아주 잠정적인 결론</p><h2 id="meal-heading">오늘 저녁은…</h2></div>
+            <div class="clock"><span id="date-label"></span><strong id="time-label"></strong></div>
+          </div>
+          <div class="recommendation">
+            <p class="thinking" id="thinking">음…</p>
+            <div class="dish-emoji" id="dish-emoji" aria-hidden="true">🍲</div>
+            <h2 class="dish-name" id="dish-name">김치찌개</h2>
+            <p class="hesitation" id="hesitation">이걸로 하면… 괜찮겠죠?</p>
+          </div>
+          <div class="decision-actions">
+            <button class="btn primary" id="decide">✓ 이걸로 진짜 결정하기</button>
+            <button class="btn secondary" id="reroll">↻ 아니, 다시 생각해봐</button>
+          </div>
+        </div>
+        <div class="machine-bottom"><span id="change-status">다음 변심까지 계산 중…</span><span id="change-count">변심 0회</span></div>
+      </div>
+
+      <section class="history" aria-label="방금 포기한 메뉴">
+        <div class="history-head"><strong>방금 전까진 이거였어요</strong><span>마음의 흔적</span></div>
+        <div class="history-list" id="history-list"><div class="history-empty">아직 첫 번째 생각을 붙잡고 있어요.</div></div>
+      </section>
+    </section>
+
+    <aside class="settings" aria-labelledby="settings-heading">
+      <p class="eyebrow">HOW SURE ARE WE?</p>
+      <h2 id="settings-heading">얼마나 우유부단할까요?</h2>
+      <p class="intro">추천은 합니다.<br>그 추천을 믿을지는 저도 모르겠어요.</p>
+      <div class="control-card">
+        <span class="mode-label">지금 뭐 먹는 시간인가요?</span>
+        <div class="mode-switch" id="mode-switch" role="group" aria-label="식사 시간 선택">
+          <button data-mode="auto" aria-pressed="true">자동</button>
+          <button data-mode="lunch" aria-pressed="false">점심</button>
+          <button data-mode="dinner" aria-pressed="false">저녁</button>
+        </div>
+
+        <div class="control-head"><label for="indecision">우유부단함</label><output for="indecision"><span id="indecision-value">55</span><small>%</small></output></div>
+        <input id="indecision" class="range" type="range" min="0" max="100" step="1" value="55">
+        <div class="range-ends"><span>확고함</span><span>갈팡질팡</span></div>
+        <p class="helper" id="rate-help">지금은 대략 8~13초마다 마음이 바뀝니다.</p>
+      </div>
+
+      <section class="mood" aria-live="polite">
+        <p class="eyebrow">“ 추천기의 현재 심정</p>
+        <h3 id="mood-title">아직은 생각이 있어요.</h3>
+        <p id="mood-copy">다만 그 생각이 몇 초 뒤에도 같을 거라는 보장은 없습니다.</p>
+      </section>
+
+      <div class="spec-note"><strong>확정 버튼은 꽤 진지합니다.</strong>우유부단함이 높으면 첫 번째 확정 시도에서 한 번 더 흔들릴 수 있어요. 그래도 다시 누르면 정말로 확정합니다.</div>
+    </aside>
+  </main>
+
+  <footer><span>중요한 회식 메뉴 선정에는 사용하지 않는 편을 권장합니다.</span><span>음… 뭐 먹지? · 결정은 잠정적</span></footer>
+</div>
+
+<script>
+(()=>{
+  'use strict';
+
+  const MENUS={
+    lunch:[
+      ['김치찌개','🍲'],['제육볶음','🥘'],['돈까스','🍛'],['냉면','🍜'],['비빔밥','🥗'],['순두부찌개','🍲'],['국밥','🥣'],['칼국수','🍜'],['김밥','🍙'],['쌀국수','🍜'],['마라탕','🌶️'],['초밥','🍣'],['짜장면','🍜'],['샌드위치','🥪'],['햄버거','🍔'],['카레','🍛'],['떡볶이','🍢'],['라멘','🍜']
+    ],
+    dinner:[
+      ['삼겹살','🥓'],['닭갈비','🍗'],['곱창','🥘'],['마라탕','🌶️'],['초밥','🍣'],['치킨','🍗'],['피자','🍕'],['부대찌개','🍲'],['족발','🍖'],['보쌈','🥬'],['감자탕','🍲'],['쌀국수','🍜'],['라멘','🍜'],['파스타','🍝'],['샤브샤브','🥘'],['제육볶음','🥘'],['김치찌개','🍲'],['햄버거','🍔']
+    ]
+  };
+
+  const PHRASES={
+    calm:['이걸로 하죠.','음… 이 정도면 괜찮겠어요.','오늘은 이게 맞는 것 같아요.'],
+    medium:['음… 이게 맞나…','어… 잠깐만요.','이것도 괜찮은데… 다른 것도…','아니, 방금 생각이 좀 바뀌었어요.','거의 정했는데 말이죠…'],
+    wild:['어… 아니 잠깐만.','음… 아니, 아닌가?','잠깐만요. 방금 건 취소요.','아 이것도 아닌 것 같은데…','아니 진짜 마지막으로 한 번만…','저도 제가 왜 이러는지 모르겠어요.']
+  };
+
+  const els={
+    machine:document.querySelector('#machine'), paper:document.querySelector('#paper'), heading:document.querySelector('#meal-heading'), date:document.querySelector('#date-label'), time:document.querySelector('#time-label'), thinking:document.querySelector('#thinking'), emoji:document.querySelector('#dish-emoji'), dish:document.querySelector('#dish-name'), hesitation:document.querySelector('#hesitation'), decide:document.querySelector('#decide'), reroll:document.querySelector('#reroll'), slider:document.querySelector('#indecision'), sliderValue:document.querySelector('#indecision-value'), rateHelp:document.querySelector('#rate-help'), history:document.querySelector('#history-list'), status:document.querySelector('#change-status'), count:document.querySelector('#change-count'), moodTitle:document.querySelector('#mood-title'), moodCopy:document.querySelector('#mood-copy'), sticker:document.querySelector('#top-sticker'), modeSwitch:document.querySelector('#mode-switch')
+  };
+
+  let mode='auto';
+  let current=null;
+  let history=[];
+  let changeCount=0;
+  let timer=null;
+  let countdownTimer=null;
+  let nextChangeAt=0;
+  let locked=false;
+  let firstConfirmAttempt=false;
+  let changing=false;
+
+  function rand(min,max){return Math.random()*(max-min)+min}
+  function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
+
+  function autoMeal(date=new Date()){
+    const minutes=date.getHours()*60+date.getMinutes();
+    if(minutes>=10*60+30 && minutes<15*60) return 'lunch';
+    if(minutes>=16*60+30 && minutes<23*60) return 'dinner';
+    return minutes<16*60+30?'lunch':'dinner';
+  }
+  function mealType(){return mode==='auto'?autoMeal():mode}
+
+  function updateClock(){
+    const now=new Date();
+    els.date.textContent=new Intl.DateTimeFormat('ko-KR',{month:'long',day:'numeric',weekday:'short'}).format(now);
+    els.time.textContent=new Intl.DateTimeFormat('ko-KR',{hour:'2-digit',minute:'2-digit',hour12:false}).format(now);
+    if(mode==='auto') updateHeading();
+  }
+
+  function updateHeading(){
+    const type=mealType();
+    els.heading.textContent=`오늘 ${type==='lunch'?'점심':'저녁'}은…`;
+  }
+
+  function intervalRange(value=Number(els.slider.value)){
+    if(value<=20) return [24,38];
+    if(value<=40) return [14,24];
+    if(value<=60) return [8,13];
+    if(value<=80) return [4,8];
+    return [1.8,4];
+  }
+
+  function intervalText(){
+    const [a,b]=intervalRange();
+    const fmt=n=>Number.isInteger(n)?n:n.toFixed(1);
+    els.rateHelp.textContent=Number(els.slider.value)===0?'지금은 거의 마음을 바꾸지 않습니다.':`지금은 대략 ${fmt(a)}~${fmt(b)}초마다 마음이 바뀝니다.`;
+  }
+
+  function updateMood(){
+    const v=Number(els.slider.value);
+    if(v<=20){els.moodTitle.textContent='오늘은 제법 단호합니다.';els.moodCopy.textContent='한 번 고른 메뉴를 꽤 오래 붙잡고 있을 수 있어요.';els.sticker.textContent='오늘은 좀 확실해요.'}
+    else if(v<=45){els.moodTitle.textContent='조금 흔들리긴 해요.';els.moodCopy.textContent='다른 메뉴가 눈에 들어오면 가끔 생각이 바뀔지도요.';els.sticker.textContent='대체로 정했어요.'}
+    else if(v<=70){els.moodTitle.textContent='아직은 생각이 있어요.';els.moodCopy.textContent='다만 그 생각이 몇 초 뒤에도 같을 거라는 보장은 없습니다.';els.sticker.textContent='거의 정했어요. 아마도.'}
+    else if(v<=90){els.moodTitle.textContent='음… 어… 잠깐만요.';els.moodCopy.textContent='추천을 보여주는 순간에도 다른 메뉴를 생각하고 있습니다.';els.sticker.textContent='결정? 그게 뭐죠?'}
+    else{els.moodTitle.textContent='제가 정하라고요?';els.moodCopy.textContent='네. 알겠습니다. 아니 잠깐만요. 그게 아니라… 어…';els.sticker.textContent='마음이 초단위로 변함'}
+  }
+
+  function updateSliderVisual(){
+    const v=Number(els.slider.value);
+    els.slider.style.setProperty('--fill',`${v}%`);
+    els.sliderValue.textContent=v;
+    intervalText();
+    updateMood();
+  }
+
+  function nextMenu(){
+    const list=MENUS[mealType()];
+    let candidate=pick(list);
+    if(current && list.length>1){
+      let guard=0;
+      while(candidate[0]===current[0] && guard++<12) candidate=pick(list);
+    }
+    return candidate;
+  }
+
+  function phrase(){
+    const v=Number(els.slider.value);
+    return pick(v<=25?PHRASES.calm:v<=70?PHRASES.medium:PHRASES.wild);
+  }
+
+  function renderHistory(){
+    if(!history.length){els.history.innerHTML='<div class="history-empty">아직 첫 번째 생각을 붙잡고 있어요.</div>';return}
+    els.history.innerHTML=history.slice(0,4).map((item,i)=>`<div class="history-row"><span>${i===0?'방금':'그 전'}</span><s>${escapeHtml(item[0])}</s><span>→</span><strong>${i===0&&current?escapeHtml(current[0]):'마음 바꿈'}</strong></div>`).join('');
+  }
+
+  function escapeHtml(text){const d=document.createElement('div');d.textContent=text;return d.innerHTML}
+
+  function changeMenu({manual=false,confirmWobble=false}={}){
+    if(locked||changing) return;
+    changing=true;
+    clearTimers();
+    if(current){history.unshift(current);history=history.slice(0,6)}
+    if(current) changeCount++;
+    els.count.textContent=`변심 ${changeCount}회`;
+    els.thinking.textContent=confirmWobble?'아니 잠깐만요…':manual?'음… 다시 생각해보면…':phrase();
+    els.thinking.classList.add('active');
+    els.hesitation.textContent=confirmWobble?'확정하려니까 갑자기 이쪽이 더 나아 보여서요.':'다른 메뉴도 잠깐 생각해볼게요.';
+    els.dish.classList.add('changing');els.emoji.classList.add('changing');
+    els.machine.classList.remove('shake');void els.machine.offsetWidth;els.machine.classList.add('shake');
+    setTimeout(()=>{
+      current=nextMenu();
+      els.dish.textContent=current[0];els.emoji.textContent=current[1];
+      els.dish.classList.remove('changing');els.emoji.classList.remove('changing');
+      els.thinking.classList.remove('active');
+      els.thinking.textContent=phrase();
+      els.hesitation.textContent=Number(els.slider.value)>75?'이게 더 낫지 않아요? …아닌가?':'이걸로 하면… 괜찮겠죠?';
+      renderHistory();
+      changing=false;
+      scheduleNext();
+    },360);
+  }
+
+  function clearTimers(){
+    if(timer) clearTimeout(timer);
+    if(countdownTimer) clearInterval(countdownTimer);
+    timer=countdownTimer=null;
+  }
+
+  function scheduleNext(){
+    clearTimers();
+    if(locked){els.status.textContent='결정 완료 · 더 이상 안 바꿔요';return}
+    const v=Number(els.slider.value);
+    if(v===0){els.status.textContent='오늘만큼은 마음이 단단합니다';return}
+    const [a,b]=intervalRange(v);
+    const seconds=rand(a,b);
+    nextChangeAt=Date.now()+seconds*1000;
+    timer=setTimeout(()=>changeMenu(),seconds*1000);
+    const tick=()=>{
+      const left=Math.max(0,Math.ceil((nextChangeAt-Date.now())/1000));
+      els.status.textContent=left>0?`다음 변심까지 약 ${left}초`:'또 고민하는 중…';
+    };
+    tick();countdownTimer=setInterval(tick,1000);
+  }
+
+  function unlock(){
+    locked=false;firstConfirmAttempt=false;
+    els.decide.textContent='✓ 이걸로 진짜 결정하기';els.decide.classList.remove('locked');
+    els.reroll.textContent='↻ 아니, 다시 생각해봐';
+    els.hesitation.textContent='다시 고민을 시작했습니다. 음…';
+    scheduleNext();
+  }
+
+  function decide(){
+    if(locked){unlock();return}
+    const v=Number(els.slider.value);
+    if(!firstConfirmAttempt && v>=70 && Math.random()<Math.min(.5,.12+(v-70)*.012)){
+      firstConfirmAttempt=true;
+      els.decide.textContent='이번엔 진짜 확정하기';
+      changeMenu({confirmWobble:true});
+      return;
+    }
+    locked=true;clearTimers();
+    els.decide.textContent=`✓ ${current[0]}로 결정 완료`;
+    els.decide.classList.add('locked');
+    els.reroll.textContent='다시 고민하기';
+    els.thinking.textContent='…알겠어요. 진짜로.';
+    els.hesitation.textContent=`오늘 ${mealType()==='lunch'?'점심':'저녁'}은 ${current[0]}입니다. 이제 안 바꿀게요.`;
+    els.status.textContent='결정 완료 · 더 이상 안 바꿔요';
+    els.paper.classList.remove('flash');void els.paper.offsetWidth;els.paper.classList.add('flash');
+  }
+
+  els.slider.addEventListener('input',()=>{updateSliderVisual();if(!locked)scheduleNext()});
+  els.reroll.addEventListener('click',()=>{if(locked)unlock();else changeMenu({manual:true})});
+  els.decide.addEventListener('click',decide);
+  els.modeSwitch.addEventListener('click',e=>{
+    const btn=e.target.closest('button[data-mode]');if(!btn)return;
+    mode=btn.dataset.mode;
+    els.modeSwitch.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b===btn)));
+    updateHeading();
+    if(locked)unlock();
+    changeMenu({manual:true});
+  });
+
+  updateClock();setInterval(updateClock,1000);
+  updateSliderVisual();updateHeading();
+  current=nextMenu();els.dish.textContent=current[0];els.emoji.textContent=current[1];els.thinking.textContent=phrase();
+  scheduleNext();
+})();
+</script>
+</body>
+</html>
