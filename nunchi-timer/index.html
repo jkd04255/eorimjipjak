@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f0f0f4">
+  <meta name="description" content="보고 있을 때는 얌전하고, 딴짓하면 몰래 시간을 앞당기는 눈치보는 타이머">
+  <title>눈치 — 눈치보는 타이머</title>
+  <link rel="stylesheet" href="../shared/toolbox.css">
+  <style>
+    .timer-stage{
+      min-height:370px;
+      padding:30px 24px 26px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+      background:
+        radial-gradient(circle at 50% 0%,#f4f1ff 0,transparent 42%),
+        #fff;
+    }
+    .timer-eyes{display:flex;gap:18px;margin-bottom:18px;user-select:none}
+    .timer-eye{
+      width:42px;height:42px;border:2px solid #d7d2ed;border-radius:50%;
+      background:#fff;display:grid;place-items:center;box-shadow:inset 0 -4px 0 #f1eff8;
+    }
+    .timer-pupil{
+      width:14px;height:14px;border-radius:50%;background:var(--tb-ink);
+      transform:translate(var(--eye-x,0px),var(--eye-y,0px));
+      transition:transform .08s linear;
+    }
+    .timer-state{
+      min-height:24px;margin-bottom:6px;color:var(--tb-purple);font-size:12px;font-weight:800;letter-spacing:1.25px;
+    }
+    .timer-display{
+      font:800 clamp(58px,10vw,96px)/1 var(--tb-mono);
+      letter-spacing:-6px;
+      color:var(--tb-ink);
+      font-variant-numeric:tabular-nums;
+    }
+    .timer-progress{
+      width:min(440px,88%);height:8px;margin-top:24px;overflow:hidden;
+      border-radius:999px;background:#ece9f7;
+    }
+    .timer-progress span{
+      display:block;width:100%;height:100%;border-radius:inherit;background:var(--tb-purple);
+      transform-origin:left center;transform:scaleX(1);transition:transform .12s linear;
+    }
+    .timer-meta{
+      width:min(440px,88%);margin-top:9px;display:flex;justify-content:space-between;gap:12px;
+      color:var(--tb-muted);font-size:11px;
+    }
+    .timer-actions{display:flex;gap:9px;margin-top:24px;flex-wrap:wrap;justify-content:center}
+    .timer-actions .tb-btn{min-width:96px}
+    .timer-start{min-width:126px!important}
+    .timer-cheat{
+      margin-top:22px;padding:10px 14px;border:1px dashed #cbc4ea;border-radius:10px;background:#f5f2ff;
+      color:#625f70;font-size:12px;
+    }
+    .timer-cheat strong{color:var(--tb-purple-dark)}
+    .timer-presets{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+    .timer-presets button{
+      min-height:38px;border:1px solid var(--tb-line);border-radius:8px;background:#fff;font-size:13px;font-weight:650;
+    }
+    .timer-presets button:hover{background:var(--tb-soft)}
+    .timer-form{margin-top:18px}
+    .timer-form .tb-field-row{align-items:end}
+    .timer-input-wrap{display:flex;align-items:center;gap:8px}
+    .timer-input-wrap input{min-width:0}
+    .timer-unit{color:var(--tb-muted);font-size:13px;font-weight:600;white-space:nowrap}
+    .sensor-note{display:flex;gap:9px;align-items:flex-start;margin-top:14px;padding-top:14px;border-top:1px solid var(--tb-line);color:var(--tb-muted);font-size:12px;line-height:1.65}
+    .sensor-dot{width:8px;height:8px;margin-top:6px;flex:none;border-radius:50%;background:var(--tb-lime);box-shadow:0 0 0 3px #eff9cc}
+    .caught-list{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .caught-stat{padding:15px;border:1px solid var(--tb-line);border-radius:12px;background:#fafafd}
+    .caught-stat span{display:block;color:var(--tb-muted);font-size:11px}
+    .caught-stat strong{display:block;margin-top:3px;font:750 24px/1.25 var(--tb-mono)}
+    .caught-log{margin-top:14px;color:var(--tb-muted);font-size:13px;line-height:1.7}
+    .caught-log strong{color:var(--tb-ink)}
+    @media(max-width:720px){
+      .timer-stage{min-height:340px;padding:26px 14px 22px}
+      .timer-display{letter-spacing:-4px}
+      .timer-eye{width:38px;height:38px}
+      .timer-actions{width:100%}.timer-actions .tb-btn{flex:1;min-width:0}.timer-start{min-width:0!important}
+      .timer-presets{grid-template-columns:repeat(2,1fr)}
+    }
+    @media(prefers-reduced-motion:reduce){.timer-pupil,.timer-progress span{transition:none}}
+  </style>
+</head>
+<body>
+  <div class="tb-shell">
+    <header class="tb-header">
+      <div class="tb-brand">
+        <span class="tb-logo" aria-hidden="true">◉</span>
+        <div class="tb-brand-copy">
+          <h1 class="tb-title">눈치</h1>
+          <p class="tb-subtitle">보고 있으면 얌전한 타이머</p>
+        </div>
+      </div>
+
+      <span class="tb-edition">ATTIC TOOL / 007</span>
+
+      <a class="tb-home" href="../" aria-label="홈으로 돌아가기" title="홈">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 10.5 12 3l9 7.5"/>
+          <path d="M5 9.5V21h14V9.5"/>
+          <path d="M9 21v-7h6v7"/>
+        </svg>
+      </a>
+    </header>
+
+    <main class="tb-main">
+      <div class="tb-grid">
+        <section class="tb-workspace" aria-labelledby="timer-title">
+          <div class="tb-case">
+            <div class="tb-case-top">
+              <span>NUNCHI TIMER / 007</span>
+              <span class="tb-sticker">안 보면 빨리 갑니다.</span>
+            </div>
+
+            <div class="tb-case-paper">
+              <div id="timer-stage" class="timer-stage">
+                <div class="timer-eyes" aria-hidden="true">
+                  <span class="timer-eye"><span class="timer-pupil"></span></span>
+                  <span class="timer-eye"><span class="timer-pupil"></span></span>
+                </div>
+                <p id="timer-state" class="timer-state">READY · 아주 얌전함</p>
+                <h2 id="timer-title" class="tb-sr-only">눈치보는 타이머</h2>
+                <div id="timer-display" class="timer-display" role="timer" aria-live="off">05:00</div>
+                <div class="timer-progress" aria-hidden="true"><span id="timer-progress-bar"></span></div>
+                <div class="timer-meta"><span id="elapsed-label">설정 5분</span><span id="watch-label">지금은 보고 있네요</span></div>
+
+                <div class="timer-actions">
+                  <button id="start-btn" class="tb-btn tb-btn-primary timer-start" type="button">시작</button>
+                  <button id="pause-btn" class="tb-btn tb-btn-secondary" type="button" disabled>잠깐</button>
+                  <button id="reset-btn" class="tb-btn tb-btn-ghost" type="button">다시</button>
+                </div>
+
+                <p class="timer-cheat"><strong id="stolen-inline">몰래 당긴 시간 0.0초</strong> · 안 보고 있을 때만 슬쩍합니다.</p>
+              </div>
+            </div>
+
+            <div class="tb-case-bottom">
+              <span id="case-status">STATUS · READY</span>
+              <span>카메라는 안 봅니다. 눈치만 봅니다.</span>
+            </div>
+          </div>
+
+          <section class="tb-section" aria-labelledby="caught-title">
+            <div class="tb-section-heading">
+              <div>
+                <p class="tb-eyebrow">CAUGHT IN THE ACT</p>
+                <h2 id="caught-title" class="tb-heading">들킨 기록</h2>
+              </div>
+              <button id="clear-log-btn" class="tb-btn tb-btn-secondary" type="button">기록 지우기</button>
+            </div>
+            <div class="tb-card">
+              <div class="caught-list">
+                <div class="caught-stat"><span>몰래 앞당긴 시간</span><strong id="stolen-total">0.0초</strong></div>
+                <div class="caught-stat"><span>딴짓하다 돌아온 횟수</span><strong id="caught-count">0회</strong></div>
+              </div>
+              <p id="caught-log" class="caught-log">아직은 아무 일도 없었습니다. <strong>의심하지 마세요.</strong></p>
+            </div>
+          </section>
+        </section>
+
+        <aside class="tb-settings" aria-labelledby="settings-title">
+          <p class="tb-eyebrow">A LITTLE SELF-CONSCIOUS TOOL</p>
+          <h2 id="settings-title" class="tb-heading">얼마나 눈치를 볼까요?</h2>
+          <p class="tb-intro">0%면 정상 타이머입니다. 높일수록 다른 탭에 다녀오는 동안 시간을 더 과감하게 앞당깁니다.</p>
+
+          <div class="tb-control-card">
+            <div class="tb-control-head">
+              <label for="nunchi">눈치 강도</label>
+              <output class="tb-control-value" for="nunchi"><span id="nunchi-value">35</span><small>%</small></output>
+            </div>
+            <input id="nunchi" class="tb-range" type="range" min="0" max="100" step="5" value="35" style="--fill:35%">
+            <div class="tb-range-ends"><span>정직함</span><span>대놓고 눈치봄</span></div>
+            <div class="tb-presets" aria-label="눈치 강도 빠른 설정">
+              <button type="button" data-nunchi="0">0%</button>
+              <button type="button" data-nunchi="35" aria-pressed="true">35%</button>
+              <button type="button" data-nunchi="100">100%</button>
+            </div>
+            <p class="tb-helper">실제 사람의 시선을 추적하지 않습니다. 이 페이지가 화면에 보이는지 여부만 사용합니다.</p>
+
+            <div class="timer-form">
+              <div class="tb-field-row">
+                <label class="tb-field" for="minutes">분
+                  <span class="timer-input-wrap"><input id="minutes" type="number" inputmode="numeric" min="0" max="180" value="5"><span class="timer-unit">분</span></span>
+                </label>
+                <label class="tb-field" for="seconds">초
+                  <span class="timer-input-wrap"><input id="seconds" type="number" inputmode="numeric" min="0" max="59" value="0"><span class="timer-unit">초</span></span>
+                </label>
+              </div>
+              <div class="timer-presets" aria-label="타이머 빠른 설정">
+                <button type="button" data-seconds="60">1분</button>
+                <button type="button" data-seconds="180">3분</button>
+                <button type="button" data-seconds="300">5분</button>
+                <button type="button" data-seconds="600">10분</button>
+              </div>
+              <label class="tb-check" for="sound-on"><span>끝나면 소리 내기</span><input id="sound-on" type="checkbox" checked></label>
+              <div class="sensor-note"><span class="sensor-dot" aria-hidden="true"></span><span><strong>눈치 센서:</strong> 다른 탭으로 이동하거나 앱을 내려두면 “안 보고 있음”으로 판단합니다.</span></div>
+            </div>
+          </div>
+
+          <section class="tb-thought" aria-label="타이머의 한마디">
+            <p class="tb-thought-label">“ 타이머의 한마디</p>
+            <h3 id="thought-title">아직 시작도 안 했는데요.</h3>
+            <p id="thought-body">왜 벌써 그렇게 쳐다보세요.</p>
+          </section>
+        </aside>
+      </div>
+    </main>
+
+    <footer class="tb-footer">
+      <span>다락방 뒷편 공구 상자</span>
+      <span>버그처럼 보여도 의도한 이상함이면 기능입니다.</span>
+    </footer>
+  </div>
+
+  <div class="tb-contact">
+    <a href="mailto:jkd04255@khu.ac.kr?subject=%5B%EB%8B%A4%EB%9D%BD%EB%B0%A9%20%EB%92%B7%ED%8E%B8%20%EA%B3%B5%EA%B5%AC%20%EC%83%81%EC%9E%90%5D%20%EB%88%88%EC%B9%98%20%EB%AC%B8%EC%9D%98%20%C2%B7%20%EC%98%A4%EB%A5%98%20%EC%A0%9C%EB%B3%B4">✉ 문의 · 오류 제보</a>
+  </div>
+
+  <script>
+    (() => {
+      const stage = document.getElementById('timer-stage');
+      const pupils = [...document.querySelectorAll('.timer-pupil')];
+      const display = document.getElementById('timer-display');
+      const progressBar = document.getElementById('timer-progress-bar');
+      const stateLabel = document.getElementById('timer-state');
+      const elapsedLabel = document.getElementById('elapsed-label');
+      const watchLabel = document.getElementById('watch-label');
+      const caseStatus = document.getElementById('case-status');
+      const startBtn = document.getElementById('start-btn');
+      const pauseBtn = document.getElementById('pause-btn');
+      const resetBtn = document.getElementById('reset-btn');
+      const clearLogBtn = document.getElementById('clear-log-btn');
+      const minutesInput = document.getElementById('minutes');
+      const secondsInput = document.getElementById('seconds');
+      const soundOn = document.getElementById('sound-on');
+      const nunchi = document.getElementById('nunchi');
+      const nunchiValue = document.getElementById('nunchi-value');
+      const nunchiPresets = [...document.querySelectorAll('[data-nunchi]')];
+      const timerPresets = [...document.querySelectorAll('[data-seconds]')];
+      const stolenInline = document.getElementById('stolen-inline');
+      const stolenTotal = document.getElementById('stolen-total');
+      const caughtCount = document.getElementById('caught-count');
+      const caughtLog = document.getElementById('caught-log');
+      const thoughtTitle = document.getElementById('thought-title');
+      const thoughtBody = document.getElementById('thought-body');
+
+      let durationMs = 5 * 60 * 1000;
+      let remainingMs = durationMs;
+      let running = false;
+      let finished = false;
+      let lastFrame = performance.now();
+      let hiddenAt = null;
+      let stolenMs = 0;
+      let caught = 0;
+      let audioContext = null;
+      let intervalId = null;
+
+      const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+      function readDurationFromInputs() {
+        const minutes = clamp(Number(minutesInput.value) || 0, 0, 180);
+        const seconds = clamp(Number(secondsInput.value) || 0, 0, 59);
+        minutesInput.value = minutes;
+        secondsInput.value = seconds;
+        return Math.max(1000, (minutes * 60 + seconds) * 1000);
+      }
+
+      function prettyDuration(ms) {
+        const total = Math.max(0, Math.ceil(ms / 1000));
+        const hours = Math.floor(total / 3600);
+        const minutes = Math.floor((total % 3600) / 60);
+        const seconds = total % 60;
+        return hours > 0
+          ? `${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`
+          : `${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
+      }
+
+      function durationLabel(ms) {
+        const total = Math.round(ms / 1000);
+        const m = Math.floor(total / 60);
+        const s = total % 60;
+        if (m && s) return `설정 ${m}분 ${s}초`;
+        if (m) return `설정 ${m}분`;
+        return `설정 ${s}초`;
+      }
+
+      function setThought(title, body) {
+        thoughtTitle.textContent = title;
+        thoughtBody.textContent = body;
+      }
+
+      function render() {
+        display.textContent = prettyDuration(remainingMs);
+        const ratio = durationMs > 0 ? clamp(remainingMs / durationMs, 0, 1) : 0;
+        progressBar.style.transform = `scaleX(${ratio})`;
+        elapsedLabel.textContent = durationLabel(durationMs);
+        stolenInline.textContent = `몰래 당긴 시간 ${(stolenMs / 1000).toFixed(1)}초`;
+        stolenTotal.textContent = `${(stolenMs / 1000).toFixed(1)}초`;
+        caughtCount.textContent = `${caught}회`;
+        startBtn.textContent = finished ? '한 번 더' : running ? '진행 중' : (remainingMs < durationMs ? '계속' : '시작');
+        startBtn.disabled = running;
+        pauseBtn.disabled = !running;
+
+        if (finished) {
+          stateLabel.textContent = 'DONE · 어쨌든 끝남';
+          caseStatus.textContent = 'STATUS · DONE';
+        } else if (running) {
+          stateLabel.textContent = document.hidden ? 'SUSPICIOUS · 안 보는 중' : 'RUNNING · 아무 일도 없음';
+          caseStatus.textContent = 'STATUS · RUNNING';
+        } else if (remainingMs < durationMs) {
+          stateLabel.textContent = 'PAUSED · 제가 멈춘 건 아님';
+          caseStatus.textContent = 'STATUS · PAUSED';
+        } else {
+          stateLabel.textContent = 'READY · 아주 얌전함';
+          caseStatus.textContent = 'STATUS · READY';
+        }
+      }
+
+      function syncNunchi(value) {
+        const n = clamp(Number(value) || 0, 0, 100);
+        nunchi.value = n;
+        nunchiValue.textContent = n;
+        nunchi.style.setProperty('--fill', `${n}%`);
+        nunchiPresets.forEach(button => button.setAttribute('aria-pressed', String(Number(button.dataset.nunchi) === n)));
+        if (n === 0) setThought('오늘은 정직하게 갑니다.', '정확한 타이머가 필요했다면 갑자기 쓸모 있어졌네요.');
+        else if (!running && !finished) setThought('아직 시작도 안 했는데요.', n >= 70 ? '그 강도면 저도 좀 부담스럽습니다.' : '왜 벌써 그렇게 쳐다보세요.');
+      }
+
+      function applyInputs(resetRemaining = true) {
+        if (running) return;
+        durationMs = readDurationFromInputs();
+        if (resetRemaining) {
+          remainingMs = durationMs;
+          finished = false;
+        }
+        render();
+      }
+
+      function setDurationSeconds(totalSeconds) {
+        if (running) return;
+        const total = clamp(Number(totalSeconds) || 1, 1, 180 * 60 + 59);
+        minutesInput.value = Math.floor(total / 60);
+        secondsInput.value = total % 60;
+        durationMs = total * 1000;
+        remainingMs = durationMs;
+        finished = false;
+        render();
+      }
+
+      function ensureAudio() {
+        if (!soundOn.checked) return;
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        if (!audioContext) audioContext = new AudioCtx();
+        if (audioContext.state === 'suspended') audioContext.resume().catch(() => {});
+      }
+
+      function beep() {
+        if (!soundOn.checked || !audioContext) return;
+        const now = audioContext.currentTime;
+        [0,0.22,0.44].forEach((offset, index) => {
+          const oscillator = audioContext.createOscillator();
+          const gain = audioContext.createGain();
+          oscillator.type = 'sine';
+          oscillator.frequency.value = index === 2 ? 880 : 660;
+          gain.gain.setValueAtTime(0.0001, now + offset);
+          gain.gain.exponentialRampToValueAtTime(0.14, now + offset + 0.01);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + offset + 0.16);
+          oscillator.connect(gain).connect(audioContext.destination);
+          oscillator.start(now + offset);
+          oscillator.stop(now + offset + 0.18);
+        });
+      }
+
+      function finish() {
+        running = false;
+        finished = true;
+        remainingMs = 0;
+        if (intervalId) clearInterval(intervalId);
+        intervalId = null;
+        beep();
+        watchLabel.textContent = '끝까지 지켜봤군요';
+        setThought('끝났어요. 진짜예요.', stolenMs > 0 ? `그중 ${(stolenMs/1000).toFixed(1)}초는 제가 조금 도왔습니다.` : '이번에는 정말 정직하게 끝냈습니다.');
+        render();
+      }
+
+      function tick() {
+        if (!running || document.hidden) return;
+        const now = performance.now();
+        const elapsed = Math.max(0, now - lastFrame);
+        lastFrame = now;
+        remainingMs -= elapsed;
+        if (remainingMs <= 0) finish();
+        else render();
+      }
+
+      function start() {
+        ensureAudio();
+        if (finished || remainingMs <= 0) {
+          durationMs = readDurationFromInputs();
+          remainingMs = durationMs;
+          finished = false;
+          stolenMs = 0;
+          caught = 0;
+          caughtLog.innerHTML = '새 타이머를 시작했습니다. <strong>이번에는 과연.</strong>';
+        } else if (remainingMs === durationMs) {
+          durationMs = readDurationFromInputs();
+          remainingMs = durationMs;
+        }
+        running = true;
+        lastFrame = performance.now();
+        hiddenAt = document.hidden ? Date.now() : null;
+        watchLabel.textContent = document.hidden ? '지금 안 보고 있죠?' : '지금은 보고 있네요';
+        setThought('네, 가고 있어요.', Number(nunchi.value) === 0 ? '오늘은 장난 안 칩니다.' : '계속 보고 계시면 아무 일도 없을 겁니다.');
+        if (intervalId) clearInterval(intervalId);
+        intervalId = setInterval(tick, 100);
+        render();
+      }
+
+      function pause() {
+        if (!running) return;
+        tick();
+        running = false;
+        hiddenAt = null;
+        if (intervalId) clearInterval(intervalId);
+        intervalId = null;
+        watchLabel.textContent = '직접 멈추셨습니다';
+        setThought('제가 멈춘 게 아닙니다.', '버튼 누른 건 분명히 봤습니다.');
+        render();
+      }
+
+      function reset() {
+        running = false;
+        finished = false;
+        hiddenAt = null;
+        if (intervalId) clearInterval(intervalId);
+        intervalId = null;
+        durationMs = readDurationFromInputs();
+        remainingMs = durationMs;
+        stolenMs = 0;
+        caught = 0;
+        watchLabel.textContent = '지금은 보고 있네요';
+        caughtLog.innerHTML = '기록까지 깨끗해졌습니다. <strong>원래 아무 일도 없었습니다.</strong>';
+        setThought('다시 처음부터군요.', '이번에는 저도 얌전히 해보겠습니다. 아마도요.');
+        render();
+      }
+
+      function onVisibilityChange() {
+        if (!running) {
+          watchLabel.textContent = document.hidden ? '화면 밖으로 감' : '지금은 보고 있네요';
+          return;
+        }
+
+        if (document.hidden) {
+          hiddenAt = Date.now();
+          watchLabel.textContent = '지금 안 보고 있죠?';
+          stateLabel.textContent = 'SUSPICIOUS · 안 보는 중';
+          setThought('어디 가세요?', '아무것도 안 할 테니까 천천히 다녀오세요.');
+          return;
+        }
+
+        if (hiddenAt !== null) {
+          const hiddenDuration = Math.max(0, Date.now() - hiddenAt);
+          const strength = Number(nunchi.value) / 100;
+          const normalPassage = hiddenDuration;
+          let extra = 0;
+          if (strength > 0 && hiddenDuration > 350) {
+            const randomFactor = 0.12 + Math.random() * 0.33;
+            extra = Math.min(15000, hiddenDuration * strength * randomFactor);
+          }
+          remainingMs -= normalPassage + extra;
+          stolenMs += extra;
+          caught += 1;
+          hiddenAt = null;
+          lastFrame = performance.now();
+          watchLabel.textContent = '돌아오셨네요';
+
+          if (extra > 50) {
+            caughtLog.innerHTML = `방금 <strong>${(extra/1000).toFixed(1)}초</strong>를 몰래 앞당기다 들켰습니다.`;
+            setThought('어... 오셨네요?', `${(extra/1000).toFixed(1)}초 정도는 그냥 정리해둔 겁니다.`);
+          } else {
+            caughtLog.innerHTML = '방금 돌아오셨지만 <strong>이번에는 거의 안 건드렸습니다.</strong>';
+            setThought('저 아무것도 안 했는데요.', '진짜로요. 이번엔 거의요.');
+          }
+
+          if (remainingMs <= 0) finish();
+          else render();
+        }
+      }
+
+      nunchi.addEventListener('input', event => syncNunchi(event.target.value));
+      nunchiPresets.forEach(button => button.addEventListener('click', () => syncNunchi(button.dataset.nunchi)));
+      timerPresets.forEach(button => button.addEventListener('click', () => setDurationSeconds(button.dataset.seconds)));
+      minutesInput.addEventListener('change', () => applyInputs(true));
+      secondsInput.addEventListener('change', () => applyInputs(true));
+      startBtn.addEventListener('click', start);
+      pauseBtn.addEventListener('click', pause);
+      resetBtn.addEventListener('click', reset);
+      clearLogBtn.addEventListener('click', () => {
+        stolenMs = 0;
+        caught = 0;
+        caughtLog.innerHTML = '들킨 기록을 지웠습니다. <strong>증거가 사라졌습니다.</strong>';
+        render();
+      });
+      document.addEventListener('visibilitychange', onVisibilityChange);
+
+      stage.addEventListener('pointermove', event => {
+        const rect = stage.getBoundingClientRect();
+        const x = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
+        const y = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
+        const dx = clamp(x * 6, -6, 6);
+        const dy = clamp(y * 5, -5, 5);
+        pupils.forEach(pupil => {
+          pupil.style.setProperty('--eye-x', `${dx}px`);
+          pupil.style.setProperty('--eye-y', `${dy}px`);
+        });
+      });
+      stage.addEventListener('pointerleave', () => pupils.forEach(pupil => {
+        pupil.style.setProperty('--eye-x', '0px');
+        pupil.style.setProperty('--eye-y', '0px');
+      }));
+
+      syncNunchi(35);
+      render();
+    })();
+  </script>
+</body>
+</html>
