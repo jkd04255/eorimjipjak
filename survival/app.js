@@ -14,6 +14,13 @@ const newPlan=document.getElementById('newPlan');
 const toast=document.getElementById('toast');
 const fanButton=document.getElementById('fanButton');
 
+const fireDecayRange=document.getElementById('fireDecayRange');
+const fireDecayValue=document.getElementById('fireDecayValue');
+const fireDecayCaption=document.getElementById('fireDecayCaption');
+const rainIntensityRange=document.getElementById('rainIntensityRange');
+const rainIntensityValue=document.getElementById('rainIntensityValue');
+const rainIntensityCaption=document.getElementById('rainIntensityCaption');
+
 const plans=[
   '해 떨어지기 전에 장작부터 챙깁니다.',
   '비구름이 오기 전에 불 세기부터 채워둡니다.',
@@ -23,44 +30,134 @@ const plans=[
   '야자수 그늘은 좋지만, 지금 더 중요한 건 모닥불입니다.'
 ];
 
-const state={fire:88,isDay:true,manualSky:false,isRaining:false,canStorm:true,toastTimer:null};
+function readStoredNumber(key,fallback){
+  try{
+    const raw=localStorage.getItem(key);
+    if(raw===null)return fallback;
+    const value=Number(raw);
+    return Number.isFinite(value)?value:fallback;
+  }catch(_){return fallback;}
+}
+
+function saveSetting(key,value){
+  try{localStorage.setItem(key,String(value));}catch(_){}
+}
+
+const state={
+  fire:88,
+  isDay:true,
+  manualSky:false,
+  isRaining:false,
+  canStorm:true,
+  toastTimer:null,
+  fireDecay:readStoredNumber('island-fire-decay',55),
+  rainIntensity:readStoredNumber('island-rain-intensity',55)
+};
 
 function clamp(v,min,max){return Math.min(max,Math.max(min,v));}
 function realTimeIsDay(){const h=new Date().getHours();return h>=6&&h<18;}
-function showToast(message){toast.textContent=message;toast.classList.add('show');clearTimeout(state.toastTimer);state.toastTimer=setTimeout(()=>toast.classList.remove('show'),1700);}
-function setRandomPlan(){let next=plans[Math.floor(Math.random()*plans.length)];if(next===survivalMessage.textContent)next=plans[(plans.indexOf(next)+1)%plans.length];survivalMessage.textContent=next;}
+function showToast(message){if(!toast)return;toast.textContent=message;toast.classList.add('show');clearTimeout(state.toastTimer);state.toastTimer=setTimeout(()=>toast.classList.remove('show'),1700);}
+function setRandomPlan(){if(!survivalMessage)return;let next=plans[Math.floor(Math.random()*plans.length)];if(next===survivalMessage.textContent)next=plans[(plans.indexOf(next)+1)%plans.length];survivalMessage.textContent=next;}
 
 function applySky(isDay,{animate=false}={}){
   state.isDay=isDay;
   document.body.classList.toggle('is-day',isDay);
   document.body.classList.toggle('is-night',!isDay);
-  islandScene.style.setProperty('--sun-rotation',isDay?'60deg':'-120deg');
-  islandScene.style.setProperty('--moon-rotation',isDay?'140deg':'-40deg');
-  skyStateText.textContent=isDay?'낮':'밤';
-  skyModeLabel.textContent=`${state.manualSky?'수동':'실시간'} ${isDay?'낮':'밤'}`;
-  dayNightToggle.textContent=isDay?'🌙 밤으로 전환':'☀️ 낮으로 전환';
+  if(islandScene){
+    islandScene.style.setProperty('--sun-rotation',isDay?'60deg':'-120deg');
+    islandScene.style.setProperty('--moon-rotation',isDay?'140deg':'-40deg');
+  }
+  if(skyStateText)skyStateText.textContent=isDay?'낮':'밤';
+  if(skyModeLabel)skyModeLabel.textContent=`${state.manualSky?'수동':'실시간'} ${isDay?'낮':'밤'}`;
+  if(dayNightToggle)dayNightToggle.textContent=isDay?'🌙 밤으로 전환':'☀️ 낮으로 전환';
   if(animate)showToast(isDay?'해가 다시 떠올랐습니다.':'해가 지고 초승달이 떠오릅니다.');
 }
 
+function fireDecayLabel(value){
+  if(value<=15)return '거의 안 꺼짐';
+  if(value<=35)return '느긋함';
+  if(value<=65)return '보통';
+  if(value<=85)return '빠르게 약해짐';
+  return '눈 깜빡하면 재';
+}
+
+function rainIntensityLabel(value){
+  if(value<=15)return '안개비';
+  if(value<=35)return '보슬비';
+  if(value<=65)return '제법 내림';
+  if(value<=85)return '굵은 빗줄기';
+  return '앞이 안 보임';
+}
+
+function syncPresetButtons(selector,value,attribute){
+  document.querySelectorAll(selector).forEach(button=>{
+    button.setAttribute('aria-pressed',Number(button.dataset[attribute])===value?'true':'false');
+  });
+}
+
+function applyTuning({persist=false}={}){
+  state.fireDecay=clamp(Math.round(state.fireDecay/5)*5,0,100);
+  state.rainIntensity=clamp(Math.round(state.rainIntensity/5)*5,0,100);
+
+  if(fireDecayRange){
+    fireDecayRange.value=state.fireDecay;
+    fireDecayRange.style.setProperty('--fill',`${state.fireDecay}%`);
+  }
+  if(fireDecayValue)fireDecayValue.textContent=state.fireDecay;
+  if(fireDecayCaption)fireDecayCaption.textContent=fireDecayLabel(state.fireDecay);
+
+  if(rainIntensityRange){
+    rainIntensityRange.value=state.rainIntensity;
+    rainIntensityRange.style.setProperty('--fill',`${state.rainIntensity}%`);
+  }
+  if(rainIntensityValue)rainIntensityValue.textContent=state.rainIntensity;
+  if(rainIntensityCaption)rainIntensityCaption.textContent=rainIntensityLabel(state.rainIntensity);
+
+  syncPresetButtons('[data-fire-decay]',state.fireDecay,'fireDecay');
+  syncPresetButtons('[data-rain-intensity]',state.rainIntensity,'rainIntensity');
+
+  if(islandScene){
+    const rainRatio=state.rainIntensity/100;
+    const opacity=(0.10+rainRatio*0.78).toFixed(2);
+    const speed=(0.84-rainRatio*0.48).toFixed(2);
+    const spacing=Math.round(39-rainRatio*17);
+    const spacing2=Math.round(58-rainRatio*22);
+    islandScene.style.setProperty('--rain-opacity',opacity);
+    islandScene.style.setProperty('--rain-speed',`${speed}s`);
+    islandScene.style.setProperty('--rain-spacing',`${spacing}px`);
+    islandScene.style.setProperty('--rain-spacing-2',`${spacing2}px`);
+  }
+
+  if(persist){
+    saveSetting('island-fire-decay',state.fireDecay);
+    saveSetting('island-rain-intensity',state.rainIntensity);
+  }
+  renderWeather();
+}
+
 function renderWeather(){
-  islandScene.classList.toggle('rainy',state.isRaining);
-  weatherStateText.textContent=state.isRaining?'비 오는 중':'맑음';
-  weatherBadge.textContent=state.isRaining?'먹구름 + 비':'맑음';
+  if(islandScene)islandScene.classList.toggle('rainy',state.isRaining);
+  const rainText=state.isRaining?`비 오는 중 · ${state.rainIntensity}%`:'맑음';
+  if(weatherStateText)weatherStateText.textContent=rainText;
+  if(weatherBadge)weatherBadge.textContent=state.isRaining?`먹구름 + 비 ${state.rainIntensity}%`:'맑음';
 }
 
 function renderFire(){
   state.fire=clamp(state.fire,0,100);
   const level=Math.round(state.fire);
   const ratio=level/100;
-  islandScene.style.setProperty('--fire-scale',(ratio*1.17).toFixed(3));
-  islandScene.style.setProperty('--glow-scale',(0.18+ratio*1.02).toFixed(3));
-  islandScene.style.setProperty('--fire-brightness',(0.35+ratio*0.95).toFixed(3));
-  islandScene.style.setProperty('--spark-opacity',ratio.toFixed(3));
-  islandScene.style.setProperty('--ember-opacity',(0.10+ratio*0.90).toFixed(3));
-  fireGlow.style.opacity=(0.05+ratio*0.82).toFixed(3);
-  fireValue.textContent=`${level}%`;
-  fireMeter.style.width=`${level}%`;
+  if(islandScene){
+    islandScene.style.setProperty('--fire-scale',(ratio*1.17).toFixed(3));
+    islandScene.style.setProperty('--glow-scale',(0.18+ratio*1.02).toFixed(3));
+    islandScene.style.setProperty('--fire-brightness',(0.35+ratio*0.95).toFixed(3));
+    islandScene.style.setProperty('--spark-opacity',ratio.toFixed(3));
+    islandScene.style.setProperty('--ember-opacity',(0.10+ratio*0.90).toFixed(3));
+  }
+  if(fireGlow)fireGlow.style.opacity=(0.05+ratio*0.82).toFixed(3);
+  if(fireValue)fireValue.textContent=`${level}%`;
+  if(fireMeter)fireMeter.style.width=`${level}%`;
 
+  if(!fireStatus)return;
   if(level>=75){fireStatus.textContent='활활';fireStatus.className='status alive';}
   else if(level>=40){fireStatus.textContent='타닥타닥';fireStatus.className='status alive';}
   else if(level>=15){fireStatus.textContent='약해짐';fireStatus.className='status warning';}
@@ -71,36 +168,43 @@ function renderFire(){
 function startStorm(){
   if(state.isRaining)return;
   state.isRaining=true;
-  islandScene.classList.remove('clearing');
+  if(islandScene)islandScene.classList.remove('clearing');
   renderWeather();
-  showToast('먹구름이 몰려와 비가 내리기 시작했습니다.');
+  showToast(`먹구름이 몰려왔습니다. 비 세기 ${state.rainIntensity}%.`);
 }
 
 function clearStorm(){
-  fanButton.classList.add('spinning');
-  setTimeout(()=>fanButton.classList.remove('spinning'),1100);
+  if(fanButton){
+    fanButton.classList.add('spinning');
+    setTimeout(()=>fanButton.classList.remove('spinning'),1100);
+  }
 
   if(!state.isRaining){showToast('선풍기만 열심히 돌고 있습니다. 먹구름은 없습니다.');return;}
 
   state.isRaining=false;
   state.canStorm=false;
-  islandScene.classList.add('clearing');
+  if(islandScene)islandScene.classList.add('clearing');
   renderWeather();
-  showToast('선풍기 바람으로 먹구름을 날려버렸습니다.');
+  showToast('선풍기 바람으로 먹구름과 빗줄기를 함께 날려버렸습니다.');
 
-  setTimeout(()=>islandScene.classList.remove('clearing'),1100);
+  setTimeout(()=>{if(islandScene)islandScene.classList.remove('clearing');},1100);
   setTimeout(()=>{state.canStorm=true;},6500);
 }
 
 function decayFire(){
   if(state.fire<=0)return;
   const before=state.fire;
-  const decay=state.isRaining?12:6;
+
+  // 0%에서도 완전히 멈추지 않도록 아주 작은 자연 감소를 남깁니다.
+  const baseDecay=0.35+(state.fireDecay/100)*7.0;
+  const rainMultiplier=state.isRaining?(1.25+(state.rainIntensity/100)*1.35):1;
+  const decay=baseDecay*rainMultiplier;
+
   state.fire=clamp(state.fire-decay,0,100);
   renderFire();
 
   if(!state.isRaining&&before>18&&state.fire<=18)showToast('불이 거의 꺼져갑니다. 장작이 필요합니다.');
-  if(state.isRaining&&before>24&&state.fire<=24)showToast('비 때문에 불이 더 빠르게 죽고 있습니다.');
+  if(state.isRaining&&before>24&&state.fire<=24)showToast('젖은 불씨가 빠르게 약해지고 있습니다.');
   if(state.fire===0)showToast('불이 꺼졌습니다. 잔불만 남았습니다.');
 }
 
@@ -109,23 +213,46 @@ function maybeStartStorm(){
   if(Math.random()<0.28)startStorm();
 }
 
-addWood.addEventListener('click',()=>{
+if(addWood)addWood.addEventListener('click',()=>{
   const wasOut=state.fire<=0;
   state.fire=clamp(state.fire+24,0,100);
   renderFire();
   showToast(wasOut?'불씨가 다시 살아났습니다.':'장작 투입. 불이 확 살아납니다.');
 });
 
-fanButton.addEventListener('click',clearStorm);
+if(fanButton)fanButton.addEventListener('click',clearStorm);
 
-dayNightToggle.addEventListener('click',()=>{
+if(dayNightToggle)dayNightToggle.addEventListener('click',()=>{
   state.manualSky=true;
   applySky(!state.isDay,{animate:true});
 });
 
-newPlan.addEventListener('click',()=>{setRandomPlan();showToast('오늘의 생존계획을 다시 정했습니다.');});
+if(newPlan)newPlan.addEventListener('click',()=>{setRandomPlan();showToast('오늘의 생존계획을 다시 정했습니다.');});
+
+if(fireDecayRange)fireDecayRange.addEventListener('input',event=>{
+  state.fireDecay=Number(event.target.value);
+  applyTuning({persist:true});
+});
+
+if(rainIntensityRange)rainIntensityRange.addEventListener('input',event=>{
+  state.rainIntensity=Number(event.target.value);
+  applyTuning({persist:true});
+});
+
+document.querySelectorAll('[data-fire-decay]').forEach(button=>button.addEventListener('click',()=>{
+  state.fireDecay=Number(button.dataset.fireDecay);
+  applyTuning({persist:true});
+  showToast(`불 사그라듦을 ${state.fireDecay}%로 바꿨습니다.`);
+}));
+
+document.querySelectorAll('[data-rain-intensity]').forEach(button=>button.addEventListener('click',()=>{
+  state.rainIntensity=Number(button.dataset.rainIntensity);
+  applyTuning({persist:true});
+  showToast(`비 세기를 ${state.rainIntensity}%로 바꿨습니다.`);
+}));
 
 applySky(realTimeIsDay());
+applyTuning();
 renderWeather();
 renderFire();
 setRandomPlan();
@@ -137,3 +264,7 @@ setInterval(()=>{
   const nowDay=realTimeIsDay();
   if(nowDay!==state.isDay)applySky(nowDay,{animate:true});
 },60000);
+
+// 첫 폭풍은 페이지에 들어온 뒤 6~12초 사이에 한 번은 반드시 찾아옵니다.
+const guaranteedFirstStormMs=6000+Math.floor(Math.random()*6001);
+setTimeout(()=>{if(!state.isRaining)startStorm();},guaranteedFirstStormMs);
