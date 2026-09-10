@@ -21,9 +21,10 @@
     .believability{margin-top:22px}
     .believability-head{display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--tb-muted);font-size:12px}
     .believability-track{height:7px;margin-top:8px;border-radius:999px;background:#eceaf3;overflow:hidden}
-    .believability-track span{display:block;height:100%;width:72%;background:var(--tb-purple);transform-origin:left center;transition:width .18s ease}
-    .excuse-actions{display:flex;gap:9px;margin-top:22px;flex-wrap:wrap}
-    .excuse-actions .tb-btn{flex:1;min-width:120px}
+    .believability-track span{display:block;height:100%;width:78%;background:var(--tb-purple);transition:width .18s ease}
+    .excuse-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:22px}
+    .excuse-actions .tb-btn{min-width:0}
+    .excuse-actions .generate{grid-column:1/-1}
     .situation-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
     .situation-btn{min-height:62px;padding:11px 12px;border:1px solid var(--tb-line);border-radius:10px;background:#fff;text-align:left;font-size:13px;font-weight:700}
     .situation-btn:hover{background:var(--tb-soft)}
@@ -33,22 +34,19 @@
     .history-item span{display:block;color:var(--tb-muted);font-size:11px}
     .history-item p{margin-top:4px;font-size:13px;line-height:1.65}
     .empty-history{color:var(--tb-muted);font-size:13px}
-    @media(max-width:720px){.excuse-stage{padding:22px 18px}.situation-grid{grid-template-columns:1fr}.excuse-actions{display:grid;grid-template-columns:1fr}.excuse-actions .tb-btn{min-width:0}}
+    @media(max-width:720px){.excuse-stage{padding:22px 18px}.situation-grid{grid-template-columns:1fr}.excuse-actions{grid-template-columns:1fr 1fr}.excuse-actions .generate{grid-column:1/-1}}
+    @media(max-width:390px){.excuse-actions{grid-template-columns:1fr}.excuse-actions .generate{grid-column:auto}}
   </style>
 </head>
 <body>
   <div class="tb-shell">
     <header class="tb-header">
       <div class="tb-brand">
-        <span class="tb-logo excuse-logo" aria-hidden="true">
-          <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7.5h20v14H15l-6 4v-4H6z"/><path d="M11 12h10M11 16h7"/></svg>
-        </span>
+        <span class="tb-logo excuse-logo" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7.5h20v14H15l-6 4v-4H6z"/><path d="M11 12h10M11 16h7"/></svg></span>
         <div class="tb-brand-copy"><h1 class="tb-title">그럴싸</h1><p class="tb-subtitle">점점 수상해지는 핑계 생성기</p></div>
       </div>
       <span class="tb-edition">ATTIC TOOL / 014</span>
-      <a class="tb-home" href="../" aria-label="홈으로 돌아가기" title="홈">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-7h6v7"/></svg>
-      </a>
+      <a class="tb-home" href="../" aria-label="홈으로 돌아가기" title="홈"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-7h6v7"/></svg></a>
     </header>
 
     <main class="tb-main">
@@ -58,25 +56,23 @@
             <div class="tb-case-top"><span>EXCUSE LAB / 014</span><span class="tb-sticker">어쩔 수 없었습니다</span></div>
             <div class="tb-case-paper">
               <div class="excuse-stage">
-                <p class="situation-label" id="situation-label">지각 · 기본 핑계</p>
+                <p class="situation-label" id="situation-label">지각 · 그럴듯함</p>
                 <h2 id="generator-title" class="situation-title">일단 그럴싸하게 시작해볼게요.</h2>
-                <p class="situation-desc">같은 상황에서 계속 과장하면 핑계가 점점 독자적인 세계관을 갖기 시작합니다.</p>
-
+                <p class="situation-desc">같은 단계에서도 여러 핑계 중 하나가 랜덤으로 나옵니다. 부족하면 더 과장하고, 너무 갔다 싶으면 다시 낮추세요.</p>
                 <div class="excuse-paper" aria-live="polite">
                   <p id="excuse-level" class="excuse-level">LEVEL 1 · 그럴듯함</p>
                   <p id="excuse-text" class="excuse-text">버스가 평소보다 조금 늦게 왔어요.</p>
                   <p id="excuse-sub" class="excuse-sub">이 정도는 아직 설명이라고 부를 수 있습니다.</p>
                 </div>
-
                 <div class="believability">
-                  <div class="believability-head"><span>상대방이 믿어줄 것 같은 정도</span><strong id="believe-value">78%</strong></div>
-                  <div class="believability-track"><span id="believe-bar"></span></div>
+                  <div class="believability-head"><span>상대방이 믿어줄 것 같은 정도</span><strong id="believe-value">82%</strong></div>
+                  <div class="believability-track"><span id="believe-bar" style="width:82%"></span></div>
                 </div>
-
                 <div class="excuse-actions">
-                  <button id="generate-btn" class="tb-btn tb-btn-primary" type="button">새 핑계 만들기</button>
+                  <button id="generate-btn" class="tb-btn tb-btn-primary generate" type="button">새 핑계 만들기</button>
+                  <button id="deescalate-btn" class="tb-btn tb-btn-secondary" type="button">조금 덜 과장하기</button>
                   <button id="escalate-btn" class="tb-btn tb-btn-secondary" type="button">좀 더 과장하기</button>
-                  <button id="copy-btn" class="tb-btn tb-btn-ghost" type="button">복사하기</button>
+                  <button id="copy-btn" class="tb-btn tb-btn-ghost generate" type="button">복사하기</button>
                 </div>
               </div>
             </div>
@@ -92,8 +88,7 @@
         <aside class="tb-settings" aria-labelledby="settings-title">
           <p class="tb-eyebrow">MAKE IT SOUND REASONABLE</p>
           <h2 id="settings-title" class="tb-heading">무슨 일이 있었나요?</h2>
-          <p class="tb-intro">상황을 고르고 뻔뻔함을 올려보세요. 높은 단계에서는 현실성이 먼저 퇴근합니다.</p>
-
+          <p class="tb-intro">상황을 고르고 뻔뻔함을 조절해보세요. 높은 단계에서는 현실성이 먼저 퇴근합니다.</p>
           <div class="tb-control-card">
             <div class="situation-grid" id="situations">
               <button class="situation-btn" data-key="late" aria-pressed="true" type="button">지각</button>
@@ -103,7 +98,6 @@
               <button class="situation-btn" data-key="work" aria-pressed="false" type="button">출근·회의</button>
               <button class="situation-btn" data-key="reply" aria-pressed="false" type="button">답장 늦음</button>
             </div>
-
             <div class="tb-section" style="margin-top:24px">
               <div class="tb-control-head"><label for="boldness">뻔뻔함</label><output class="tb-control-value" for="boldness"><span id="boldness-value">25</span><small>%</small></output></div>
               <input id="boldness" class="tb-range" type="range" min="0" max="100" step="5" value="25" style="--fill:25%">
@@ -111,97 +105,205 @@
               <p id="boldness-helper" class="tb-helper">아직은 충분히 있을 법한 핑계를 만듭니다.</p>
             </div>
           </div>
-
-          <section class="tb-thought" aria-label="그럴싸의 한마디">
-            <p class="tb-thought-label">“ 그럴싸의 한마디</p>
-            <h3 id="thought-title">말은 짧을수록 안전합니다.</h3>
-            <p id="thought-body">설명을 덧붙일수록 새로운 설정이 생기고, 설정은 언젠가 회수해야 합니다.</p>
-          </section>
+          <section class="tb-thought" aria-label="그럴싸의 한마디"><p class="tb-thought-label">“ 그럴싸의 한마디</p><h3 id="thought-title">말은 짧을수록 안전합니다.</h3><p id="thought-body">설명을 덧붙일수록 새로운 설정이 생기고, 설정은 언젠가 회수해야 합니다.</p></section>
         </aside>
       </div>
     </main>
-
     <footer class="tb-footer"><span>다락방 뒷편 공구 상자</span><span>중요한 상황에서는 핑계보다 사실대로 말하는 편이 안전합니다.</span></footer>
   </div>
   <div class="tb-contact"><a href="mailto:jkd04255@khu.ac.kr?subject=%5B%EB%8B%A4%EB%9D%BD%EB%B0%A9%20%EB%92%B7%ED%8E%B8%20%EA%B3%B5%EA%B5%AC%20%EC%83%81%EC%9E%90%5D%20%EA%B7%B8%EB%9F%B4%EC%8B%B8%20%EB%AC%B8%EC%9D%98%20%C2%B7%20%EC%98%A4%EB%A5%98%20%EC%A0%9C%EB%B3%B4">✉ 문의 · 오류 제보</a></div>
 
-  <script>
-  (()=>{
-    const data={
-      late:[
-        ['버스가 평소보다 조금 늦게 왔어요.','알람도 맞춰놨고 출발도 했습니다. 교통이 아주 조금 배신했습니다.'],
+<script>
+(()=>{
+  const data={
+    late:[
+      [
+        ['버스가 평소보다 조금 늦게 왔어요.','교통이 오늘 조금만 배신했습니다.'],
+        ['환승 타이밍이 계속 안 맞아서 조금 늦었습니다.','진짜 몇 분 차이였는데 그 몇 분이 계속 쌓였습니다.'],
+        ['집에서 조금 늦게 나왔는데 길까지 막혔어요.','두 문제가 아주 효율적으로 합쳐졌습니다.']
+      ],[
         ['버스가 저를 보고도 그냥 지나쳤습니다.','기사님과 눈까지 마주쳤는데 관계가 거기까지였습니다.'],
+        ['지하철 문이 제 앞에서 세 번 연속 닫혔습니다.','대중교통이 오늘 저를 개인적으로 싫어하는 것 같습니다.'],
+        ['지도 앱이 빠른 길이라고 데려간 곳이 더 느린 길이었습니다.','기계에 대한 신뢰를 오늘 조금 잃었습니다.']
+      ],[
         ['버스와 저 사이에 개인적인 갈등이 있었습니다.','자세한 사정은 서로의 명예를 위해 밝히지 않겠습니다.'],
-        ['제가 출발하자 도시 전체의 시간이 11분 정도 느려졌습니다.','저도 피해자입니다. 시계 세 개가 동시에 저를 배신했습니다.']
-      ],
-      assignment:[
-        ['파일을 거의 다 만들었는데 마지막 저장을 못 했습니다.','내용은 있었습니다. 파일만 없을 뿐입니다.'],
-        ['제출 버튼을 눌렀는데 사이트가 저를 받아주지 않았습니다.','서버와 제 과제 사이에 궁합 문제가 있었습니다.'],
-        ['과제가 너무 완성도가 높아서 파일이 스스로 제출을 거부했습니다.','아직 세상에 공개될 준비가 안 됐다고 합니다.'],
-        ['제 과제가 학문적 독립을 선언하고 제 컴퓨터를 떠났습니다.','현재 행방은 알 수 없지만 언젠가 학회에서 다시 만날 것 같습니다.']
-      ],
-      cancel:[
-        ['갑자기 집에 처리할 일이 생겼어요.','미리 말씀드리지 못해 죄송합니다.'],
-        ['나가려고 했는데 현관문 앞에서 모든 의지가 사라졌습니다.','물리적인 문제는 아니었지만 상당히 강력했습니다.'],
-        ['오늘 밖에 나가면 안 될 것 같은 강한 예감이 들었습니다.','근거는 없지만 예감 쪽이 굉장히 확신에 차 있었습니다.'],
-        ['제가 집을 나서면 동네의 균형이 무너진다는 연락을 받았습니다.','어쩔 수 없이 지역사회를 위해 집에 남았습니다.']
-      ],
-      class:[
-        ['아침에 몸이 너무 안 좋아서 수업을 못 갔습니다.','지금은 조금 괜찮아졌습니다.'],
-        ['강의실까지 갔는데 정신이 먼저 결석했습니다.','몸만 들어가는 건 출석의 취지와 맞지 않는다고 판단했습니다.'],
-        ['오늘 수업이 휴강이라는 느낌이 너무 강했습니다.','공지에는 없었지만 제 직감에는 분명히 있었습니다.'],
-        ['교수님과 제가 같은 시공간에 있으면 강의가 붕괴될 가능성이 있었습니다.','교육 환경 보호를 위한 전략적 결석이었습니다.']
-      ],
-      work:[
-        ['교통이 평소보다 많이 막혔습니다.','예상보다 이동 시간이 길어졌습니다.'],
-        ['엘리베이터가 저를 계속 다른 층으로 데려갔습니다.','출근은 했는데 건물이 협조하지 않았습니다.'],
-        ['회의 링크가 저를 회의 참석자로 인정하지 않았습니다.','새로고침을 할수록 관계만 악화됐습니다.'],
-        ['회사 건물이 오늘 저를 직원으로 인식하지 못했습니다.','출입구와 긴 협상 끝에 현재 관계 회복 중입니다.']
-      ],
-      reply:[
-        ['답장을 머릿속으로 먼저 하고 보낸 줄 알았습니다.','확인해보니 생각만 굉장히 성실하게 했더라고요.'],
-        ['답장을 쓰다가 완벽한 문장을 고민하느라 늦었습니다.','결국 지금도 완벽하지는 않습니다.'],
-        ['메시지를 너무 오래 바라보다가 서로 답장한 사이인 줄 알았습니다.','읽음 표시가 대화를 대신해줄 거라 믿었습니다.'],
-        ['제 답장이 데이터 세계에서 길을 잃고 이제야 돌아왔습니다.','여러 서버를 여행한 흔적은 없지만 저는 그렇게 믿고 있습니다.']
+        ['횡단보도들이 제가 도착할 때마다 빨간불로 바뀌었습니다.','우연이라고 보기엔 횟수가 너무 많았습니다.'],
+        ['제가 탄 버스가 제 목적지를 잠시 잊은 것 같습니다.','분명 같은 번호였는데 마음은 다른 곳에 있었습니다.']
+      ],[
+        ['제가 출발하자 도시 전체의 시간이 11분 정도 느려졌습니다.','시계 세 개가 동시에 저를 배신했습니다.'],
+        ['오늘 아침 제 주변에서만 시공간 지연이 발생했습니다.','현재는 정상화된 것으로 보입니다.'],
+        ['출발 직후 도로가 저를 중심으로 재배치됐습니다.','길은 맞았는데 도시가 협조하지 않았습니다.']
       ]
-    };
-    const labels={late:'지각',assignment:'과제 미제출',cancel:'약속 취소',class:'수업 결석',work:'출근·회의',reply:'답장 늦음'};
-    const levelNames=['그럴듯함','수상함','뻔뻔함','재난급'];
-    const levelSubs=['이 정도는 아직 설명이라고 부를 수 있습니다.','조금 이상하지만 밀어붙이면 넘어갈 수도 있습니다.','여기부터는 표정 관리가 중요합니다.','논리보다 세계관의 완성도가 중요해집니다.'];
-    const helper=['아직은 충분히 있을 법한 핑계를 만듭니다.','조금씩 수상해집니다. 질문을 받으면 위험합니다.','상대방의 상상력까지 적극적으로 활용합니다.','현실성은 포기하고 설정의 일관성만 챙깁니다.'];
-    const status=['STATUS · PLAUSIBLE','STATUS · SUSPICIOUS','STATUS · BOLD','STATUS · CATASTROPHIC'];
-    const thought=[
-      ['말은 짧을수록 안전합니다.','설명을 덧붙일수록 새로운 설정이 생기고, 설정은 언젠가 회수해야 합니다.'],
-      ['질문이 들어오면 침착하세요.','세부 설정을 즉석에서 추가하는 순간 장편 연재가 시작됩니다.'],
-      ['여기서 더 가면 핑계가 아닙니다.','하지만 이미 여기까지 왔으니 세계관은 끝까지 지켜주세요.'],
-      ['상대가 믿는지가 중요한 게 아닙니다.','이쯤 되면 본인이 믿고 있는지가 더 중요합니다.']
-    ];
-    const $=id=>document.getElementById(id);
-    const buttons=[...document.querySelectorAll('.situation-btn')];
-    let key='late', level=0, history=[];
-    const levelFromBoldness=v=>Math.min(3,Math.floor(Number(v)/26));
-    function render(updateText=true){
-      if(updateText){const pool=data[key][level];$('excuse-text').textContent=pool[0];$('excuse-sub').textContent=pool[1];}
-      $('situation-label').textContent=`${labels[key]} · ${levelNames[level]}`;
-      $('excuse-level').textContent=`LEVEL ${level+1} · ${levelNames[level]}`;
-      const believe=[78,53,27,6][level]+Math.floor(Math.random()*7-3);
-      $('believe-value').textContent=Math.max(1,Math.min(99,believe))+'%';
-      $('believe-bar').style.width=Math.max(1,Math.min(99,believe))+'%';
-      $('case-status').textContent=status[level];
-      $('thought-title').textContent=thought[level][0];$('thought-body').textContent=thought[level][1];
+    ],
+    assignment:[
+      [
+        ['파일을 거의 다 만들었는데 마지막 저장을 못 했습니다.','내용은 있었습니다. 파일만 없을 뿐입니다.'],
+        ['제출 시간을 착각해서 마감이 지난 뒤에 확인했습니다.','시간을 다시 돌릴 수는 없었습니다.'],
+        ['완성본이 아니라 중간 파일을 들고 나왔습니다.','정답은 집 컴퓨터에 남아 있습니다.']
+      ],[
+        ['제출 버튼을 눌렀는데 사이트가 저를 받아주지 않았습니다.','서버와 제 과제 사이에 궁합 문제가 있었습니다.'],
+        ['파일 이름을 너무 멋지게 지었다가 어디 저장했는지 못 찾았습니다.','창작성이 검색성을 이겼습니다.'],
+        ['과제를 열었는데 글꼴부터 사진까지 전부 제자리를 떠났습니다.','제출 직전에 문서가 단체 행동을 시작했습니다.']
+      ],[
+        ['과제가 너무 완성도가 높아서 파일이 스스로 제출을 거부했습니다.','아직 세상에 공개될 준비가 안 됐다고 합니다.'],
+        ['제 노트북이 마감 직전에 학업 파업을 선언했습니다.','충전은 됐는데 의지가 없었습니다.'],
+        ['제출 페이지와 제 파일이 서로 호환되지 않는 가치관을 갖고 있었습니다.','제가 중재해봤지만 실패했습니다.']
+      ],[
+        ['제 과제가 학문적 독립을 선언하고 제 컴퓨터를 떠났습니다.','언젠가 학회에서 다시 만날 것 같습니다.'],
+        ['마감 1분 전 파일이 새로운 차원으로 이동했습니다.','휴지통에도 없다는 점이 이를 뒷받침합니다.'],
+        ['과제 데이터가 스스로 자유를 찾아 인터넷 어딘가로 떠났습니다.','저작자는 저지만 현재 관리 권한은 없습니다.']
+      ]
+    ],
+    cancel:[
+      [
+        ['갑자기 집에 처리할 일이 생겼어요.','미리 말씀드리지 못해 죄송합니다.'],
+        ['오늘 컨디션이 생각보다 안 좋아서 쉬어야 할 것 같아요.','다음에는 미리 말씀드릴게요.'],
+        ['일정이 겹친 걸 너무 늦게 확인했어요.','제가 달력을 제대로 못 봤습니다.']
+      ],[
+        ['나가려고 했는데 현관문 앞에서 모든 의지가 사라졌습니다.','물리적인 문제는 아니었지만 상당히 강력했습니다.'],
+        ['씻고 옷까지 입었는데 침대가 마지막 순간에 저를 설득했습니다.','논리적으로 반박하기 어려웠습니다.'],
+        ['집을 나서려는 순간 오늘은 아닌 것 같다는 판단이 내려졌습니다.','누가 내렸는지는 저도 잘 모르겠습니다.']
+      ],[
+        ['오늘 밖에 나가면 안 될 것 같은 강한 예감이 들었습니다.','예감 쪽이 굉장히 확신에 차 있었습니다.'],
+        ['현관문이 평소보다 무거웠습니다.','집이 저를 보내고 싶지 않았던 것 같습니다.'],
+        ['약속 장소 방향으로 가려는데 발이 계속 반대쪽으로 향했습니다.','신체와 일정 사이에 의견 충돌이 있었습니다.']
+      ],[
+        ['제가 집을 나서면 동네의 균형이 무너진다는 연락을 받았습니다.','지역사회를 위해 집에 남았습니다.'],
+        ['오늘 제가 외출하면 기상 체계에 문제가 생긴다고 합니다.','기상청에는 아직 전달되지 않은 정보입니다.'],
+        ['현관 밖의 세계가 오늘만 임시 점검 중이었습니다.','내일 다시 열릴 예정입니다.']
+      ]
+    ],
+    class:[
+      [
+        ['알람을 못 듣고 늦게 일어났습니다.','눈을 떴을 때는 이미 출석의 의미가 희미해져 있었습니다.'],
+        ['시간표를 잘못 봐서 강의 시간을 착각했습니다.','요일 감각이 잠시 퇴근했습니다.'],
+        ['교통이 너무 막혀서 수업 시작 전에 못 도착했습니다.','다음엔 조금 더 일찍 나오겠습니다.']
+      ],[
+        ['강의실까지 갔는데 정신이 먼저 결석했습니다.','몸만 들어가는 건 출석의 취지와 맞지 않는다고 판단했습니다.'],
+        ['학교에는 도착했는데 강의실이 저를 못 찾았습니다.','저도 강의실을 못 찾았으니 쌍방입니다.'],
+        ['수업 시작 직전에 오늘이 공강이라는 확신이 생겼습니다.','확신에는 근거가 없었습니다.']
+      ],[
+        ['오늘 수업이 휴강이라는 느낌이 너무 강했습니다.','공지보다 느낌을 믿은 것이 문제였습니다.'],
+        ['교수님과 저 사이의 출석 신호가 잠시 끊겼습니다.','물리적으로는 학교 근처에 있었습니다.'],
+        ['강의실 문 앞에서 학습 에너지가 0%가 됐습니다.','충전기를 찾다가 수업이 끝났습니다.']
+      ],[
+        ['오늘 제 출석 정보만 서버에서 현실과 분리됐습니다.','저는 갔다고 기억하는 쪽을 선택하겠습니다.'],
+        ['시간표가 밤사이 자율적으로 변경된 것 같습니다.','제 휴대폰만 업데이트를 못 받았습니다.'],
+        ['강의실이 잠시 평행세계로 이동해서 접근할 수 없었습니다.','다른 학생들은 운 좋게 원래 세계선에 있었습니다.']
+      ]
+    ],
+    work:[
+      [
+        ['교통이 예상보다 막혀서 조금 늦었습니다.','최대한 빨리 이동했습니다.'],
+        ['알람을 하나 놓쳐서 출발이 늦었습니다.','다음부터 알람을 하나 더 맞추겠습니다.'],
+        ['회의 시간을 잘못 확인했습니다.','캘린더를 다시 확인하겠습니다.']
+      ],[
+        ['엘리베이터가 모든 층에 서는 바람에 출근이 밀렸습니다.','오늘따라 굉장히 사교적인 엘리베이터였습니다.'],
+        ['회사 근처까지 왔는데 커피 줄이 예상보다 길었습니다.','업무 효율을 위한 투자였는데 시간이 먼저 손해봤습니다.'],
+        ['회의 링크를 찾는 동안 회의가 먼저 시작했습니다.','링크 숨바꼭질에서 제가 졌습니다.']
+      ],[
+        ['출근길 신호등들이 조직적으로 저를 방해했습니다.','초록불이 저를 피했습니다.'],
+        ['사무실 건물이 오늘 저를 인식하지 못했습니다.','출입카드와 건물 사이에 감정 문제가 있었습니다.'],
+        ['회의가 시작됐는데 제 시간대에서는 아직 시작 전이었습니다.','시차가 없는 지역에서 시차 문제가 발생했습니다.']
+      ],[
+        ['오늘 회사가 제 위치에서만 3km씩 멀어졌습니다.','걸어갈수록 목적지가 도망갔습니다.'],
+        ['출근 직전 제 직장 좌표가 일시적으로 삭제됐습니다.','지도에는 있었지만 현실에는 없었습니다.'],
+        ['회의 서버가 저를 위험 인물로 판단해 접속을 막았습니다.','왜 위험한지는 보안상 공개되지 않았습니다.']
+      ]
+    ],
+    reply:[
+      [
+        ['메시지를 보고 답장해야지 했다가 깜빡했습니다.','지금 생각나서 바로 답장드립니다.'],
+        ['답장을 쓰다가 다른 일이 생겨서 전송을 못 했어요.','작성한 줄 알았습니다.'],
+        ['알림을 놓쳐서 이제 확인했습니다.','늦게 봐서 죄송합니다.']
+      ],[
+        ['답장을 머릿속으로 너무 완벽하게 해서 실제로 보낸 줄 알았습니다.','마음속 전송은 완료된 상태였습니다.'],
+        ['메시지를 세 번 읽고 세 번 답장한 줄 착각했습니다.','읽음과 전송 사이에 큰 오해가 있었습니다.'],
+        ['답장 버튼을 누르려다가 손가락이 다른 앱으로 갔습니다.','손가락도 잠시 집중력을 잃었습니다.']
+      ],[
+        ['휴대폰이 제 답장을 검토하다가 승인을 안 해줬습니다.','문장이 너무 성급하다는 내부 판단이 있었습니다.'],
+        ['메시지가 너무 중요해서 답장 초안만 17개 만들었습니다.','결국 전송 단계가 남았습니다.'],
+        ['답장을 보냈는데 인터넷이 제 진심을 전달하지 않았습니다.','저는 분명 마음속으로 전송 버튼을 눌렀습니다.']
+      ],[
+        ['제 답장이 통신망에서 길을 잃고 이제야 돌아왔습니다.','긴 여행이었던 것 같습니다.'],
+        ['휴대폰이 며칠 동안 답장을 미래 예약으로 처리했습니다.','오늘이 그 미래였나 봅니다.'],
+        ['메시지가 제 시간선에는 오늘 도착했습니다.','상대방 시간선과 동기화가 늦었습니다.']
+      ]
+    ]
+  };
+
+  const names={late:'지각',assignment:'과제 미제출',cancel:'약속 취소',class:'수업 결석',work:'출근·회의',reply:'답장 늦음'};
+  const levels=[
+    {name:'그럴듯함',min:0,believe:82,status:'PLAUSIBLE',helper:'아직은 충분히 있을 법한 핑계를 만듭니다.',sub:'이 정도는 아직 설명이라고 부를 수 있습니다.'},
+    {name:'조금 수상함',min:30,believe:56,status:'SUSPICIOUS',helper:'슬슬 질문을 받을 가능성이 생깁니다.',sub:'한두 번 되물으면 설정이 흔들릴 수 있습니다.'},
+    {name:'뻔뻔함',min:60,believe:27,status:'BOLD',helper:'이제 사실보다 태도가 중요해집니다.',sub:'말할 때 망설이면 바로 무너질 수 있습니다.'},
+    {name:'재난급',min:85,believe:4,status:'CATASTROPHIC',helper:'현실성과 작별했습니다.',sub:'이쯤 되면 핑계가 아니라 세계관 설명입니다.'}
+  ];
+  const $=id=>document.getElementById(id);
+  const buttons=[...document.querySelectorAll('.situation-btn')];
+  let key='late';
+  let last='';
+  let history=[];
+
+  function levelIndex(){const v=Number($('boldness').value);return v>=85?3:v>=60?2:v>=30?1:0}
+  function randomExcuse(){
+    const pool=data[key][levelIndex()];
+    if(pool.length===1)return pool[0];
+    let choice=pool[Math.floor(Math.random()*pool.length)];
+    let tries=0;
+    while(choice[0]===last&&tries<8){choice=pool[Math.floor(Math.random()*pool.length)];tries++}
+    return choice;
+  }
+  function updateControls(){
+    const v=Number($('boldness').value),l=levels[levelIndex()];
+    $('boldness-value').textContent=v;
+    $('boldness').style.setProperty('--fill',v+'%');
+    $('boldness-helper').textContent=l.helper;
+    $('situation-label').textContent=names[key]+' · '+l.name;
+    $('excuse-level').textContent='LEVEL '+(levelIndex()+1)+' · '+l.name;
+    $('believe-value').textContent=l.believe+'%';
+    $('believe-bar').style.width=l.believe+'%';
+    $('case-status').textContent='STATUS · '+l.status;
+    $('deescalate-btn').disabled=v<=0;
+    $('escalate-btn').disabled=v>=100;
+  }
+  function render(addHistory=true){
+    updateControls();
+    const choice=randomExcuse();
+    last=choice[0];
+    $('excuse-text').textContent=choice[0];
+    $('excuse-sub').textContent=choice[1]+' '+levels[levelIndex()].sub;
+    if(addHistory){
+      history.unshift({s:names[key],level:levels[levelIndex()].name,text:choice[0]});
+      history=history.slice(0,6);
+      renderHistory();
     }
-    function addHistory(){
-      history.unshift({s:labels[key],t:$('excuse-text').textContent,l:levelNames[level]});history=history.slice(0,5);
-      $('history').innerHTML=history.map(x=>`<div class="history-item"><span>${x.s} · ${x.l}</span><p>${x.t}</p></div>`).join('');
-    }
-    buttons.forEach(btn=>btn.addEventListener('click',()=>{key=btn.dataset.key;buttons.forEach(b=>b.setAttribute('aria-pressed',String(b===btn)));level=levelFromBoldness($('boldness').value);render()}));
-    $('boldness').addEventListener('input',e=>{const v=Number(e.target.value);e.target.style.setProperty('--fill',v+'%');$('boldness-value').textContent=v;level=levelFromBoldness(v);$('boldness-helper').textContent=helper[level];render()});
-    $('generate-btn').addEventListener('click',()=>{level=levelFromBoldness($('boldness').value);render();addHistory()});
-    $('escalate-btn').addEventListener('click',()=>{level=Math.min(3,level+1);const target=[10,35,65,95][level];$('boldness').value=target;$('boldness').style.setProperty('--fill',target+'%');$('boldness-value').textContent=target;$('boldness-helper').textContent=helper[level];render();addHistory()});
-    $('copy-btn').addEventListener('click',async()=>{try{await navigator.clipboard.writeText($('excuse-text').textContent);const b=$('copy-btn');const old=b.textContent;b.textContent='복사됨';setTimeout(()=>b.textContent=old,1000)}catch{alert($('excuse-text').textContent)}});
-    $('clear-history').addEventListener('click',()=>{history=[];$('history').innerHTML='<p class="empty-history">기록을 지웠습니다. 이제 아무 말도 안 한 사람입니다.</p>'});
+  }
+  function renderHistory(){
+    if(!history.length){$('history').innerHTML='<p class="empty-history">아직 만든 핑계가 없습니다. 깨끗한 삶이네요.</p>';return}
+    $('history').innerHTML=history.map(x=>'<div class="history-item"><span>'+x.s+' · '+x.level+'</span><p>'+x.text+'</p></div>').join('');
+  }
+  function setBoldness(v){$('boldness').value=Math.max(0,Math.min(100,v));render()}
+
+  buttons.forEach(btn=>btn.addEventListener('click',()=>{
+    key=btn.dataset.key;
+    buttons.forEach(b=>b.setAttribute('aria-pressed',String(b===btn)));
+    last='';
     render();
-  })();
-  </script>
+  }));
+  $('generate-btn').addEventListener('click',()=>render());
+  $('escalate-btn').addEventListener('click',()=>setBoldness(Number($('boldness').value)+25));
+  $('deescalate-btn').addEventListener('click',()=>setBoldness(Number($('boldness').value)-25));
+  $('boldness').addEventListener('input',()=>{updateControls()});
+  $('boldness').addEventListener('change',()=>render());
+  $('clear-history').addEventListener('click',()=>{history=[];renderHistory()});
+  $('copy-btn').addEventListener('click',async()=>{
+    const text=$('excuse-text').textContent;
+    try{await navigator.clipboard.writeText(text);$('copy-btn').textContent='복사됨';setTimeout(()=>$('copy-btn').textContent='복사하기',1000)}
+    catch(e){window.prompt('복사하세요',text)}
+  });
+  updateControls();
+})();
+</script>
 </body>
 </html>
