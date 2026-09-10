@@ -89,20 +89,23 @@
         </section>
 
         <aside class="tb-settings" aria-labelledby="settings-title">
-          <p class="tb-eyebrow">PIGEON CUSTOMER SERVICE</p>
-          <h2 id="settings-title" class="tb-heading">손님이 얼마나 까다로울까요?</h2>
-          <p class="tb-intro">낮으면 웬만한 고등어도 잘 먹습니다. 높을수록 정확한 굽기와 적절한 뒤집기를 요구합니다.</p>
+          <p class="tb-eyebrow">REALITY CONTROL</p>
+          <h2 id="settings-title" class="tb-heading">이 장사는 얼마나 현실적일까요?</h2>
+          <p class="tb-intro">현실성을 높일수록 고등어가 불판에서 탈출하거나, 길고양이가 고등어를 훔쳐갈 가능성이 커집니다.</p>
           <div class="tb-control-card">
-            <div class="tb-control-head"><label for="pickiness">비둘기 까다로움</label><output class="tb-control-value" for="pickiness"><span id="pickiness-value">35</span><small>%</small></output></div>
-            <input id="pickiness" class="tb-range" type="range" min="0" max="100" step="5" value="35" style="--fill:35%">
-            <div class="tb-range-ends"><span>아무거나 먹음</span><span>미식 비둘기</span></div>
-            <div class="tb-presets" aria-label="까다로움 빠른 설정"><button type="button" data-value="0">0%</button><button type="button" data-value="35" aria-pressed="true">35%</button><button type="button" data-value="100">100%</button></div>
-            <p class="tb-helper">노릇한 구간은 약 58~82%입니다. 한 번 뒤집으면 평가가 좋아지고, 두 번부터는 비둘기가 괜히 의심합니다.</p>
+            <div class="tb-control-head"><label for="realism">현실적인 정도</label><output class="tb-control-value" for="realism"><span id="realism-value">35</span><small>%</small></output></div>
+            <input id="realism" class="tb-range" type="range" min="0" max="100" step="5" value="35" style="--fill:35%">
+            <div class="tb-range-ends"><span>평화로운 세계</span><span>야생의 현실</span></div>
+            <div class="tb-presets" aria-label="현실성 빠른 설정"><button type="button" data-value="0">0%</button><button type="button" data-value="35" aria-pressed="true">35%</button><button type="button" data-value="100">100%</button></div>
+            <p id="reality-odds" class="tb-helper">현재 돌발상황 확률을 계산하는 중입니다.</p>
+            <p class="tb-helper">현실성은 손님의 평가 기준에는 영향을 주지 않습니다. 오직 장사 중 벌어지는 돌발상황만 더 자주 일어납니다.</p>
             <div class="taste-list">
               <div class="taste-item"><span>기본 판매가</span><strong>2,000원</strong></div>
               <div class="taste-item"><span>완벽하게 구우면</span><strong>최대 3,000원</strong></div>
               <div class="taste-item"><span>너무 태우면</span><strong>환불 + 잔소리</strong></div>
             </div>
+            <input id="pickiness" type="hidden" value="35" aria-hidden="true">
+            <span id="pickiness-value" hidden>35</span>
           </div>
           <section class="tb-thought" aria-label="비둘기의 한마디"><p class="tb-thought-label">“ 단골 비둘기의 한마디</p><h3 id="thought-title">생선은 처음이지만요.</h3><p id="thought-body">왠지 오늘은 고등어가 당기네요. 구구.</p></section>
         </aside>
@@ -113,6 +116,94 @@
   </div>
   <div class="tb-contact"><a href="mailto:jkd04255@khu.ac.kr?subject=%5B%EB%8B%A4%EB%9D%BD%EB%B0%A9%20%EB%92%B7%ED%8E%B8%20%EA%B3%B5%EA%B5%AC%20%EC%83%81%EC%9E%90%5D%20%EA%B5%AC%EA%B5%AC%EC%83%81%ED%9A%8C%20%EB%AC%B8%EC%9D%98%20%C2%B7%20%EC%98%A4%EB%A5%98%20%EC%A0%9C%EB%B3%B4">✉ 문의 · 오류 제보</a></div>
 
-  <script src="app.js?v=20260910-2" defer></script>
+  <script src="app.js?v=20260910-3" defer></script>
+  <script>
+    (() => {
+      'use strict';
+
+      const FIXED_CUSTOMER_PICKINESS = 35;
+      const RUNAWAY_MIN = 0.02;
+      const RUNAWAY_MAX = 0.30;
+      const CAT_MIN = 0.02;
+      const CAT_MAX = 0.24;
+      const nativeRandom = Math.random.bind(Math);
+
+      function getOdds() {
+        const slider = document.getElementById('realism');
+        const reality = Math.max(0, Math.min(100, Number(slider?.value ?? 35))) / 100;
+        return {
+          runaway: RUNAWAY_MIN + (RUNAWAY_MAX - RUNAWAY_MIN) * reality,
+          cat: CAT_MIN + (CAT_MAX - CAT_MIN) * reality
+        };
+      }
+
+      // app.js는 첫 Math.random()으로 탈출/고양이/평상시를 결정합니다.
+      // 이 한 번만 현실성에 맞춘 분포로 바꾸고, 나머지 랜덤 동작은 그대로 둡니다.
+      document.addEventListener('click', event => {
+        const button = event.target.closest?.('#fish-btn');
+        if (!button || button.disabled) return;
+
+        const { runaway, cat } = getOdds();
+        const previousRandom = Math.random;
+        let firstCall = true;
+
+        const patchedRandom = () => {
+          if (!firstCall) return nativeRandom();
+          firstCall = false;
+
+          const categoryRoll = nativeRandom();
+          const bucketRoll = nativeRandom();
+          if (categoryRoll < runaway) return bucketRoll * 0.179999;
+          if (categoryRoll < runaway + cat) return 0.18 + bucketRoll * 0.139999;
+          return 0.32 + bucketRoll * 0.68;
+        };
+
+        Math.random = patchedRandom;
+        queueMicrotask(() => {
+          if (Math.random === patchedRandom) Math.random = previousRandom;
+        });
+      }, true);
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const realism = document.getElementById('realism');
+        const realismValue = document.getElementById('realism-value');
+        const oddsText = document.getElementById('reality-odds');
+        const hiddenPickiness = document.getElementById('pickiness');
+        const hiddenPickinessValue = document.getElementById('pickiness-value');
+        const presetButtons = [...document.querySelectorAll('.tb-presets button')];
+
+        const keepCustomerStandardFixed = () => {
+          if (hiddenPickiness) hiddenPickiness.value = String(FIXED_CUSTOMER_PICKINESS);
+          if (hiddenPickinessValue) hiddenPickinessValue.textContent = String(FIXED_CUSTOMER_PICKINESS);
+        };
+
+        const renderReality = () => {
+          const value = Math.max(0, Math.min(100, Number(realism?.value ?? 35)));
+          if (realism) realism.style.setProperty('--fill', `${value}%`);
+          if (realismValue) realismValue.textContent = String(value);
+          const { runaway, cat } = getOdds();
+          if (oddsText) {
+            oddsText.innerHTML = `현재 한 마리당 · <strong>고등어 탈출 약 ${Math.round(runaway * 100)}%</strong> · <strong>고양이 등장 약 ${Math.round(cat * 100)}%</strong>`;
+          }
+          presetButtons.forEach(button => {
+            button.setAttribute('aria-pressed', String(Number(button.dataset.value) === value));
+          });
+          keepCustomerStandardFixed();
+        };
+
+        realism?.addEventListener('input', renderReality);
+        presetButtons.forEach(button => {
+          button.addEventListener('click', () => {
+            if (realism) realism.value = button.dataset.value;
+            renderReality();
+            queueMicrotask(keepCustomerStandardFixed);
+          });
+        });
+
+        keepCustomerStandardFixed();
+        renderReality();
+      });
+    })();
+  </script>
 </body>
 </html>
