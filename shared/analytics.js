@@ -5,6 +5,14 @@
   const BASE = 'https://counterapi.com';
   const PRODUCTION_HOST = 'jkd04255.github.io';
   const REPO_PREFIX = '/eorimjipjak';
+  const USAGE_TICK_SECONDS = 5;
+  const USAGE_TICK_MS = USAGE_TICK_SECONDS * 1000;
+  const APP_KEYS = new Set([
+    'calculator', 'spell-checker', 'kkamppak', 'survival', 'siren',
+    'what-to-eat', 'nunchi-timer', 'gugu-mackerel', 'broken-clock',
+    'solar-charge', 'clock-out', 'seolleong-seolleong', 'changbak',
+    'frequency', 'excuse', 'memory-test', 'fishing'
+  ]);
 
   if (location.hostname !== PRODUCTION_HOST) return;
 
@@ -39,6 +47,37 @@
       img.referrerPolicy = 'no-referrer';
       img.src = url.toString();
     }
+  }
+
+  // 앱 페이지에서만 세션과 활성 이용시간을 기록합니다.
+  // 화면이 보이는 동안 5초마다 usage5 이벤트 1회를 쌓습니다.
+  function setupUsageTracking(key) {
+    if (!APP_KEYS.has(key)) return;
+
+    track('usage-session', key);
+    let timer = null;
+
+    const stop = () => {
+      if (timer !== null) {
+        clearInterval(timer);
+        timer = null;
+      }
+    };
+
+    const start = () => {
+      if (timer !== null || document.hidden) return;
+      timer = setInterval(() => {
+        if (!document.hidden) track('usage5', key);
+      }, USAGE_TICK_MS);
+    };
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stop();
+      else start();
+    });
+    window.addEventListener('pagehide', stop);
+    window.addEventListener('pageshow', start);
+    start();
   }
 
   // 분석 페이지의 "누적 앱 실행" 값과 같은 기준을 사용합니다.
@@ -121,7 +160,6 @@
     const { grid, cards, newestCard, comingCard } = state;
     if (!grid || cards.length === 0) return;
 
-    // 통계를 전부 읽은 뒤 한 번에 DOM을 움직여 중간 실패로 순서가 깨지지 않게 합니다.
     const scores = await Promise.all(cards.map(async (card) => {
       const key = keyFromPath(new URL(card.href, location.href).pathname);
       const score = await readPopularity(key);
@@ -133,7 +171,6 @@
       };
     }));
 
-    // 통계 서버 전체가 실패하면 현재 화면 순서를 그대로 둡니다.
     if (scores.every((item) => item.score === null)) return;
 
     const normalized = scores.map((item) => ({
@@ -145,18 +182,15 @@
       b.score - a.score || a.originalIndex - b.originalIndex
     );
 
-    // 실제 누적 실행 수 1·2위에는 인기 배지를 붙입니다.
     const popularTop2 = popularityOrder
       .filter((item) => item.score > 0)
       .slice(0, 2)
       .map((item) => item.card);
 
-    // 최신 앱은 순위와 무관하게 정확히 세 번째에 고정합니다.
     const newestEntry = popularityOrder.find((item) => item.card === newestCard) || null;
     const finalOrder = popularityOrder.filter((item) => item.card !== newestCard);
     if (newestEntry) finalOrder.splice(Math.min(2, finalOrder.length), 0, newestEntry);
 
-    // 한 번에 전체 순서를 적용합니다.
     const fragment = document.createDocumentFragment();
     finalOrder.forEach((item) => fragment.appendChild(item.card));
     if (comingCard) fragment.appendChild(comingCard);
@@ -194,7 +228,9 @@
     }, 60000);
   }
 
-  track('pageview', keyFromPath(location.pathname));
+  const pageKey = keyFromPath(location.pathname);
+  track('pageview', pageKey);
+  setupUsageTracking(pageKey);
 
   document.addEventListener('click', (event) => {
     const card = event.target.closest && event.target.closest('a.tool-card[href]');
