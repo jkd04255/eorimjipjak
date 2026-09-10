@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f0f0f4">
+  <meta name="description" content="쉬운 단어를 보여준 뒤 어려운 단어가 정답이었다고 우기는 뻔뻔한 기억력 테스트">
+  <title>기억나? — 뻔뻔한 기억력 테스트</title>
+  <link rel="stylesheet" href="../shared/toolbox.css">
+  <style>
+    .memory-logo svg{width:28px;height:28px}
+    .memory-stage{min-height:410px;padding:34px 24px 30px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden;background:#fff}
+    .memory-kicker{margin:0;color:var(--tb-purple);font-size:12px;font-weight:800;letter-spacing:1.2px}
+    .memory-title{margin:8px 0 0;font-size:24px;letter-spacing:-.05em}
+    .memory-desc{max-width:520px;margin:10px auto 0;color:var(--tb-muted);font-size:14px;line-height:1.75}
+    .word-board{width:min(540px,100%);margin-top:28px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+    .word-chip{min-height:76px;display:grid;place-items:center;padding:14px;border:1px solid var(--tb-line);border-radius:14px;background:#fafafd;font-size:21px;font-weight:800;letter-spacing:-.04em;transition:transform .18s ease,opacity .18s ease,filter .18s ease}
+    .word-board.is-hiding .word-chip{opacity:0;filter:blur(8px);transform:scale(.94)}
+    .countdown{margin-top:18px;color:var(--tb-muted);font:700 13px/1.4 var(--tb-mono)}
+    .memory-actions{margin-top:24px;display:flex;gap:9px;flex-wrap:wrap;justify-content:center}
+    .memory-actions .tb-btn{min-width:130px}
+    .recall-form{width:min(560px,100%);margin-top:24px;display:grid;gap:10px;text-align:left}
+    .recall-row{display:grid;grid-template-columns:42px 1fr;gap:10px;align-items:center}
+    .recall-num{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;background:#eeebfb;color:var(--tb-purple-dark);font:800 13px/1 var(--tb-mono)}
+    .recall-input{width:100%;min-height:46px;padding:11px 13px;border:1px solid var(--tb-line);border-radius:11px;background:#fff;color:var(--tb-ink);font:inherit;outline:none}
+    .recall-input:focus{border-color:#9b8be7;box-shadow:0 0 0 3px #ece8ff}
+    .result-list{width:min(620px,100%);margin-top:24px;display:grid;gap:10px;text-align:left}
+    .result-item{padding:16px;border:1px solid var(--tb-line);border-radius:13px;background:#fafafd}
+    .result-item .mine{color:var(--tb-muted);font-size:12px}
+    .result-item .mine strong{color:var(--tb-ink)}
+    .result-item .fake{margin-top:5px;font-size:15px;font-weight:750;line-height:1.55}
+    .result-item .fake strong{color:var(--tb-danger)}
+    .result-item .snark{margin-top:5px;color:var(--tb-purple-dark);font-size:13px;font-weight:700}
+    .final-score{margin-top:24px;padding:18px 22px;border:1px dashed #c8c1e4;border-radius:14px;background:#f1eefb}
+    .final-score strong{display:block;font:850 34px/1 var(--tb-mono);letter-spacing:-2px}
+    .final-score span{display:block;margin-top:8px;color:#625d75;font-size:13px}
+    .hidden{display:none!important}
+    .memory-note{margin-top:14px;padding-top:14px;border-top:1px solid var(--tb-line);color:var(--tb-muted);font-size:12px;line-height:1.75}
+    .example-box{margin-top:14px;padding:14px;border-radius:12px;background:#f6f5f9;color:#696576;font-size:13px;line-height:1.7}
+    .example-box strong{color:var(--tb-ink)}
+    @media(max-width:720px){.memory-stage{min-height:380px;padding:28px 15px 24px}.word-board{grid-template-columns:repeat(2,minmax(0,1fr))}.word-chip{min-height:68px;font-size:19px}.memory-actions{width:100%}.memory-actions .tb-btn{flex:1;min-width:0}.recall-row{grid-template-columns:34px 1fr}.recall-num{width:32px;height:32px}}
+    @media(max-width:370px){.word-board{gap:7px}.word-chip{font-size:18px;padding:10px}.memory-title{font-size:21px}}
+    @media(prefers-reduced-motion:reduce){.word-chip{transition:none}}
+  </style>
+</head>
+<body>
+  <div class="tb-shell">
+    <header class="tb-header">
+      <div class="tb-brand">
+        <span class="tb-logo memory-logo" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 12a6 6 0 1 1 9.7 4.7C17.7 18.3 16 19.2 16 22"/>
+            <path d="M16 27h.01"/>
+            <path d="M6 8.5 3.5 6M26 8.5 28.5 6M7 25l-2 2M25 25l2 2"/>
+          </svg>
+        </span>
+        <div class="tb-brand-copy">
+          <h1 class="tb-title">기억나?</h1>
+          <p class="tb-subtitle">뻔뻔한 기억력 테스트</p>
+        </div>
+      </div>
+      <span class="tb-edition">ATTIC TOOL / 017</span>
+      <a class="tb-home" href="../" aria-label="홈으로 돌아가기" title="홈">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-7h6v7"/></svg>
+      </a>
+    </header>
+
+    <main class="tb-main">
+      <div class="tb-grid">
+        <section class="tb-workspace" aria-labelledby="memory-main-title">
+          <div class="tb-case">
+            <div class="tb-case-top"><span>MEMORY TEST / 017</span><span class="tb-sticker">이것도 못해요?</span></div>
+            <div class="tb-case-paper">
+              <div class="memory-stage">
+                <p id="phase-label" class="memory-kicker">READY · 아주 쉬운 문제입니다</p>
+                <h2 id="memory-main-title" class="memory-title">단어 몇 개만 기억하세요.</h2>
+                <p id="phase-desc" class="memory-desc">짧고 쉬운 단어를 보여드립니다. 잠깐 뒤에 기억나는 대로 적으면 됩니다. 정말 간단하죠?</p>
+
+                <div id="ready-view" class="memory-actions">
+                  <button id="start-btn" class="tb-btn tb-btn-primary" type="button">테스트 시작</button>
+                </div>
+
+                <div id="show-view" class="hidden" style="width:100%">
+                  <div id="word-board" class="word-board" aria-live="polite"></div>
+                  <div id="countdown" class="countdown"></div>
+                </div>
+
+                <form id="recall-view" class="recall-form hidden" autocomplete="off">
+                  <div id="recall-inputs"></div>
+                  <div class="memory-actions">
+                    <button class="tb-btn tb-btn-primary" type="submit">채점하기</button>
+                    <button id="giveup-btn" class="tb-btn tb-btn-secondary" type="button">벌써 포기</button>
+                  </div>
+                </form>
+
+                <div id="result-view" class="hidden" style="width:100%">
+                  <div id="result-list" class="result-list"></div>
+                  <div class="final-score"><strong id="score">0 / 5</strong><span id="score-comment">음… 곤란하네요.</span></div>
+                  <div class="memory-actions"><button id="again-btn" class="tb-btn tb-btn-primary" type="button">다시 도전</button></div>
+                </div>
+              </div>
+            </div>
+            <div class="tb-case-bottom"><span id="case-status">STATUS · READY</span><span>문제는 쉬웠습니다. 아마도요.</span></div>
+          </div>
+        </section>
+
+        <aside class="tb-settings" aria-labelledby="settings-title">
+          <p class="tb-eyebrow">ABSOLUTELY FAIR TEST</p>
+          <h2 id="settings-title" class="tb-heading">시험 설정</h2>
+          <p class="tb-intro">제시 단어는 초등학생도 아는 수준으로 준비했습니다. 채점은 저희가 아주 엄정하게 하겠습니다.</p>
+
+          <div class="tb-control-card">
+            <div class="tb-control-head"><label for="word-count">단어 개수</label><output class="tb-control-value" for="word-count"><span id="word-count-value">5</span><small>개</small></output></div>
+            <input id="word-count" class="tb-range" type="range" min="3" max="7" step="1" value="5" style="--fill:50%">
+            <div class="tb-range-ends"><span>3개</span><span>7개</span></div>
+
+            <div class="tb-control-head" style="margin-top:22px"><label for="snark">비꼼 강도</label><output class="tb-control-value" for="snark"><span id="snark-value">70</span><small>%</small></output></div>
+            <input id="snark" class="tb-range" type="range" min="0" max="100" step="10" value="70" style="--fill:70%">
+            <div class="tb-range-ends"><span>조금 얄밉게</span><span>매우 얄밉게</span></div>
+
+            <p class="memory-note">제시어는 항상 짧고 쉬운 단어입니다. 채점할 때만 앱이 전혀 다른 길고 어려운 단어를 정답이라고 주장합니다. 즉, 공정성은 없습니다.</p>
+          </div>
+
+          <section class="tb-thought" aria-label="채점 예시">
+            <p class="tb-thought-label">“ 채점 예시</p>
+            <h3>의자라고요?</h3>
+            <p>정답은 <strong>법학전문대학원</strong>이었습니다! 이것도 못해요?</p>
+            <div class="example-box">제시어 <strong>의자</strong> → 사용자가 <strong>의자</strong> 입력 → 앱 주장 정답 <strong>법학전문대학원</strong></div>
+          </section>
+        </aside>
+      </div>
+    </main>
+
+    <footer class="tb-footer"><span>다락방 뒷편 공구 상자</span><span>기억력보다 앱의 양심이 더 의심스러운 테스트입니다.</span></footer>
+  </div>
+
+  <div class="tb-contact"><a href="mailto:jkd04255@khu.ac.kr?subject=%5B%EB%8B%A4%EB%9D%BD%EB%B0%A9%20%EB%92%B7%ED%8E%B8%20%EA%B3%B5%EA%B5%AC%20%EC%83%81%EC%9E%90%5D%20%EA%B8%B0%EC%96%B5%EB%82%98%20%EB%AC%B8%EC%9D%98%20%C2%B7%20%EC%98%A4%EB%A5%98%20%EC%A0%9C%EB%B3%B4">✉ 문의 · 오류 제보</a></div>
+
+  <script>
+    (() => {
+      const easyWords = ['의자','사과','버스','구름','연필','우산','고양이','바다','시계','모자','컵','나무','신발','책','딸기','문','강아지','학교','달','비누','열쇠','휴지','빵','기차','공','꽃','양말','물','밥','별'];
+      const impossibleAnswers = [
+        '법학전문대학원','국가과학기술연구회','전자기파흡수율측정기준','국제통화기금협정문','개인정보보호위원회','한국형발사체개발사업본부','고등교육기관평가인증원','국가균형발전특별회계','전기통신금융사기피해방지법','산업재해보상보험심사위원회','초고성능컴퓨팅활용촉진법','국립환경과학원대기질통합예보센터','정보통신기반보호위원회','지방교육재정교부금법시행령','국가연구개발혁신법시행규칙','자동차손해배상보장사업분담금','중소기업기술정보진흥원','과학기술정보통신부장관','국제연합교육과학문화기구','자본시장과금융투자업에관한법률'
+      ];
+      const snarksSoft = ['아쉽네요.','조금만 더 기억해보시지 그랬어요.','거의…는 아니네요.','다음에는 가능할지도요.'];
+      const snarksMid = ['이것도 못해요?','분명 보여드렸는데요?','기억력이 벌써 휴가 갔나요?','아까 봤잖아요. 설마 잊었어요?','음… 제가 더 민망하네요.'];
+      const snarksHard = ['이 정도면 방금 뭘 봤는지도 모르시는 거 아닌가요?','아니, 이걸 어떻게 틀려요? 너무 쉬웠는데.','제가 문제를 더 쉽게 내드려야 하나요? 여기서 더요?','눈은 뜨고 계셨죠?','정답을 이렇게 크게 알려드려야 한다니 안타깝네요.'];
+
+      const phaseLabel = document.getElementById('phase-label');
+      const title = document.getElementById('memory-main-title');
+      const desc = document.getElementById('phase-desc');
+      const readyView = document.getElementById('ready-view');
+      const showView = document.getElementById('show-view');
+      const recallView = document.getElementById('recall-view');
+      const resultView = document.getElementById('result-view');
+      const board = document.getElementById('word-board');
+      const countdown = document.getElementById('countdown');
+      const recallInputs = document.getElementById('recall-inputs');
+      const resultList = document.getElementById('result-list');
+      const score = document.getElementById('score');
+      const scoreComment = document.getElementById('score-comment');
+      const caseStatus = document.getElementById('case-status');
+      const startBtn = document.getElementById('start-btn');
+      const againBtn = document.getElementById('again-btn');
+      const giveupBtn = document.getElementById('giveup-btn');
+      const countRange = document.getElementById('word-count');
+      const countValue = document.getElementById('word-count-value');
+      const snarkRange = document.getElementById('snark');
+      const snarkValue = document.getElementById('snark-value');
+
+      let shownWords = [];
+      let fakeAnswers = [];
+      let timer = null;
+
+      function shuffle(arr){
+        const copy = [...arr];
+        for(let i=copy.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[copy[i],copy[j]]=[copy[j],copy[i]];}
+        return copy;
+      }
+      function setRange(el, output){
+        const min = Number(el.min), max = Number(el.max), value = Number(el.value);
+        el.style.setProperty('--fill', `${((value-min)/(max-min))*100}%`);
+        output.textContent = value;
+      }
+      function setView(view){
+        [readyView,showView,recallView,resultView].forEach(v=>v.classList.add('hidden'));
+        view.classList.remove('hidden');
+      }
+      function getSnark(){
+        const level = Number(snarkRange.value);
+        const pool = level < 35 ? snarksSoft : level < 75 ? snarksMid : snarksHard;
+        return pool[Math.floor(Math.random()*pool.length)];
+      }
+      function resetIntro(){
+        clearInterval(timer);
+        board.classList.remove('is-hiding');
+        setView(readyView);
+        phaseLabel.textContent='READY · 아주 쉬운 문제입니다';
+        title.textContent='단어 몇 개만 기억하세요.';
+        desc.textContent='짧고 쉬운 단어를 보여드립니다. 잠깐 뒤에 기억나는 대로 적으면 됩니다. 정말 간단하죠?';
+        caseStatus.textContent='STATUS · READY';
+      }
+      function startTest(){
+        const n = Number(countRange.value);
+        shownWords = shuffle(easyWords).slice(0,n);
+        fakeAnswers = shuffle(impossibleAnswers).slice(0,n);
+        board.innerHTML = shownWords.map(w=>`<div class="word-chip">${w}</div>`).join('');
+        board.classList.remove('is-hiding');
+        setView(showView);
+        phaseLabel.textContent='MEMORIZE · 이것만 기억하세요';
+        title.textContent='잘 보세요. 어렵지 않습니다.';
+        desc.textContent='잠시 후 사라집니다. 단어를 순서대로 기억해 주세요.';
+        caseStatus.textContent='STATUS · MEMORIZING';
+        let left = 5;
+        countdown.textContent=`${left}초 뒤에 가립니다`;
+        clearInterval(timer);
+        timer=setInterval(()=>{
+          left--;
+          countdown.textContent=left>0?`${left}초 뒤에 가립니다`:'이제 적어보세요.';
+          if(left<=0){
+            clearInterval(timer);
+            board.classList.add('is-hiding');
+            setTimeout(showRecall,350);
+          }
+        },1000);
+      }
+      function showRecall(){
+        recallInputs.innerHTML = shownWords.map((_,i)=>`<div class="recall-row"><span class="recall-num">${i+1}</span><input class="recall-input" aria-label="${i+1}번째 단어" placeholder="${i+1}번째 단어" maxlength="30"></div>`).join('');
+        setView(recallView);
+        phaseLabel.textContent='RECALL · 기억나는 대로';
+        title.textContent='아까 단어가 뭐였죠?';
+        desc.textContent='순서대로 적어주세요. 자신 있으시죠?';
+        caseStatus.textContent='STATUS · TESTING';
+        const first=recallInputs.querySelector('input');
+        if(first) first.focus();
+      }
+      function grade(gaveUp=false){
+        const inputs=[...recallInputs.querySelectorAll('input')];
+        const answers=inputs.map(i=>i.value.trim() || '(빈칸)');
+        resultList.innerHTML=answers.map((answer,i)=>{
+          const fake=fakeAnswers[i];
+          return `<div class="result-item"><div class="mine">${i+1}번에 <strong>${escapeHtml(answer)}</strong>${gaveUp?'…이라고 쓰기도 전에 포기하셨네요.':'라고 쓰셨네요.'}</div><div class="fake">정답은 <strong>${fake}</strong>이었습니다!</div><div class="snark">${getSnark()}</div></div>`;
+        }).join('');
+        score.textContent=`0 / ${shownWords.length}`;
+        const level=Number(snarkRange.value);
+        scoreComment.textContent = level<35 ? '조금 아쉽습니다. 다음에는 기억해보세요.' : level<75 ? '전부 틀렸네요. 이것도 못해요?' : '0점입니다. 문제를 더 쉽게 내는 방법이 있는지 고민해볼게요.';
+        setView(resultView);
+        phaseLabel.textContent='RESULT · 엄정한 채점 완료';
+        title.textContent='결과가 나왔습니다.';
+        desc.textContent='저희 채점 기준은 완벽합니다. 아마도요.';
+        caseStatus.textContent='STATUS · 0 POINTS';
+      }
+      function escapeHtml(str){
+        return str.replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+      }
+
+      countRange.addEventListener('input',()=>setRange(countRange,countValue));
+      snarkRange.addEventListener('input',()=>setRange(snarkRange,snarkValue));
+      startBtn.addEventListener('click',startTest);
+      againBtn.addEventListener('click',resetIntro);
+      giveupBtn.addEventListener('click',()=>grade(true));
+      recallView.addEventListener('submit',e=>{e.preventDefault();grade(false);});
+      setRange(countRange,countValue);
+      setRange(snarkRange,snarkValue);
+    })();
+  </script>
+</body>
+</html>
