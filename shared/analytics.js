@@ -5,7 +5,6 @@
   const BASE = 'https://counterapi.com';
   const PRODUCTION_HOST = 'jkd04255.github.io';
   const REPO_PREFIX = '/eorimjipjak';
-  const POPULARITY_WINDOW = '7d';
 
   if (location.hostname !== PRODUCTION_HOST) return;
 
@@ -42,11 +41,10 @@
     }
   }
 
+  // 분석 페이지의 "누적 앱 실행" 값과 같은 기준을 사용합니다.
   async function readPopularity(key) {
     const params = new URLSearchParams({
       readOnly: 'true',
-      timeline: POPULARITY_WINDOW,
-      unique: 'true',
       _: Date.now().toString()
     });
     const url = `${BASE}/api/${encodeURIComponent(NAMESPACE)}/launch/${encodeURIComponent(key)}?${params}`;
@@ -60,7 +58,9 @@
       if (response.status === 404) return 0;
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const data = await response.json();
-      const value = typeof data.value === 'number' ? data.value : Number(String(data.value || '0').replace(/,/g, ''));
+      const value = typeof data.value === 'number'
+        ? data.value
+        : Number(String(data.value || '0').replace(/,/g, ''));
       return Number.isFinite(value) ? value : 0;
     } catch (_) {
       return null;
@@ -72,12 +72,12 @@
     const style = document.createElement('style');
     style.id = 'toolbox-live-badge-styles';
     style.textContent = `
-      .tool-top .status-cluster{margin-left:auto;display:flex;align-items:flex-start;justify-content:flex-end;gap:6px;flex-wrap:wrap;max-width:64%}
+      .tool-top .status-cluster{margin-left:auto;display:flex;align-items:flex-start;justify-content:flex-end;gap:6px;flex-wrap:wrap;max-width:68%}
       .tool-top .status-cluster>.tag{margin:0}
       .live-badge{display:inline-flex;align-items:center;justify-content:center;min-height:23px;padding:4px 9px;border-radius:6px;font-size:10px;font-weight:900;line-height:1;letter-spacing:.25px;box-shadow:0 2px 0 rgba(34,35,44,.12);white-space:nowrap}
       .live-badge.popular{background:#ef4444;color:#fff;transform:rotate(-2deg)}
       .live-badge.new{background:#ffd84d;color:#4d3b00;transform:rotate(2deg)}
-      @media(max-width:720px){.tool-top .status-cluster{max-width:68%;gap:5px}.live-badge{padding:4px 8px;font-size:9px}}
+      @media(max-width:720px){.tool-top .status-cluster{max-width:72%;gap:5px}.live-badge{padding:4px 8px;font-size:9px}}
     `;
     document.head.appendChild(style);
   }
@@ -86,10 +86,15 @@
     injectBadgeStyles();
     cards.forEach((card) => {
       const top = card.querySelector('.tool-top');
-      const tag = top && top.querySelector(':scope > .tag');
-      if (!top || !tag || top.querySelector(':scope > .status-cluster')) return;
+      if (!top) return;
 
-      const cluster = document.createElement('div');
+      let cluster = top.querySelector('.status-cluster');
+      if (cluster) return;
+
+      const tag = top.querySelector('.tag');
+      if (!tag) return;
+
+      cluster = document.createElement('div');
       cluster.className = 'status-cluster';
       top.insertBefore(cluster, tag);
       cluster.appendChild(tag);
@@ -97,7 +102,9 @@
   }
 
   function clearLiveBadges(cards) {
-    cards.forEach((card) => card.querySelectorAll('.live-badge').forEach((badge) => badge.remove()));
+    cards.forEach((card) => {
+      card.querySelectorAll('.live-badge').forEach((badge) => badge.remove());
+    });
   }
 
   function addBadge(card, type, text) {
@@ -114,6 +121,7 @@
     const { grid, cards, newestCard, comingCard } = state;
     if (!grid || cards.length === 0) return;
 
+    // 통계를 전부 읽은 뒤 한 번에 DOM을 움직여 중간 실패로 순서가 깨지지 않게 합니다.
     const scores = await Promise.all(cards.map(async (card) => {
       const key = keyFromPath(new URL(card.href, location.href).pathname);
       const score = await readPopularity(key);
@@ -125,24 +133,34 @@
       };
     }));
 
-    const hasAnyResponse = scores.some((item) => item.score !== null);
-    if (!hasAnyResponse) return;
+    // 통계 서버 전체가 실패하면 현재 화면 순서를 그대로 둡니다.
+    if (scores.every((item) => item.score === null)) return;
 
-    scores.forEach((item) => {
-      if (item.score === null) item.score = 0;
-    });
+    const normalized = scores.map((item) => ({
+      ...item,
+      score: item.score === null ? 0 : item.score
+    }));
 
-    const popularityOrder = [...scores].sort((a, b) => b.score - a.score || a.originalIndex - b.originalIndex);
-    const withoutNewest = popularityOrder.filter((item) => item.card !== newestCard);
-    const popularTop2 = withoutNewest.filter((item) => item.score > 0).slice(0, 2).map((item) => item.card);
+    const popularityOrder = [...normalized].sort((a, b) =>
+      b.score - a.score || a.originalIndex - b.originalIndex
+    );
 
-    const finalOrder = [...withoutNewest];
-    const newestEntry = popularityOrder.find((item) => item.card === newestCard);
-    const insertAt = Math.min(2, finalOrder.length);
-    if (newestEntry) finalOrder.splice(insertAt, 0, newestEntry);
+    // 실제 누적 실행 수 1·2위에는 인기 배지를 붙입니다.
+    const popularTop2 = popularityOrder
+      .filter((item) => item.score > 0)
+      .slice(0, 2)
+      .map((item) => item.card);
 
-    finalOrder.forEach((item) => grid.appendChild(item.card));
-    if (comingCard) grid.appendChild(comingCard);
+    // 최신 앱은 순위와 무관하게 정확히 세 번째에 고정합니다.
+    const newestEntry = popularityOrder.find((item) => item.card === newestCard) || null;
+    const finalOrder = popularityOrder.filter((item) => item.card !== newestCard);
+    if (newestEntry) finalOrder.splice(Math.min(2, finalOrder.length), 0, newestEntry);
+
+    // 한 번에 전체 순서를 적용합니다.
+    const fragment = document.createDocumentFragment();
+    finalOrder.forEach((item) => fragment.appendChild(item.card));
+    if (comingCard) fragment.appendChild(comingCard);
+    grid.appendChild(fragment);
 
     clearLiveBadges(cards);
     popularTop2.forEach((card) => addBadge(card, 'popular', '인기'));
@@ -153,8 +171,12 @@
     const grid = document.querySelector('main.grid');
     if (!grid) return;
 
-    const cards = Array.from(grid.querySelectorAll(':scope > a.tool-card[href]'));
-    const comingCard = grid.querySelector(':scope > .tool-card.coming');
+    const cards = Array.from(grid.children).filter((el) =>
+      el.matches && el.matches('a.tool-card[href]')
+    );
+    const comingCard = Array.from(grid.children).find((el) =>
+      el.matches && el.matches('.tool-card.coming')
+    ) || null;
     if (cards.length === 0) return;
 
     cards.forEach((card, index) => {
