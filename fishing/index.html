@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta name="theme-color" content="#f0f0f4">
+  <meta name="description" content="물고기는 한 마리도 안 낚이고 물고기처럼 생긴 물건만 낚이는 낚시 미니게임">
+  <title>낚였네 — 물고기 없는 낚시게임</title>
+  <link rel="stylesheet" href="../shared/toolbox.css?build=20260911-fishing-1">
+  <style>
+    .fish-logo svg{width:29px;height:29px}
+    .fishing-stage{min-height:520px;padding:24px;background:linear-gradient(#f8f8fc 0 43%,#d9eef4 43% 100%);position:relative;overflow:hidden}
+    .scene{position:relative;min-height:235px;border:1px solid var(--tb-line);border-radius:18px;overflow:hidden;background:linear-gradient(#f7f7fb 0 48%,#9dd5e7 48% 100%)}
+    .scene:before{content:"";position:absolute;left:0;right:0;top:48%;height:8px;background:repeating-linear-gradient(90deg,#fff8 0 22px,transparent 22px 45px);opacity:.75}
+    .shore{position:absolute;left:-8%;right:-8%;bottom:-54px;height:94px;border-radius:50%;background:#dbc78f}
+    .reed{position:absolute;bottom:29px;width:4px;height:58px;background:#6f8d56;border-radius:4px;transform-origin:bottom}.reed.r1{left:8%;transform:rotate(-7deg)}.reed.r2{left:11%;height:70px;transform:rotate(4deg)}.reed.r3{right:9%;height:62px;transform:rotate(9deg)}
+    .angler{position:absolute;left:11%;bottom:35px;width:78px;height:104px}
+    .head{position:absolute;left:23px;top:2px;width:31px;height:31px;border-radius:50%;background:#d9b08c;border:2px solid #24252d}.hat{position:absolute;left:15px;top:-2px;width:49px;height:14px;border-radius:50% 50% 20% 20%;background:#6045db;transform:rotate(-6deg)}.body{position:absolute;left:20px;top:34px;width:42px;height:49px;border:2px solid #24252d;border-radius:13px 13px 7px 7px;background:#dfff86}.leg{position:absolute;top:80px;width:7px;height:24px;background:#24252d;border-radius:4px}.leg.l1{left:28px;transform:rotate(7deg)}.leg.l2{left:51px;transform:rotate(-8deg)}
+    .rod{position:absolute;left:58px;top:40px;width:113px;height:3px;background:#262730;transform:rotate(-25deg);transform-origin:left center;border-radius:3px}.line{position:absolute;left:158px;top:1px;width:1px;height:112px;background:#686875;transform:rotate(1deg);transform-origin:top}.bobber{position:absolute;left:-5px;bottom:-7px;width:10px;height:10px;border-radius:50%;background:#fff;border:3px solid #a1354f;box-shadow:0 2px 0 #ffffff88}
+    .splash{position:absolute;left:calc(11% + 150px);top:51%;width:54px;height:18px;border:3px solid #fff9;border-top:0;border-radius:50%;opacity:0;transform:scale(.4)}.splash.on{animation:splash .55s ease-out 2}@keyframes splash{0%{opacity:0;transform:scale(.3)}40%{opacity:1}100%{opacity:0;transform:scale(1.55)}}
+    .scene-copy{position:absolute;right:18px;top:16px;max-width:210px;text-align:right}.scene-copy strong{display:block;font-size:18px}.scene-copy span{display:block;margin-top:3px;color:#555765;font-size:12px}
+    .fish-status{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:16px;padding:13px 14px;border:1px solid var(--tb-line);border-radius:12px;background:#fff}.fish-status strong{font-size:14px}.fish-status span{color:var(--tb-muted);font-size:12px}
+    .main-action{width:100%;margin-top:14px;min-height:52px;font-size:16px}
+    .bite-action{background:#a1354f!important;animation:pulse .7s ease-in-out infinite alternate}@keyframes pulse{to{transform:scale(1.02);box-shadow:0 0 0 5px #a1354f22}}
+    .mini-wrap{display:grid;grid-template-columns:106px minmax(0,1fr);gap:22px;align-items:center;margin-top:17px;padding:20px;border:1px solid var(--tb-line);border-radius:16px;background:#fff}
+    .lane{position:relative;width:76px;height:330px;margin:auto;border:3px solid #2a2b34;border-radius:16px;background:linear-gradient(180deg,#d8edf4,#9bcfe0);overflow:hidden;box-shadow:inset 0 0 0 5px #ffffff99}
+    .lane:before,.lane:after{content:"";position:absolute;left:0;right:0;height:1px;background:#ffffff88}.lane:before{top:33%}.lane:after{top:66%}
+    .catch-bar{position:absolute;left:7px;width:56px;height:88px;border:2px solid #426419;border-radius:11px;background:#dfff86cc;box-shadow:0 2px 0 #829d3d;bottom:8px;transition:background .08s}.catch-bar.hit{background:#caff64}
+    .target{position:absolute;left:50%;width:37px;height:25px;margin-left:-18.5px;bottom:160px;display:grid;place-items:center;filter:drop-shadow(0 2px 0 #ffffff99)}.target svg{width:37px;height:25px;overflow:visible}
+    .progress-track{position:absolute;right:5px;top:14px;bottom:14px;width:8px;border:1px solid #ffffffcc;border-radius:8px;background:#ffffff88;overflow:hidden}.progress-fill{position:absolute;left:0;right:0;bottom:0;height:18%;background:#6045db;border-radius:8px}
+    .control-copy h3{margin:0;font-size:22px}.control-copy p{margin:8px 0 0;color:var(--tb-muted);font-size:13px;line-height:1.7}.hold-btn{width:100%;margin-top:17px;min-height:72px;border:2px solid #262730;border-radius:15px;background:#292a34;color:#fff;font-size:18px;font-weight:850;box-shadow:0 5px 0 #171820;user-select:none;touch-action:none}.hold-btn:active,.hold-btn.is-held{transform:translateY(3px);box-shadow:0 2px 0 #171820;background:#6045db}.key-note{margin-top:9px;color:var(--tb-muted);font-size:11px;text-align:center}
+    .result-box{margin-top:17px;padding:22px;border:1px solid var(--tb-line);border-radius:16px;background:#fff;text-align:center}.result-icon{width:110px;height:84px;margin:0 auto 10px;display:grid;place-items:center;border-radius:18px;background:#f1effc;font-size:55px}.result-icon svg{max-width:86px;max-height:65px}.rarity{display:inline-block;padding:3px 9px;border-radius:999px;background:#ece9fb;color:#4d33c5;font-size:11px;font-weight:850}.result-name{margin-top:8px;font-size:26px}.result-note{margin:6px auto 0;max-width:420px;color:var(--tb-muted);font-size:13px;line-height:1.7}
+    .collection{margin-top:28px}.collection-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.collection-item{min-height:94px;padding:13px;border:1px solid var(--tb-line);border-radius:14px;background:#fff}.collection-item.locked{background:#f4f4f7;color:#aaa;filter:grayscale(1)}.collection-item .ci-icon{font-size:26px;line-height:1}.collection-item strong{display:block;margin-top:8px;font-size:12px;line-height:1.35}.collection-item span{display:block;margin-top:3px;color:var(--tb-muted);font-size:10px}.collection-item.locked strong{color:#9a9aa3}
+    .stat-stack{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.tiny-stat{padding:15px;border:1px solid var(--tb-line);border-radius:13px;background:#fff}.tiny-stat span{display:block;color:var(--tb-muted);font-size:11px}.tiny-stat strong{display:block;margin-top:3px;font:850 24px/1.2 var(--tb-mono)}
+    .zero-box{padding:18px;border:1px solid var(--tb-line);border-radius:14px;background:#fff}.zero-box strong{display:flex;align-items:baseline;justify-content:space-between;gap:10px}.zero-box b{font:900 34px/1 var(--tb-mono);color:var(--tb-danger)}.zero-box p{margin:8px 0 0;color:var(--tb-muted);font-size:12px;line-height:1.65}
+    .tb-thought{margin-top:18px}
+    .hidden{display:none!important}
+    @media(max-width:760px){.fishing-stage{padding:14px;min-height:500px}.scene{min-height:210px}.scene-copy{right:12px;top:12px;max-width:160px}.scene-copy strong{font-size:15px}.angler{left:4%;transform:scale(.9);transform-origin:bottom left}.splash{left:calc(4% + 145px)}.mini-wrap{grid-template-columns:92px minmax(0,1fr);gap:12px;padding:14px}.lane{height:300px}.collection-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:420px){.scene-copy span{display:none}.mini-wrap{grid-template-columns:84px minmax(0,1fr)}.lane{width:68px;height:286px}.catch-bar{width:49px}.control-copy h3{font-size:19px}.hold-btn{font-size:15px}.collection-grid{gap:8px}.collection-item{padding:11px}}
+    @media(prefers-reduced-motion:reduce){.bite-action,.splash.on{animation:none}}
+  </style>
+  <script defer src="../shared/analytics.js?v=20260911-fishing-1"></script>
+</head>
+<body>
+  <div class="tb-shell">
+    <header class="tb-header">
+      <div class="tb-brand">
+        <span class="tb-logo fish-logo" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v13c0 6 4 10 9 10s9-4 9-9c0-4-2.5-7-6-7-3 0-5 2-5 5"/><path d="M3.5 5.5 6 3l2.5 2.5"/></svg>
+        </span>
+        <div class="tb-brand-copy"><h1 class="tb-title">낚였네</h1><p class="tb-subtitle">물고기 없는 낚시게임</p></div>
+      </div>
+      <span class="tb-edition">ATTIC TOOL / 016</span>
+      <a class="tb-home" href="../?build=20260911-fishing-1" aria-label="홈으로 돌아가기" title="홈"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-7h6v7"/></svg></a>
+    </header>
+
+    <main class="tb-main">
+      <div class="tb-grid">
+        <section class="tb-workspace" aria-labelledby="main-title">
+          <div class="tb-case">
+            <div class="tb-case-top"><span>FISHING / 016</span><span class="tb-sticker">물고기는 없습니다.</span></div>
+            <div class="tb-case-paper">
+              <div class="fishing-stage">
+                <div class="scene">
+                  <div class="reed r1"></div><div class="reed r2"></div><div class="reed r3"></div>
+                  <div class="angler"><div class="hat"></div><div class="head"></div><div class="body"></div><div class="leg l1"></div><div class="leg l2"></div><div class="rod"><div class="line"><div id="bobber" class="bobber"></div></div></div></div>
+                  <div id="splash" class="splash"></div><div class="shore"></div>
+                  <div class="scene-copy"><strong id="scene-title">오늘도 낚시를 해볼까요.</strong><span id="scene-sub">무언가가 낚이긴 합니다. 물고기는 아니고요.</span></div>
+                </div>
+
+                <div class="fish-status"><strong id="status-main">낚싯줄을 던져보세요.</strong><span id="status-sub">입질이 오면 빠르게 챔질!</span></div>
+                <button id="main-btn" class="tb-btn tb-btn-primary main-action" type="button">낚싯줄 던지기</button>
+
+                <div id="mini-game" class="mini-wrap hidden" aria-label="낚시 미니게임">
+                  <div class="lane" id="lane">
+                    <div id="catch-bar" class="catch-bar"></div>
+                    <div id="target" class="target" aria-hidden="true">
+                      <svg viewBox="0 0 46 30" fill="none"><path d="M7 15c6-8 17-11 27-5l7-6v22l-7-6c-10 6-21 3-27-5Z" fill="#6045db" stroke="#292a34" stroke-width="2"/><circle cx="29" cy="12" r="2" fill="#fff"/></svg>
+                    </div>
+                    <div class="progress-track"><div id="progress-fill" class="progress-fill"></div></div>
+                  </div>
+                  <div class="control-copy">
+                    <h3>물고기 같은 무언가를 붙잡으세요.</h3>
+                    <p>누르고 있으면 초록 막대가 올라가고, 떼면 내려갑니다. 움직이는 물고기 모양을 막대 안에 오래 가둬두세요.</p>
+                    <button id="hold-btn" class="hold-btn" type="button">꾹 누르기</button>
+                    <div class="key-note">PC에서는 Space 키도 됩니다.</div>
+                  </div>
+                </div>
+
+                <div id="result-box" class="result-box hidden">
+                  <div id="result-icon" class="result-icon">?</div>
+                  <span id="rarity" class="rarity">흔함</span>
+                  <h2 id="result-name" class="result-name">?</h2>
+                  <p id="result-note" class="result-note"></p>
+                  <button id="again-btn" class="tb-btn tb-btn-primary" type="button" style="margin-top:16px">한 번 더 낚기</button>
+                </div>
+              </div>
+            </div>
+            <div class="tb-case-bottom"><span id="case-status">STATUS · READY</span><span>생선 코너는 비어 있습니다.</span></div>
+          </div>
+
+          <section class="collection">
+            <div class="tb-section-heading"><div><p class="tb-eyebrow">FISH? COLLECTION</p><h2 class="tb-heading">낚은 것 도감</h2></div><span id="collection-count" class="tb-muted">0 / 15</span></div>
+            <div id="collection-grid" class="collection-grid"></div>
+          </section>
+        </section>
+
+        <aside class="tb-settings">
+          <p class="tb-eyebrow">VERY SERIOUS FISHING DATA</p>
+          <h2 id="main-title" class="tb-heading">오늘의 조황</h2>
+          <p class="tb-intro">물고기를 낚는 게임은 아닙니다. 다만 물고기와 관련 있어 보이는 물건은 제법 잘 낚입니다.</p>
+          <div class="zero-box"><strong><span>진짜 물고기 확률</span><b>0%</b></strong><p>설정을 찾으셔도 소용없습니다. 이 값은 바뀌지 않습니다.</p></div>
+          <div class="stat-stack"><div class="tiny-stat"><span>성공한 낚시</span><strong id="catch-count">0</strong></div><div class="tiny-stat"><span>놓친 횟수</span><strong id="miss-count">0</strong></div></div>
+          <section class="tb-thought"><p class="tb-thought-label">“ 낚시터 관리인의 한마디</p><h3 id="thought-title">여긴 물고기가 없어요.</h3><p id="thought-copy">근데 왜 자꾸 물고기 모양 물건이 나오는지는 저도 모릅니다.</p></section>
+        </aside>
+      </div>
+    </main>
+
+    <footer class="tb-footer"><span>다락방 뒷편 공구 상자</span><span>오늘도 물고기만 빼고 다 낚였습니다.</span></footer>
+  </div>
+  <div class="tb-contact"><a href="mailto:jkd04255@khu.ac.kr?subject=%5B%EB%8B%A4%EB%9D%BD%EB%B0%A9%20%EB%92%B7%ED%8E%B8%20%EA%B3%B5%EA%B5%AC%20%EC%83%81%EC%9E%90%5D%20%EB%82%9A%EC%98%80%EB%84%A4%20%EB%AC%B8%EC%9D%98">✉ 문의 · 오류 제보</a></div>
+
+  <script>
+  (()=>{
+    const items=[
+      {id:'bone',name:'물고기 뼈',icon:'🦴',rarity:'흔함',weight:18,speed:.64,jump:.035,note:'생선은 이미 누가 먹고 갔습니다. 낚시라고 하기엔 조금 늦었습니다.'},
+      {id:'keyring',name:'금붕어 모양 키링',icon:'🔑',rarity:'흔함',weight:15,speed:.72,jump:.045,note:'가방에 달면 제법 귀엽습니다. 물속에서 건진 것만 빼면요.'},
+      {id:'plate',name:'물고기 무늬 그릇',icon:'🥣',rarity:'흔함',weight:14,speed:.76,jump:.048,note:'그릇 안에는 물고기가 없습니다. 그릇 밖에도 없습니다.'},
+      {id:'bread',name:'붕어빵',icon:'🥮',rarity:'흔함',weight:13,speed:.80,jump:.055,note:'낚자마자 살짝 눅눅합니다. 그래도 붕어보다 붕어빵이 낫죠.'},
+      {id:'soap',name:'물고기 모양 비누',icon:'🧼',rarity:'보통',weight:9,speed:.88,jump:.065,note:'잡을수록 미끄럽습니다. 놀랍게도 비누라서 그렇습니다.'},
+      {id:'slipper',name:'물고기 슬리퍼 한 짝',icon:'🩴',rarity:'보통',weight:8,speed:.92,jump:.07,note:'반대쪽은 어디 갔을까요. 다음 낚시에도 안 나올 가능성이 높습니다.'},
+      {id:'pouch',name:'고등어 연필통',icon:'✏️',rarity:'보통',weight:7,speed:.96,jump:.072,note:'지퍼를 열어봤지만 연필만 있습니다. 고등어는 역시 없습니다.'},
+      {id:'saucer',name:'생선 모양 간장종지',icon:'🍶',rarity:'보통',weight:7,speed:1.00,jump:.075,note:'회는 없고 간장종지만 있습니다. 순서가 많이 잘못됐습니다.'},
+      {id:'opener',name:'물고기 모양 병따개',icon:'🧲',rarity:'희귀',weight:5,speed:1.06,jump:.085,note:'병은 잘 따지만 바다의 비밀은 못 엽니다.'},
+      {id:'sock',name:'물고기 자수 양말',icon:'🧦',rarity:'희귀',weight:5,speed:1.10,jump:.09,note:'젖은 양말을 낚았습니다. 이것보다 기분 나쁜 전리품도 드뭅니다.'},
+      {id:'paperweight',name:'유리 물고기 문진',icon:'💎',rarity:'희귀',weight:4,speed:1.16,jump:.10,note:'빛에 비추면 예쁩니다. 수조에 넣어도 먹이는 필요 없습니다.'},
+      {id:'wood',name:'목각 잉어 장식',icon:'🪵',rarity:'희귀',weight:3.7,speed:1.20,jump:.105,note:'힘차게 헤엄치는 척하지만 소재 특성상 전혀 헤엄치지 못합니다.'},
+      {id:'stopper',name:'물고기 도어스토퍼',icon:'🚪',rarity:'매우 희귀',weight:2.5,speed:1.28,jump:.115,note:'문은 잘 잡습니다. 방금은 낚싯줄도 꽤 잘 잡았습니다.'},
+      {id:'balloon',name:'금붕어 풍선',icon:'🎈',rarity:'매우 희귀',weight:2.1,speed:1.35,jump:.13,note:'물속에서 풍선을 낚았다는 부분은 깊이 생각하지 않는 편이 좋습니다.'},
+      {id:'sign',name:'물고기 그림 낚시금지 표지판',icon:'🚫',rarity:'전설?',weight:1.2,speed:1.48,jump:.15,note:'표지판을 낚아버렸습니다. 이제 이곳에서 낚시해도 되는지는 더 애매해졌습니다.'}
+    ];
+    const $=id=>document.getElementById(id);
+    const mainBtn=$('main-btn'),mini=$('mini-game'),holdBtn=$('hold-btn'),bar=$('catch-bar'),target=$('target'),progressFill=$('progress-fill'),result=$('result-box');
+    const statusMain=$('status-main'),statusSub=$('status-sub'),sceneTitle=$('scene-title'),sceneSub=$('scene-sub'),caseStatus=$('case-status'),splash=$('splash');
+    let state='ready',biteTimer=null,biteTimeout=null,raf=null,last=0,held=false;
+    let targetItem=null,barY=8,barV=0,targetY=160,targetV=.7,targetGoal=220,progress=18;
+    let catches=Number(localStorage.getItem('fishing-catches')||0),misses=Number(localStorage.getItem('fishing-misses')||0);
+    let collection=new Set(JSON.parse(localStorage.getItem('fishing-collection')||'[]'));
+    $('catch-count').textContent=catches;$('miss-count').textContent=misses;
+
+    const thoughts=[
+      ['여긴 물고기가 없어요.','근데 왜 자꾸 물고기 모양 물건이 나오는지는 저도 모릅니다.'],
+      ['미끼는 정상입니다.','문제는 이 연못이 생활용품 코너랑 연결돼 있다는 점입니다.'],
+      ['방금 그건 입질이 맞아요.','다만 입이 달린 생물이 아니었을 뿐입니다.'],
+      ['낚시는 인내심입니다.','그리고 이곳에서는 상식도 조금 내려놓으셔야 합니다.']
+    ];
+    function setThought(){const t=thoughts[Math.floor(Math.random()*thoughts.length)];$('thought-title').textContent=t[0];$('thought-copy').textContent=t[1]}
+    function weightedPick(){let total=items.reduce((s,i)=>s+i.weight,0),r=Math.random()*total;for(const i of items){r-=i.weight;if(r<=0)return i}return items[0]}
+    function renderCollection(){
+      $('collection-count').textContent=`${collection.size} / ${items.length}`;
+      $('collection-grid').innerHTML=items.map(i=>{const got=collection.has(i.id);return `<div class="collection-item ${got?'':'locked'}"><div class="ci-icon">${got?i.icon:'?'}</div><strong>${got?i.name:'아직 모르는 물건'}</strong><span>${got?i.rarity:'???'}</span></div>`}).join('');
+    }
+    renderCollection();setThought();
+
+    function resetScene(){
+      cancelAnimationFrame(raf);clearTimeout(biteTimer);clearTimeout(biteTimeout);held=false;holdBtn.classList.remove('is-held');
+      mini.classList.add('hidden');result.classList.add('hidden');mainBtn.classList.remove('hidden','bite-action');mainBtn.textContent='낚싯줄 던지기';
+      state='ready';statusMain.textContent='낚싯줄을 던져보세요.';statusSub.textContent='입질이 오면 빠르게 챔질!';sceneTitle.textContent='오늘도 낚시를 해볼까요.';sceneSub.textContent='무언가가 낚이긴 합니다. 물고기는 아니고요.';caseStatus.textContent='STATUS · READY';
+    }
+    function cast(){
+      if(state!=='ready'&&state!=='result')return;
+      result.classList.add('hidden');mini.classList.add('hidden');state='waiting';mainBtn.disabled=true;mainBtn.textContent='기다리는 중…';
+      statusMain.textContent='찌가 잠잠합니다.';statusSub.textContent='너무 기대하지는 마세요.';sceneTitle.textContent='조용하네요.';sceneSub.textContent='물속에서 생활용품이 헤엄치는 소리는 원래 안 들립니다.';caseStatus.textContent='STATUS · WAITING';
+      biteTimer=setTimeout(bite,900+Math.random()*1800);
+    }
+    function bite(){
+      if(state!=='waiting')return;state='bite';mainBtn.disabled=false;mainBtn.textContent='!  지금 챔질!';mainBtn.classList.add('bite-action');
+      statusMain.textContent='입질!';statusSub.textContent='지금 누르세요!';sceneTitle.textContent='뭔가 걸렸습니다!';sceneSub.textContent='물고기일 가능성은 여전히 0%입니다.';caseStatus.textContent='STATUS · BITE';
+      splash.classList.remove('on');void splash.offsetWidth;splash.classList.add('on');
+      biteTimeout=setTimeout(()=>failBite(),1500);
+    }
+    function failBite(){
+      if(state!=='bite')return;state='result';misses++;localStorage.setItem('fishing-misses',misses);$('miss-count').textContent=misses;mainBtn.classList.remove('bite-action');mainBtn.textContent='놓쳤습니다 · 다시 던지기';
+      statusMain.textContent='챔질이 늦었습니다.';statusSub.textContent='무언가가 물속으로 사라졌습니다.';sceneTitle.textContent='놓쳤네요.';sceneSub.textContent='아마 접시 같은 거였겠죠.';caseStatus.textContent='STATUS · TOO LATE';setThought();
+    }
+    function hook(){
+      if(state!=='bite')return;clearTimeout(biteTimeout);mainBtn.classList.remove('bite-action');mainBtn.classList.add('hidden');targetItem=weightedPick();startMini();
+    }
+    function startMini(){
+      state='playing';mini.classList.remove('hidden');result.classList.add('hidden');barY=12;barV=0;targetY=120+Math.random()*100;targetV=(Math.random()>.5?1:-1)*.5;targetGoal=40+Math.random()*230;progress=24;
+      statusMain.textContent='걸었습니다!';statusSub.textContent='초록 막대로 끝까지 버티세요.';sceneTitle.textContent='이제 놓치지 마세요.';sceneSub.textContent=`난이도: ${targetItem.rarity}`;caseStatus.textContent='STATUS · REELING';last=performance.now();raf=requestAnimationFrame(loop);
+    }
+    function loop(now){
+      if(state!=='playing')return;const dt=Math.min(32,now-last)/16.67;last=now;
+      const laneH=$('lane').clientHeight,barH=bar.offsetHeight,targetH=25,maxBar=laneH-barH-6,maxTarget=laneH-targetH-5;
+      barV+=(held?.54:-.38)*dt;barV*=Math.pow(.88,dt);barV=Math.max(-6.4,Math.min(5.4,barV));barY+=barV*dt;
+      if(barY<3){barY=3;barV=Math.abs(barV)*.22}if(barY>maxBar){barY=maxBar;barV=-Math.abs(barV)*.25}
+      if(Math.random()<targetItem.jump*dt){targetGoal=18+Math.random()*(maxTarget-26);targetV+=(Math.random()-.5)*2.4*targetItem.speed}
+      const dir=Math.sign(targetGoal-targetY);targetV+=dir*.055*targetItem.speed*dt;targetV*=Math.pow(.94,dt);targetV=Math.max(-3.8*targetItem.speed,Math.min(3.8*targetItem.speed,targetV));targetY+=targetV*dt;
+      if(targetY<4){targetY=4;targetV=Math.abs(targetV)}if(targetY>maxTarget){targetY=maxTarget;targetV=-Math.abs(targetV)}
+      const center=targetY+targetH/2,inside=center>=barY&&center<=barY+barH;
+      progress+=inside?(.34*dt):(-.44*dt);progress=Math.max(0,Math.min(100,progress));bar.classList.toggle('hit',inside);
+      bar.style.bottom=`${barY}px`;target.style.bottom=`${targetY}px`;progressFill.style.height=`${progress}%`;
+      if(progress>=100){win();return}if(progress<=0){lose();return}raf=requestAnimationFrame(loop);
+    }
+    function win(){
+      state='result';cancelAnimationFrame(raf);catches++;collection.add(targetItem.id);localStorage.setItem('fishing-catches',catches);localStorage.setItem('fishing-collection',JSON.stringify([...collection]));$('catch-count').textContent=catches;renderCollection();mini.classList.add('hidden');result.classList.remove('hidden');
+      $('result-icon').textContent=targetItem.icon;$('rarity').textContent=targetItem.rarity;$('result-name').textContent=targetItem.name;$('result-note').textContent=targetItem.note;
+      statusMain.textContent='낚았습니다!';statusSub.textContent='역시 물고기는 아닙니다.';sceneTitle.textContent=`${targetItem.name} 획득!`;sceneSub.textContent='축하합니다. 생선은 못 잡았습니다.';caseStatus.textContent='STATUS · CAUGHT';setThought();
+    }
+    function lose(){
+      state='result';cancelAnimationFrame(raf);misses++;localStorage.setItem('fishing-misses',misses);$('miss-count').textContent=misses;mini.classList.add('hidden');mainBtn.classList.remove('hidden');mainBtn.textContent='놓쳤습니다 · 다시 던지기';
+      statusMain.textContent='줄에서 빠졌습니다.';statusSub.textContent=`방금 것은 ${targetItem.rarity} 물건이었습니다.`;sceneTitle.textContent='아깝습니다.';sceneSub.textContent='물고기는 아니었으니 너무 아까워하지는 마세요.';caseStatus.textContent='STATUS · ESCAPED';setThought();
+    }
+    function hold(on){if(state!=='playing')return;held=on;holdBtn.classList.toggle('is-held',on)}
+    mainBtn.addEventListener('click',()=>{if(state==='ready'||state==='result')cast();else if(state==='bite')hook()});
+    $('again-btn').addEventListener('click',()=>{result.classList.add('hidden');mainBtn.classList.remove('hidden');state='ready';cast()});
+    holdBtn.addEventListener('pointerdown',e=>{e.preventDefault();hold(true);holdBtn.setPointerCapture?.(e.pointerId)});holdBtn.addEventListener('pointerup',()=>hold(false));holdBtn.addEventListener('pointercancel',()=>hold(false));holdBtn.addEventListener('pointerleave',e=>{if(e.buttons===0)hold(false)});
+    window.addEventListener('keydown',e=>{if(e.code==='Space'&&state==='playing'){e.preventDefault();hold(true)}});window.addEventListener('keyup',e=>{if(e.code==='Space'){e.preventDefault();hold(false)}});
+    document.addEventListener('visibilitychange',()=>{if(document.hidden&&state==='playing')hold(false)});
+  })();
+  </script>
+</body>
+</html>
