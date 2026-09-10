@@ -1,4 +1,7 @@
 (() => {
+  const homeLink = document.querySelector('.tb-home');
+  if(homeLink) homeLink.href = '../?build=20260910-1325';
+
   const sky = document.getElementById('sky');
   const clock = document.getElementById('clock');
   const dayPart = document.getElementById('day-part');
