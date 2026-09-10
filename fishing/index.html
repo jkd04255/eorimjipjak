@@ -17,7 +17,7 @@
     .reed{position:absolute;bottom:29px;width:4px;height:58px;background:#6f8d56;border-radius:4px;transform-origin:bottom}.reed.r1{left:8%;transform:rotate(-7deg)}.reed.r2{left:11%;height:70px;transform:rotate(4deg)}.reed.r3{right:9%;height:62px;transform:rotate(9deg)}
     .angler{position:absolute;left:11%;bottom:35px;width:78px;height:104px}
     .head{position:absolute;left:23px;top:2px;width:31px;height:31px;border-radius:50%;background:#d9b08c;border:2px solid #24252d}.hat{position:absolute;left:15px;top:-2px;width:49px;height:14px;border-radius:50% 50% 20% 20%;background:#6045db;transform:rotate(-6deg)}.body{position:absolute;left:20px;top:34px;width:42px;height:49px;border:2px solid #24252d;border-radius:13px 13px 7px 7px;background:#dfff86}.leg{position:absolute;top:80px;width:7px;height:24px;background:#24252d;border-radius:4px}.leg.l1{left:28px;transform:rotate(7deg)}.leg.l2{left:51px;transform:rotate(-8deg)}
-    .rod{position:absolute;left:58px;top:40px;width:113px;height:3px;background:#262730;transform:rotate(-25deg);transform-origin:left center;border-radius:3px}.line{position:absolute;left:158px;top:1px;width:1px;height:112px;background:#686875;transform:rotate(1deg);transform-origin:top}.bobber{position:absolute;left:-5px;bottom:-7px;width:10px;height:10px;border-radius:50%;background:#fff;border:3px solid #a1354f;box-shadow:0 2px 0 #ffffff88}
+    .rod{position:absolute;left:58px;top:40px;width:113px;height:3px;background:#262730;transform:rotate(-25deg);transform-origin:left center;border-radius:3px}.line{position:absolute;left:0;top:0;width:0;height:1.25px;background:#edf9ff;transform-origin:0 50%;pointer-events:none;z-index:3}.bobber{position:absolute;left:-5px;bottom:-7px;width:10px;height:10px;border-radius:50%;background:#fff;border:3px solid #a1354f;box-shadow:0 2px 0 #ffffff88}
     .splash{position:absolute;left:calc(11% + 150px);top:51%;width:54px;height:18px;border:3px solid #fff9;border-top:0;border-radius:50%;opacity:0;transform:scale(.4)}.splash.on{animation:splash .55s ease-out 2}@keyframes splash{0%{opacity:0;transform:scale(.3)}40%{opacity:1}100%{opacity:0;transform:scale(1.55)}}
     .scene-copy{position:absolute;right:18px;top:16px;max-width:210px;text-align:right}.scene-copy strong{display:block;font-size:18px}.scene-copy span{display:block;margin-top:3px;color:#555765;font-size:12px}
     .fish-status{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:16px;padding:13px 14px;border:1px solid var(--tb-line);border-radius:12px;background:#fff}.fish-status strong{font-size:14px}.fish-status span{color:var(--tb-muted);font-size:12px}
@@ -26,9 +26,9 @@
     .mini-wrap{display:grid;grid-template-columns:106px minmax(0,1fr);gap:22px;align-items:center;margin-top:17px;padding:20px;border:1px solid var(--tb-line);border-radius:16px;background:#fff}
     .lane{position:relative;width:76px;height:330px;margin:auto;border:3px solid #2a2b34;border-radius:16px;background:linear-gradient(180deg,#d8edf4,#9bcfe0);overflow:hidden;box-shadow:inset 0 0 0 5px #ffffff99}
     .lane:before,.lane:after{content:"";position:absolute;left:0;right:0;height:1px;background:#ffffff88}.lane:before{top:33%}.lane:after{top:66%}
-    .catch-bar{position:absolute;left:7px;width:56px;height:88px;border:2px solid #426419;border-radius:11px;background:#dfff86cc;box-shadow:0 2px 0 #829d3d;bottom:8px;transition:background .08s}.catch-bar.hit{background:#caff64}
-    .target{position:absolute;left:50%;width:37px;height:25px;margin-left:-18.5px;bottom:160px;display:grid;place-items:center;filter:drop-shadow(0 2px 0 #ffffff99)}.target svg{width:37px;height:25px;overflow:visible}
-    .progress-track{position:absolute;right:5px;top:14px;bottom:14px;width:8px;border:1px solid #ffffffcc;border-radius:8px;background:#ffffff88;overflow:hidden}.progress-fill{position:absolute;left:0;right:0;bottom:0;height:18%;background:#6045db;border-radius:8px}
+    .catch-bar{position:absolute;left:7px;width:56px;height:88px;border:2px solid #426419;border-radius:11px;background:#dfff86cc;box-shadow:0 2px 0 #829d3d;bottom:3px;transition:background .08s}.catch-bar.hit{background:#caff64}
+    .target{position:absolute;left:50%;width:37px;height:25px;margin-left:-18.5px;bottom:4px;display:grid;place-items:center;filter:drop-shadow(0 2px 0 #ffffff99)}.target svg{width:37px;height:25px;overflow:visible}
+    .progress-track{position:absolute;right:5px;top:14px;bottom:14px;width:8px;border:1px solid #ffffffcc;border-radius:8px;background:#ffffff88;overflow:hidden}.progress-fill{position:absolute;left:0;right:0;bottom:0;height:24%;background:#6045db;border-radius:8px}
     .control-copy h3{margin:0;font-size:22px}.control-copy p{margin:8px 0 0;color:var(--tb-muted);font-size:13px;line-height:1.7}.hold-btn{width:100%;margin-top:17px;min-height:72px;border:2px solid #262730;border-radius:15px;background:#292a34;color:#fff;font-size:18px;font-weight:850;box-shadow:0 5px 0 #171820;user-select:none;touch-action:none}.hold-btn:active,.hold-btn.is-held{transform:translateY(3px);box-shadow:0 2px 0 #171820;background:#6045db}.key-note{margin-top:9px;color:var(--tb-muted);font-size:11px;text-align:center}
     .result-box{margin-top:17px;padding:22px;border:1px solid var(--tb-line);border-radius:16px;background:#fff;text-align:center}.result-icon{width:110px;height:84px;margin:0 auto 10px;display:grid;place-items:center;border-radius:18px;background:#f1effc;font-size:55px}.result-icon svg{max-width:86px;max-height:65px}.rarity{display:inline-block;padding:3px 9px;border-radius:999px;background:#ece9fb;color:#4d33c5;font-size:11px;font-weight:850}.result-name{margin-top:8px;font-size:26px}.result-note{margin:6px auto 0;max-width:420px;color:var(--tb-muted);font-size:13px;line-height:1.7}
     .collection{margin-top:28px}.collection-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.collection-item{min-height:94px;padding:13px;border:1px solid var(--tb-line);border-radius:14px;background:#fff}.collection-item.locked{background:#f4f4f7;color:#aaa;filter:grayscale(1)}.collection-item .ci-icon{font-size:26px;line-height:1}.collection-item strong{display:block;margin-top:8px;font-size:12px;line-height:1.35}.collection-item span{display:block;margin-top:3px;color:var(--tb-muted);font-size:10px}.collection-item.locked strong{color:#9a9aa3}
@@ -36,7 +36,7 @@
     .zero-box{padding:18px;border:1px solid var(--tb-line);border-radius:14px;background:#fff}.zero-box strong{display:flex;align-items:baseline;justify-content:space-between;gap:10px}.zero-box b{font:900 34px/1 var(--tb-mono);color:var(--tb-danger)}.zero-box p{margin:8px 0 0;color:var(--tb-muted);font-size:12px;line-height:1.65}
     .tb-thought{margin-top:18px}
     .hidden{display:none!important}
-    @media(max-width:760px){.fishing-stage{padding:14px;min-height:500px}.scene{min-height:210px}.scene-copy{right:12px;top:12px;max-width:160px}.scene-copy strong{font-size:15px}.angler{left:4%;transform:scale(.9);transform-origin:bottom left}.splash{left:calc(4% + 145px)}.mini-wrap{grid-template-columns:92px minmax(0,1fr);gap:12px;padding:14px}.lane{height:300px}.collection-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:760px){.fishing-stage{padding:14px;min-height:500px}.scene{min-height:210px}.scene-copy{right:12px;top:12px;max-width:160px}.scene-copy strong{font-size:15px}.angler{left:4%;transform:scale(.9);transform-origin:bottom left}.mini-wrap{grid-template-columns:92px minmax(0,1fr);gap:12px;padding:14px}.lane{height:300px}.collection-grid{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:420px){.scene-copy span{display:none}.mini-wrap{grid-template-columns:84px minmax(0,1fr)}.lane{width:68px;height:286px}.catch-bar{width:49px}.control-copy h3{font-size:19px}.hold-btn{font-size:15px}.collection-grid{gap:8px}.collection-item{padding:11px}}
     @media(prefers-reduced-motion:reduce){.bite-action,.splash.on{animation:none}}
 
@@ -53,16 +53,18 @@
     .hat{z-index:1;background:linear-gradient(#9078ef,#5941ba);box-shadow:0 3px 0 #40326c;top:-4px}
     .body{background:linear-gradient(100deg,#ebffad,#b7d870);border-color:#333848;box-shadow:inset -7px 0 0 #91ad5545}
     .rod{background:linear-gradient(90deg,#805c3e 0 23%,#d0a967 24% 26%,#29354b 27%);height:4px;transition:transform .25s ease}
-    .line{background:#f3fcf9bb;height:98px;box-shadow:1px 0 0 #163d4825}
-    .bobber{width:12px;height:18px;left:-6px;bottom:-9px;border:1px solid #53313b;border-radius:50%;background:linear-gradient(#ff7868 0 47%,#fff6dc 48% 76%,#da5749 77%);box-shadow:1px 3px 3px #173c4e55;animation:bobber-idle 2.5s ease-in-out infinite}
-    .splash{left:calc(10% + 192px);top:auto;bottom:77px;z-index:3;width:48px;height:13px;border:2px solid #e3ffffbb;border-radius:50%;opacity:.65;transform:none;animation:ripple-idle 3s ease-out infinite}
+    .line{background:#f3fcf9e6;box-shadow:0 1px 0 #163d4825}
+    .rod-tip,.float-tip{position:absolute;width:0;height:0;pointer-events:none}.rod-tip{left:100%;top:50%}.float-tip{left:50%;top:0}
+    .float-rig{position:absolute;left:70%;bottom:74px;width:0;height:0;z-index:3;pointer-events:none;animation:bobber-idle 2.5s ease-in-out infinite}
+    .bobber{width:12px;height:18px;left:-6px;top:-9px;bottom:auto;border:1px solid #53313b;border-radius:50%;background:linear-gradient(#ff7868 0 47%,#fff6dc 48% 76%,#da5749 77%);box-shadow:1px 3px 3px #173c4e55}
+    .splash{left:-24px;top:4px;bottom:auto;z-index:3;width:48px;height:13px;border:2px solid #e3ffffbb;border-radius:50%;opacity:.65;transform:none;animation:ripple-idle 3s ease-out infinite}
     .splash.on{animation:splash .55s ease-out infinite}
     .scene-copy{left:18px;right:18px;top:17px;max-width:none;text-align:left;color:#254653}
     .scene-copy strong{font-size:19px;letter-spacing:-.035em}
     .scene-copy span{max-width:310px;color:#416776;font-size:13px;line-height:1.6;margin-top:5px}
     .scene[data-state="waiting"] .rod{transform:rotate(-28deg)}
     .scene[data-state="bite"]{box-shadow:inset 0 0 0 3px #ffcf77,0 5px 12px #1a4c6015}
-    .scene[data-state="bite"] .bobber{animation:bobber-bite .24s ease-in-out infinite alternate}
+    .scene[data-state="bite"] .float-rig{animation:bobber-bite .24s ease-in-out infinite alternate}
     .scene[data-state="playing"] .rod{transform:rotate(-39deg);animation:rod-tug .65s ease-in-out infinite alternate}
     .scene[data-state="caught"] .angler{animation:catch-cheer .6s ease-out}
     .fish-status{position:relative;padding:14px 15px;margin-top:14px;align-items:flex-start;flex-direction:column;gap:3px;border-color:#cfdee3;box-shadow:0 3px 0 #d9e4e8}
@@ -94,16 +96,16 @@
     .zero-box{background:linear-gradient(135deg,#fff,#f7f1f4)}.zero-box p{font-size:14px}
     @keyframes water-drift{to{transform:translateX(12px) scale(1.2);opacity:.3}}
     @keyframes reed-sway{to{rotate:4deg}}
-    @keyframes bobber-idle{50%{translate:0 3px;rotate:8deg}}
-    @keyframes bobber-bite{to{translate:0 10px;rotate:-18deg}}
+    @keyframes bobber-idle{50%{translate:0 3px}}
+    @keyframes bobber-bite{to{translate:0 7px}}
     @keyframes ripple-idle{0%{scale:.5;opacity:.1}40%{opacity:.6}100%{scale:1.6;opacity:0}}
     @keyframes rod-tug{to{transform:rotate(-34deg)}}
     @keyframes catch-cheer{50%{translate:0 -7px}}
     @keyframes result-reveal{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
     @media(max-width:900px){.tb-grid{grid-template-columns:minmax(0,1fr) 260px;gap:24px}}
-    @media(max-width:760px){.fishing-stage{padding:14px;min-height:0}.scene{min-height:270px}.angler{left:6%;transform:scale(1.1)}.splash{left:calc(6% + 168px);bottom:72px}.scene-copy{left:14px;right:14px;top:14px}.scene-copy strong{font-size:17px}.scene-copy span{font-size:12px;max-width:245px}.mini-wrap{gap:12px;padding:14px}}
+    @media(max-width:760px){.fishing-stage{padding:14px;min-height:0}.scene{min-height:270px}.angler{left:6%;transform:scale(1.1)}.float-rig{bottom:72px}.scene-copy{left:14px;right:14px;top:14px}.scene-copy strong{font-size:17px}.scene-copy span{font-size:12px;max-width:245px}.mini-wrap{gap:12px;padding:14px}}
     @media(max-width:720px){.tb-grid{grid-template-columns:1fr}.tb-main{padding-top:22px}.tb-case{padding:14px}.tb-case-top{padding-bottom:14px}.tb-case-bottom{font-size:12px;flex-wrap:wrap;gap:3px}}
-    @media(max-width:420px){.fishing-stage{padding:10px}.scene{min-height:255px}.scene-copy span{display:block}.angler{left:4%;transform:scale(1)}.splash{left:calc(4% + 151px);bottom:69px}.mini-wrap{grid-template-columns:76px minmax(0,1fr);padding:12px;gap:10px}.control-copy h3{font-size:18px}.control-copy p{font-size:14px;line-height:1.6}.collection-item{padding:12px}.fish-status span{font-size:13px}}
+    @media(max-width:420px){.fishing-stage{padding:10px}.scene{min-height:255px}.scene-copy span{display:block}.angler{left:4%;transform:scale(1)}.float-rig{bottom:69px}.mini-wrap{grid-template-columns:76px minmax(0,1fr);padding:12px;gap:10px}.control-copy h3{font-size:18px}.control-copy p{font-size:14px;line-height:1.6}.collection-item{padding:12px}.fish-status span{font-size:13px}}
     @media(prefers-reduced-motion:reduce){.scene *,.scene:before,.result-box,.collection-item{animation:none!important;transition:none!important}.splash{opacity:.5}.splash.on{opacity:1;transform:scale(1.2)}}
   </style>
   <script defer src="../shared/analytics.js?v=20260911-fishing-1"></script>
@@ -130,8 +132,9 @@
               <div class="fishing-stage">
                 <div class="scene" id="fishing-scene" data-state="ready">
                   <div class="reed r1"></div><div class="reed r2"></div><div class="reed r3"></div>
-                  <div class="angler"><div class="hat"></div><div class="head"></div><div class="body"></div><div class="leg l1"></div><div class="leg l2"></div><div class="rod"><div class="line"><div id="bobber" class="bobber"></div></div></div></div>
-                  <div id="splash" class="splash"></div><div class="shore"></div>
+                  <div class="angler"><div class="hat"></div><div class="head"></div><div class="body"></div><div class="leg l1"></div><div class="leg l2"></div><div class="rod"><span id="rod-tip" class="rod-tip"></span></div></div>
+                  <div id="fishing-line" class="line" aria-hidden="true"></div>
+                  <div class="float-rig" aria-hidden="true"><div id="bobber" class="bobber"><span id="float-tip" class="float-tip"></span></div><div id="splash" class="splash"></div></div><div class="shore"></div>
                   <div class="scene-copy"><strong id="scene-title">오늘도 낚시를 해볼까요.</strong><span id="scene-sub">무언가가 낚이긴 합니다. 물고기는 아니고요.</span></div>
                 </div>
 
@@ -210,7 +213,8 @@
     const mainBtn=$('main-btn'),mini=$('mini-game'),holdBtn=$('hold-btn'),bar=$('catch-bar'),target=$('target'),progressFill=$('progress-fill'),result=$('result-box');
     const statusMain=$('status-main'),statusSub=$('status-sub'),sceneTitle=$('scene-title'),sceneSub=$('scene-sub'),caseStatus=$('case-status'),splash=$('splash');
     let state='ready',biteTimer=null,biteTimeout=null,raf=null,last=0,held=false;
-    let targetItem=null,barY=8,barV=0,targetY=160,targetV=.7,targetGoal=220,progress=18;
+    const START_BAR_Y=3,START_TARGET_Y=4,START_PROGRESS=24;
+    let targetItem=null,barY=START_BAR_Y,barV=0,targetY=START_TARGET_Y,targetV=0,targetGoal=START_TARGET_Y,progress=START_PROGRESS;
     let catches=Number(localStorage.getItem('fishing-catches')||0),misses=Number(localStorage.getItem('fishing-misses')||0);
     let collection=new Set(JSON.parse(localStorage.getItem('fishing-collection')||'[]'));
     $('catch-count').textContent=catches;$('miss-count').textContent=misses;
@@ -229,7 +233,28 @@
     }
     renderCollection();setThought();
 
-    function sceneState(value){$('fishing-scene').dataset.state=value;splash.classList.remove('on')}
+    const scene=$('fishing-scene'),line=$('fishing-line'),rodTip=$('rod-tip'),floatTip=$('float-tip');
+    const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+    let lineRaf=null;
+    function syncLine(){
+      const bounds=scene.getBoundingClientRect(),tip=rodTip.getBoundingClientRect(),float=floatTip.getBoundingClientRect();
+      const dx=float.left-tip.left,dy=float.top-tip.top;
+      line.style.left=`${tip.left-bounds.left-scene.clientLeft}px`;
+      line.style.top=`${tip.top-bounds.top-scene.clientTop-line.offsetHeight/2}px`;
+      line.style.width=`${Math.hypot(dx,dy)}px`;
+      line.style.transform=`rotate(${Math.atan2(dy,dx)}rad)`;
+    }
+    function animateLine(){
+      syncLine();lineRaf=null;
+      if(!document.hidden&&!reduceMotion.matches)lineRaf=requestAnimationFrame(animateLine);
+    }
+    function refreshLine(){cancelAnimationFrame(lineRaf);lineRaf=null;animateLine()}
+    window.addEventListener('resize',syncLine);
+    reduceMotion.addEventListener('change',refreshLine);
+    document.addEventListener('visibilitychange',refreshLine);
+    refreshLine();
+
+    function sceneState(value){scene.dataset.state=value;splash.classList.remove('on');syncLine()}
     function resetScene(){
       sceneState('ready');
       cancelAnimationFrame(raf);clearTimeout(biteTimer);clearTimeout(biteTimeout);held=false;holdBtn.classList.remove('is-held');
@@ -256,17 +281,19 @@
       if(state!=='bite')return;clearTimeout(biteTimeout);mainBtn.classList.remove('bite-action');mainBtn.classList.add('hidden');targetItem=weightedPick();startMini();
     }
     function startMini(){
-      state='playing';sceneState('playing');held=false;holdBtn.classList.remove('is-held');mini.classList.remove('hidden');result.classList.add('hidden');barY=12;barV=0;targetY=120+Math.random()*100;targetV=(Math.random()>.5?1:-1)*.5;targetGoal=40+Math.random()*230;progress=24;
+      state='playing';sceneState('playing');held=false;holdBtn.classList.remove('is-held');mini.classList.remove('hidden');result.classList.add('hidden');barY=START_BAR_Y;barV=0;targetY=START_TARGET_Y;targetV=0;targetGoal=START_TARGET_Y;progress=START_PROGRESS;
+      // Reset the visible positions before the first animation frame, including retries.
+      bar.style.bottom=`${barY}px`;target.style.bottom=`${targetY}px`;progressFill.style.height=`${progress}%`;bar.classList.add('hit');
       statusMain.textContent='걸었습니다!';statusSub.textContent='초록 막대로 끝까지 버티세요.';sceneTitle.textContent='이제 놓치지 마세요.';sceneSub.textContent=`난이도: ${targetItem.rarity}`;caseStatus.textContent='STATUS · REELING';last=performance.now();raf=requestAnimationFrame(loop);
     }
     function loop(now){
       if(state!=='playing')return;const dt=Math.min(32,now-last)/16.67;last=now;
       const laneH=$('lane').clientHeight,barH=bar.offsetHeight,targetH=25,maxBar=laneH-barH-6,maxTarget=laneH-targetH-5;
       barV+=(held?.54:-.38)*dt;barV*=Math.pow(.88,dt);barV=Math.max(-6.4,Math.min(5.4,barV));barY+=barV*dt;
-      if(barY<3){barY=3;barV=Math.abs(barV)*.22}if(barY>maxBar){barY=maxBar;barV=-Math.abs(barV)*.25}
+      if(barY<START_BAR_Y){barY=START_BAR_Y;barV=Math.abs(barV)*.22}if(barY>maxBar){barY=maxBar;barV=-Math.abs(barV)*.25}
       if(Math.random()<targetItem.jump*dt){targetGoal=18+Math.random()*(maxTarget-26);targetV+=(Math.random()-.5)*2.4*targetItem.speed}
       const dir=Math.sign(targetGoal-targetY);targetV+=dir*.055*targetItem.speed*dt;targetV*=Math.pow(.94,dt);targetV=Math.max(-3.8*targetItem.speed,Math.min(3.8*targetItem.speed,targetV));targetY+=targetV*dt;
-      if(targetY<4){targetY=4;targetV=Math.abs(targetV)}if(targetY>maxTarget){targetY=maxTarget;targetV=-Math.abs(targetV)}
+      if(targetY<START_TARGET_Y){targetY=START_TARGET_Y;targetV=Math.abs(targetV)}if(targetY>maxTarget){targetY=maxTarget;targetV=-Math.abs(targetV)}
       const center=targetY+targetH/2,inside=center>=barY&&center<=barY+barH;
       progress+=inside?(.34*dt):(-.44*dt);progress=Math.max(0,Math.min(100,progress));bar.classList.toggle('hit',inside);
       bar.style.bottom=`${barY}px`;target.style.bottom=`${targetY}px`;progressFill.style.height=`${progress}%`;
