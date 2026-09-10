@@ -39,6 +39,72 @@
     @media(max-width:760px){.fishing-stage{padding:14px;min-height:500px}.scene{min-height:210px}.scene-copy{right:12px;top:12px;max-width:160px}.scene-copy strong{font-size:15px}.angler{left:4%;transform:scale(.9);transform-origin:bottom left}.splash{left:calc(4% + 145px)}.mini-wrap{grid-template-columns:92px minmax(0,1fr);gap:12px;padding:14px}.lane{height:300px}.collection-grid{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:420px){.scene-copy span{display:none}.mini-wrap{grid-template-columns:84px minmax(0,1fr)}.lane{width:68px;height:286px}.catch-bar{width:49px}.control-copy h3{font-size:19px}.hold-btn{font-size:15px}.collection-grid{gap:8px}.collection-item{padding:11px}}
     @media(prefers-reduced-motion:reduce){.bite-action,.splash.on{animation:none}}
+
+    /* Fishing graphics v2: retain the original scene and shared toolbox shell. */
+    .tb-grid{grid-template-columns:minmax(0,1fr) minmax(250px,300px);gap:32px}
+    .fishing-stage{padding:18px;min-height:0;background:#eef3f5}
+    .scene{min-height:300px;isolation:isolate;border:1px solid #214e6050;border-radius:16px;background:linear-gradient(175deg,#dcefff 0%,#c5e5f3 35%,#e8f4ed 46%,#7ecad1 46.5%,#489eae 64%,#23697d 100%);box-shadow:inset 0 0 35px #1c677515,0 5px 12px #1a4c6015}
+    .scene:before{top:46%;height:54%;opacity:.5;background:repeating-linear-gradient(174deg,transparent 0 19px,#e0ffff55 20px 21px,transparent 22px 38px);transform:scale(1.2);animation:water-drift 9s ease-in-out infinite alternate;z-index:-1}
+    .shore{bottom:-65px;height:108px;background:linear-gradient(#b6b78a,#778d66 14%,#d6c79e 17%,#a28e68);box-shadow:0 -3px 0 #deedd270,0 -12px 22px #153e5138;z-index:2}
+    .reed{z-index:3;background:linear-gradient(90deg,#42624d,#87a76a);box-shadow:2px 0 0 #253f3d20;animation:reed-sway 4s ease-in-out infinite alternate}
+    .reed.r2{animation-delay:-2s}.reed.r3{animation-delay:-1s}
+    .angler{left:10%;bottom:32px;z-index:4;transform:scale(1.25);transform-origin:bottom left;filter:drop-shadow(1px 3px 1px #143b4330)}
+    .head{background:linear-gradient(110deg,#efd0a8,#c89371);border-color:#333848;box-shadow:inset 0 6px 0 #6b493b30}
+    .hat{z-index:1;background:linear-gradient(#9078ef,#5941ba);box-shadow:0 3px 0 #40326c;top:-4px}
+    .body{background:linear-gradient(100deg,#ebffad,#b7d870);border-color:#333848;box-shadow:inset -7px 0 0 #91ad5545}
+    .rod{background:linear-gradient(90deg,#805c3e 0 23%,#d0a967 24% 26%,#29354b 27%);height:4px;transition:transform .25s ease}
+    .line{background:#f3fcf9bb;height:98px;box-shadow:1px 0 0 #163d4825}
+    .bobber{width:12px;height:18px;left:-6px;bottom:-9px;border:1px solid #53313b;border-radius:50%;background:linear-gradient(#ff7868 0 47%,#fff6dc 48% 76%,#da5749 77%);box-shadow:1px 3px 3px #173c4e55;animation:bobber-idle 2.5s ease-in-out infinite}
+    .splash{left:calc(10% + 192px);top:auto;bottom:77px;z-index:3;width:48px;height:13px;border:2px solid #e3ffffbb;border-radius:50%;opacity:.65;transform:none;animation:ripple-idle 3s ease-out infinite}
+    .splash.on{animation:splash .55s ease-out infinite}
+    .scene-copy{left:18px;right:18px;top:17px;max-width:none;text-align:left;color:#254653}
+    .scene-copy strong{font-size:19px;letter-spacing:-.035em}
+    .scene-copy span{max-width:310px;color:#416776;font-size:13px;line-height:1.6;margin-top:5px}
+    .scene[data-state="waiting"] .rod{transform:rotate(-28deg)}
+    .scene[data-state="bite"]{box-shadow:inset 0 0 0 3px #ffcf77,0 5px 12px #1a4c6015}
+    .scene[data-state="bite"] .bobber{animation:bobber-bite .24s ease-in-out infinite alternate}
+    .scene[data-state="playing"] .rod{transform:rotate(-39deg);animation:rod-tug .65s ease-in-out infinite alternate}
+    .scene[data-state="caught"] .angler{animation:catch-cheer .6s ease-out}
+    .fish-status{position:relative;padding:14px 15px;margin-top:14px;align-items:flex-start;flex-direction:column;gap:3px;border-color:#cfdee3;box-shadow:0 3px 0 #d9e4e8}
+    .fish-status strong{font-size:16px}.fish-status span{font-size:14px}
+    .main-action{min-height:56px;border-radius:12px;box-shadow:0 4px 0 #3c2b91;font-weight:800}
+    .main-action:disabled{opacity:1;background:#e1e8ec;color:#536b77;box-shadow:0 3px 0 #c9d7de}
+    .bite-action{box-shadow:0 4px 0 #752c3e!important}
+    .mini-wrap{background:#f9fcfd;border-color:#cbdce3;gap:18px;box-shadow:0 4px 0 #d8e3e9}
+    .lane{border-color:#304356;background:repeating-linear-gradient(0deg,transparent 0 28px,#ddf6ff25 29px 30px),linear-gradient(#87bdce,#397b98 65%,#204965);box-shadow:inset 4px 0 9px #152e4566,inset -3px 0 0 #b7e7f522,0 4px 0 #142b3d}
+    .catch-bar{background:#dfff8699;border-color:#efffc7;box-shadow:0 0 12px #dfff8650,inset 0 0 0 2px #48683750}
+    .catch-bar.hit{background:#dfff86dd;box-shadow:0 0 18px #dfff86a0,inset 0 0 0 2px #6b8d41}
+    .target{filter:drop-shadow(0 2px 2px #163042aa) drop-shadow(0 0 3px #fff)}
+    .progress-track{width:7px;right:3px;background:#162d4880;border:0}
+    .progress-fill{background:linear-gradient(#ebffb4,#a6de66)}
+    .control-copy h3{font-size:21px}.control-copy p{font-size:14px;color:#516370}
+    .key-note{font-size:12px}.hold-btn{border-radius:12px}
+    .result-box{position:relative;overflow:hidden;border-color:#c5b8f1;background:radial-gradient(ellipse at 50% 0,#ece5ff,transparent 65%),#fff;box-shadow:0 5px 0 #d7cdec;animation:result-reveal .45s cubic-bezier(.2,.8,.2,1)}
+    .result-icon{width:124px;height:108px;font-size:66px;background:#ffffffaa;border:1px solid #fff;box-shadow:0 8px 24px #6045db18;transform:rotate(-4deg);border-radius:25px}
+    .result-name{font-size:26px;line-height:1.35}.result-note{font-size:14px}.rarity{font-size:12px;padding:4px 11px}
+    .result-box[data-rarity="희귀"]{border-color:#8f80d1}.result-box[data-rarity="매우 희귀"],.result-box[data-rarity="전설?"]{border-color:#d4a94d;background:radial-gradient(ellipse at 50% 0,#fff0b5,transparent 70%),#fff}
+    .collection-grid{gap:10px}.collection-item{position:relative;min-height:130px;padding:15px;background:linear-gradient(145deg,#fff,#f1effa);box-shadow:0 3px 0 #dedde7;transition:transform .2s,border-color .2s}
+    .collection-item:not(.locked):hover{transform:translateY(-3px);border-color:#b7a9e6}
+    .collection-item .ci-icon{width:46px;height:43px;display:grid;place-items:center;border-radius:12px;background:#fff;border:1px solid #e6e2f0;font-size:29px}
+    .collection-item strong{font-size:14px}.collection-item span{font-size:12px}
+    .collection-item.locked{background:#ececf2;border-style:dashed;box-shadow:none;filter:none}
+    .collection-item.locked .ci-icon{color:#8e90a4;background:#e0e1e9;border-color:transparent;font:700 23px var(--tb-mono)}
+    .collection-item.locked strong{color:#777988}
+    .tiny-stat{border-top:3px solid #b9a7ec;box-shadow:0 3px 0 #e2dfeb}.tiny-stat span{font-size:14px}.tiny-stat strong{font-size:30px;margin-top:7px}
+    .zero-box{background:linear-gradient(135deg,#fff,#f7f1f4)}.zero-box p{font-size:14px}
+    @keyframes water-drift{to{transform:translateX(12px) scale(1.2);opacity:.3}}
+    @keyframes reed-sway{to{rotate:4deg}}
+    @keyframes bobber-idle{50%{translate:0 3px;rotate:8deg}}
+    @keyframes bobber-bite{to{translate:0 10px;rotate:-18deg}}
+    @keyframes ripple-idle{0%{scale:.5;opacity:.1}40%{opacity:.6}100%{scale:1.6;opacity:0}}
+    @keyframes rod-tug{to{transform:rotate(-34deg)}}
+    @keyframes catch-cheer{50%{translate:0 -7px}}
+    @keyframes result-reveal{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+    @media(max-width:900px){.tb-grid{grid-template-columns:minmax(0,1fr) 260px;gap:24px}}
+    @media(max-width:760px){.fishing-stage{padding:14px;min-height:0}.scene{min-height:270px}.angler{left:6%;transform:scale(1.1)}.splash{left:calc(6% + 168px);bottom:72px}.scene-copy{left:14px;right:14px;top:14px}.scene-copy strong{font-size:17px}.scene-copy span{font-size:12px;max-width:245px}.mini-wrap{gap:12px;padding:14px}}
+    @media(max-width:720px){.tb-grid{grid-template-columns:1fr}.tb-main{padding-top:22px}.tb-case{padding:14px}.tb-case-top{padding-bottom:14px}.tb-case-bottom{font-size:12px;flex-wrap:wrap;gap:3px}}
+    @media(max-width:420px){.fishing-stage{padding:10px}.scene{min-height:255px}.scene-copy span{display:block}.angler{left:4%;transform:scale(1)}.splash{left:calc(4% + 151px);bottom:69px}.mini-wrap{grid-template-columns:76px minmax(0,1fr);padding:12px;gap:10px}.control-copy h3{font-size:18px}.control-copy p{font-size:14px;line-height:1.6}.collection-item{padding:12px}.fish-status span{font-size:13px}}
+    @media(prefers-reduced-motion:reduce){.scene *,.scene:before,.result-box,.collection-item{animation:none!important;transition:none!important}.splash{opacity:.5}.splash.on{opacity:1;transform:scale(1.2)}}
   </style>
   <script defer src="../shared/analytics.js?v=20260911-fishing-1"></script>
 </head>
@@ -62,14 +128,14 @@
             <div class="tb-case-top"><span>FISHING / 016</span><span class="tb-sticker">물고기는 없습니다.</span></div>
             <div class="tb-case-paper">
               <div class="fishing-stage">
-                <div class="scene">
+                <div class="scene" id="fishing-scene" data-state="ready">
                   <div class="reed r1"></div><div class="reed r2"></div><div class="reed r3"></div>
                   <div class="angler"><div class="hat"></div><div class="head"></div><div class="body"></div><div class="leg l1"></div><div class="leg l2"></div><div class="rod"><div class="line"><div id="bobber" class="bobber"></div></div></div></div>
                   <div id="splash" class="splash"></div><div class="shore"></div>
                   <div class="scene-copy"><strong id="scene-title">오늘도 낚시를 해볼까요.</strong><span id="scene-sub">무언가가 낚이긴 합니다. 물고기는 아니고요.</span></div>
                 </div>
 
-                <div class="fish-status"><strong id="status-main">낚싯줄을 던져보세요.</strong><span id="status-sub">입질이 오면 빠르게 챔질!</span></div>
+                <div class="fish-status" role="status" aria-live="polite"><strong id="status-main">낚싯줄을 던져보세요.</strong><span id="status-sub">입질이 오면 빠르게 챔질!</span></div>
                 <button id="main-btn" class="tb-btn tb-btn-primary main-action" type="button">낚싯줄 던지기</button>
 
                 <div id="mini-game" class="mini-wrap hidden" aria-label="낚시 미니게임">
@@ -163,32 +229,34 @@
     }
     renderCollection();setThought();
 
+    function sceneState(value){$('fishing-scene').dataset.state=value;splash.classList.remove('on')}
     function resetScene(){
+      sceneState('ready');
       cancelAnimationFrame(raf);clearTimeout(biteTimer);clearTimeout(biteTimeout);held=false;holdBtn.classList.remove('is-held');
       mini.classList.add('hidden');result.classList.add('hidden');mainBtn.classList.remove('hidden','bite-action');mainBtn.textContent='낚싯줄 던지기';
       state='ready';statusMain.textContent='낚싯줄을 던져보세요.';statusSub.textContent='입질이 오면 빠르게 챔질!';sceneTitle.textContent='오늘도 낚시를 해볼까요.';sceneSub.textContent='무언가가 낚이긴 합니다. 물고기는 아니고요.';caseStatus.textContent='STATUS · READY';
     }
     function cast(){
       if(state!=='ready'&&state!=='result')return;
-      result.classList.add('hidden');mini.classList.add('hidden');state='waiting';mainBtn.disabled=true;mainBtn.textContent='기다리는 중…';
+      result.classList.add('hidden');mini.classList.add('hidden');state='waiting';sceneState('waiting');mainBtn.disabled=true;mainBtn.textContent='기다리는 중…';
       statusMain.textContent='찌가 잠잠합니다.';statusSub.textContent='너무 기대하지는 마세요.';sceneTitle.textContent='조용하네요.';sceneSub.textContent='물속에서 생활용품이 헤엄치는 소리는 원래 안 들립니다.';caseStatus.textContent='STATUS · WAITING';
       biteTimer=setTimeout(bite,900+Math.random()*1800);
     }
     function bite(){
-      if(state!=='waiting')return;state='bite';mainBtn.disabled=false;mainBtn.textContent='!  지금 챔질!';mainBtn.classList.add('bite-action');
+      if(state!=='waiting')return;state='bite';sceneState('bite');mainBtn.disabled=false;mainBtn.textContent='!  지금 챔질!';mainBtn.classList.add('bite-action');
       statusMain.textContent='입질!';statusSub.textContent='지금 누르세요!';sceneTitle.textContent='뭔가 걸렸습니다!';sceneSub.textContent='물고기일 가능성은 여전히 0%입니다.';caseStatus.textContent='STATUS · BITE';
       splash.classList.remove('on');void splash.offsetWidth;splash.classList.add('on');
       biteTimeout=setTimeout(()=>failBite(),1500);
     }
     function failBite(){
-      if(state!=='bite')return;state='result';misses++;localStorage.setItem('fishing-misses',misses);$('miss-count').textContent=misses;mainBtn.classList.remove('bite-action');mainBtn.textContent='놓쳤습니다 · 다시 던지기';
+      if(state!=='bite')return;state='result';sceneState('escaped');misses++;localStorage.setItem('fishing-misses',misses);$('miss-count').textContent=misses;mainBtn.classList.remove('bite-action');mainBtn.textContent='놓쳤습니다 · 다시 던지기';
       statusMain.textContent='챔질이 늦었습니다.';statusSub.textContent='무언가가 물속으로 사라졌습니다.';sceneTitle.textContent='놓쳤네요.';sceneSub.textContent='아마 접시 같은 거였겠죠.';caseStatus.textContent='STATUS · TOO LATE';setThought();
     }
     function hook(){
       if(state!=='bite')return;clearTimeout(biteTimeout);mainBtn.classList.remove('bite-action');mainBtn.classList.add('hidden');targetItem=weightedPick();startMini();
     }
     function startMini(){
-      state='playing';mini.classList.remove('hidden');result.classList.add('hidden');barY=12;barV=0;targetY=120+Math.random()*100;targetV=(Math.random()>.5?1:-1)*.5;targetGoal=40+Math.random()*230;progress=24;
+      state='playing';sceneState('playing');held=false;holdBtn.classList.remove('is-held');mini.classList.remove('hidden');result.classList.add('hidden');barY=12;barV=0;targetY=120+Math.random()*100;targetV=(Math.random()>.5?1:-1)*.5;targetGoal=40+Math.random()*230;progress=24;
       statusMain.textContent='걸었습니다!';statusSub.textContent='초록 막대로 끝까지 버티세요.';sceneTitle.textContent='이제 놓치지 마세요.';sceneSub.textContent=`난이도: ${targetItem.rarity}`;caseStatus.textContent='STATUS · REELING';last=performance.now();raf=requestAnimationFrame(loop);
     }
     function loop(now){
@@ -205,11 +273,13 @@
       if(progress>=100){win();return}if(progress<=0){lose();return}raf=requestAnimationFrame(loop);
     }
     function win(){
+      sceneState('caught');result.dataset.rarity=targetItem.rarity;
       state='result';cancelAnimationFrame(raf);catches++;collection.add(targetItem.id);localStorage.setItem('fishing-catches',catches);localStorage.setItem('fishing-collection',JSON.stringify([...collection]));$('catch-count').textContent=catches;renderCollection();mini.classList.add('hidden');result.classList.remove('hidden');
       $('result-icon').textContent=targetItem.icon;$('rarity').textContent=targetItem.rarity;$('result-name').textContent=targetItem.name;$('result-note').textContent=targetItem.note;
       statusMain.textContent='낚았습니다!';statusSub.textContent='역시 물고기는 아닙니다.';sceneTitle.textContent=`${targetItem.name} 획득!`;sceneSub.textContent='축하합니다. 생선은 못 잡았습니다.';caseStatus.textContent='STATUS · CAUGHT';setThought();
     }
     function lose(){
+      sceneState('escaped');
       state='result';cancelAnimationFrame(raf);misses++;localStorage.setItem('fishing-misses',misses);$('miss-count').textContent=misses;mini.classList.add('hidden');mainBtn.classList.remove('hidden');mainBtn.textContent='놓쳤습니다 · 다시 던지기';
       statusMain.textContent='줄에서 빠졌습니다.';statusSub.textContent=`방금 것은 ${targetItem.rarity} 물건이었습니다.`;sceneTitle.textContent='아깝습니다.';sceneSub.textContent='물고기는 아니었으니 너무 아까워하지는 마세요.';caseStatus.textContent='STATUS · ESCAPED';setThought();
     }
