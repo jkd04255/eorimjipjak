@@ -3,39 +3,39 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <meta name="theme-color" content="#f0f0f4">
-  <meta name="description" content="쉬운 단어 하나를 보여준 뒤 어려운 단어가 정답이었다고 우기는 뻔뻔한 기억력 테스트">
+  <meta name="description" content="쉬운 단어 하나를 보여준 뒤 전혀 다른 어려운 단어가 정답이었다고 우기는 기억력 테스트">
   <title>기억나? — 뻔뻔한 기억력 테스트</title>
-  <link rel="stylesheet" href="../shared/toolbox.css">
+  <link rel="stylesheet" href="../shared/toolbox.css?build=20260910-1438">
   <style>
     .memory-logo svg{width:28px;height:28px}
-    .memory-stage{min-height:430px;padding:36px 24px 32px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden;background:#fff}
+    .memory-stage{min-height:450px;padding:38px 24px 34px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:#fff}
     .memory-kicker{margin:0;color:var(--tb-purple);font-size:12px;font-weight:800;letter-spacing:1.2px}
-    .memory-title{margin:8px 0 0;font-size:26px;letter-spacing:-.05em}
+    .memory-title{margin:8px 0 0;font-size:27px;letter-spacing:-.05em}
     .memory-desc{max-width:520px;margin:10px auto 0;color:var(--tb-muted);font-size:14px;line-height:1.75}
-    .single-word{width:min(500px,100%);min-height:170px;margin-top:28px;display:grid;place-items:center;padding:24px;border:1px solid var(--tb-line);border-radius:18px;background:#fafafd;font-size:clamp(42px,10vw,76px);font-weight:850;letter-spacing:-.06em;transition:opacity .2s ease,filter .2s ease,transform .2s ease}
+    .single-word{width:min(500px,100%);min-height:180px;margin-top:30px;display:grid;place-items:center;padding:24px;border:1px solid var(--tb-line);border-radius:18px;background:#fafafd;font-size:clamp(46px,11vw,80px);font-weight:850;letter-spacing:-.06em;transition:opacity .2s ease,filter .2s ease,transform .2s ease}
     .single-word.is-hiding{opacity:0;filter:blur(10px);transform:scale(.95)}
     .countdown{margin-top:14px;color:var(--tb-muted);font:700 13px/1.4 var(--tb-mono)}
-    .memory-actions{margin-top:24px;display:flex;gap:9px;flex-wrap:wrap;justify-content:center}
-    .memory-actions .tb-btn{min-width:140px}
-    .answer-wrap{width:min(500px,100%);margin-top:24px;text-align:left}
+    .memory-actions{margin-top:24px;display:flex;gap:9px;justify-content:center}
+    .memory-actions .tb-btn{min-width:150px}
+    .answer-wrap{width:min(500px,100%);margin-top:26px;text-align:left}
     .answer-wrap label{display:block;margin-bottom:8px;font-size:13px;font-weight:750}
     .answer-input{width:100%;min-height:54px;padding:13px 15px;border:1px solid var(--tb-line);border-radius:12px;background:#fff;color:var(--tb-ink);font:inherit;font-size:18px;text-align:center;outline:none}
     .answer-input:focus{border-color:#9b8be7;box-shadow:0 0 0 3px #ece8ff}
-    .result-card{width:min(600px,100%);margin-top:26px;padding:22px;border:1px solid var(--tb-line);border-radius:16px;background:#fafafd;text-align:left}
-    .result-card .mine{color:var(--tb-muted);font-size:13px}.result-card .mine strong{color:var(--tb-ink)}
-    .result-card .fake{margin-top:8px;font-size:19px;font-weight:800;line-height:1.55}.result-card .fake strong{color:var(--tb-danger)}
-    .result-card .snark{margin-top:10px;color:var(--tb-purple-dark);font-size:15px;font-weight:800}
-    .final-score{margin-top:18px;padding:18px 22px;border:1px dashed #c8c1e4;border-radius:14px;background:#f1eefb}
-    .final-score strong{display:block;font:850 36px/1 var(--tb-mono);letter-spacing:-2px}
-    .final-score span{display:block;margin-top:8px;color:#625d75;font-size:13px}
-    .hidden{display:none!important}
-    .memory-info{margin-top:18px}
-    .memory-info .tb-card{padding:20px}
-    .memory-info p{margin:0;color:var(--tb-muted);font-size:13px;line-height:1.8}
-    .memory-info strong{color:var(--tb-ink)}
+    .result-card{width:min(600px,100%);margin-top:28px;padding:22px;border:1px solid var(--tb-line);border-radius:16px;background:#fafafd;text-align:left}
+    .mine{color:var(--tb-muted);font-size:13px}.mine strong{color:var(--tb-ink)}
+    .fake{margin-top:8px;font-size:20px;font-weight:800;line-height:1.55}.fake strong{color:var(--tb-danger)}
+    .snark{margin-top:11px;color:var(--tb-purple-dark);font-size:16px;font-weight:850}
+    .score{margin-top:18px;padding:18px 22px;border:1px dashed #c8c1e4;border-radius:14px;background:#f1eefb}
+    .score strong{display:block;font:850 36px/1 var(--tb-mono);letter-spacing:-2px}
+    .score span{display:block;margin-top:8px;color:#625d75;font-size:13px}
+    .memory-info{margin-top:18px}.memory-info .tb-card{padding:20px}.memory-info p{margin:0;color:var(--tb-muted);font-size:13px;line-height:1.8}.memory-info strong{color:var(--tb-ink)}
     .example-box{margin-top:12px;padding:14px;border-radius:12px;background:#f6f5f9;color:#696576;font-size:13px;line-height:1.7}.example-box strong{color:var(--tb-ink)}
-    @media(max-width:720px){.memory-stage{min-height:400px;padding:28px 15px 24px}.single-word{min-height:145px}.memory-actions{width:100%}.memory-actions .tb-btn{flex:1;min-width:0}}
+    .hidden{display:none!important}
+    @media(max-width:720px){.memory-stage{min-height:410px;padding:30px 15px 26px}.single-word{min-height:150px}.memory-actions{width:100%}.memory-actions .tb-btn{width:100%}}
     @media(prefers-reduced-motion:reduce){.single-word{transition:none}}
   </style>
 </head>
@@ -44,25 +44,32 @@
     <header class="tb-header">
       <div class="tb-brand">
         <span class="tb-logo memory-logo" aria-hidden="true">
-          <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 12a6 6 0 1 1 9.7 4.7C17.7 18.3 16 19.2 16 22"/><path d="M16 27h.01"/><path d="M6 8.5 3.5 6M26 8.5 28.5 6M7 25l-2 2M25 25l2 2"/></svg>
+          <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 12a6 6 0 1 1 9.7 4.7C17.7 18.3 16 19.2 16 22"/>
+            <path d="M16 27h.01"/>
+          </svg>
         </span>
         <div class="tb-brand-copy"><h1 class="tb-title">기억나?</h1><p class="tb-subtitle">뻔뻔한 기억력 테스트</p></div>
       </div>
       <span class="tb-edition">ATTIC TOOL / 017</span>
-      <a class="tb-home" href="../" aria-label="홈으로 돌아가기" title="홈"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-7h6v7"/></svg></a>
+      <a class="tb-home" href="../?build=20260910-1438" aria-label="홈으로 돌아가기" title="홈">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-7h6v7"/></svg>
+      </a>
     </header>
 
     <main class="tb-main">
       <section class="tb-workspace" aria-labelledby="memory-main-title">
         <div class="tb-case">
-          <div class="tb-case-top"><span>MEMORY TEST / 017</span><span class="tb-sticker">이것도 못해요?</span></div>
+          <div class="tb-case-top"><span>MEMORY TEST / ONE QUESTION</span><span class="tb-sticker">이것도 못해요?</span></div>
           <div class="tb-case-paper">
             <div class="memory-stage">
-              <p id="phase-label" class="memory-kicker">READY · 문제는 딱 하나입니다</p>
+              <p id="phase-label" class="memory-kicker">READY · 딱 한 문제</p>
               <h2 id="memory-main-title" class="memory-title">단어 하나만 기억하세요.</h2>
-              <p id="phase-desc" class="memory-desc">전체 테스트도 한 문제뿐입니다. 이 정도면 정말 쉽죠?</p>
+              <p id="phase-desc" class="memory-desc">단어 하나를 3초 동안 보여드립니다. 그리고 끝입니다.</p>
 
-              <div id="ready-view" class="memory-actions"><button id="start-btn" class="tb-btn tb-btn-primary" type="button">테스트 시작</button></div>
+              <div id="ready-view" class="memory-actions">
+                <button id="start-btn" class="tb-btn tb-btn-primary" type="button">테스트 시작</button>
+              </div>
 
               <div id="show-view" class="hidden" style="width:100%">
                 <div id="single-word" class="single-word" aria-live="polite"></div>
@@ -81,66 +88,67 @@
                   <div class="fake">정답은 <strong id="fake-answer">-</strong>이었습니다!</div>
                   <div id="snark-line" class="snark">이것도 못해요?</div>
                 </div>
-                <div class="final-score"><strong>0 / 1</strong><span>한 문제 중 0문제 정답입니다. 문제는 정말 하나뿐이었습니다.</span></div>
-                <div class="memory-actions"><button id="again-btn" class="tb-btn tb-btn-primary" type="button">다시 도전</button></div>
+                <div class="score"><strong>0 / 1</strong><span>한 문제 중 0문제 정답입니다. 진짜 한 문제였습니다.</span></div>
+                <div class="memory-actions"><button id="again-btn" class="tb-btn tb-btn-primary" type="button">다시 해보기</button></div>
               </div>
             </div>
           </div>
-          <div class="tb-case-bottom"><span id="case-status">STATUS · READY</span><span>한 문제뿐인데요?</span></div>
+          <div class="tb-case-bottom"><span id="case-status">STATUS · READY</span><span>문제는 하나뿐입니다.</span></div>
         </div>
 
         <section class="memory-info" aria-label="테스트 설명">
           <div class="tb-card">
-            <p><strong>진행 방식</strong> · 짧고 쉬운 단어 하나가 3초 동안 보입니다. 기억한 단어를 그대로 입력하면 됩니다.</p>
-            <div class="example-box">예: <strong>의자</strong>를 보여줌 → 사용자가 <strong>의자</strong> 입력 → 앱: “정답은 <strong>법학전문대학원</strong>이었습니다! 이것도 못해요?”</div>
+            <p><strong>진행 방식</strong> · 짧은 단어 하나를 보고 그대로 입력하면 됩니다. 그런데 채점기는 전혀 다른 말을 정답이라고 우깁니다.</p>
+            <div class="example-box"><strong>의자</strong> 제시 → <strong>의자</strong> 입력 → “정답은 <strong>법학전문대학원</strong>이었습니다! 이것도 못해요?”</div>
           </div>
         </section>
       </section>
     </main>
 
-    <footer class="tb-footer"><span>다락방 뒷편 공구 상자</span><span>기억력보다 앱의 양심이 더 의심스러운 테스트입니다.</span></footer>
+    <footer class="tb-footer"><span>다락방 뒷편 공구 상자</span><span>기억력보다 채점기의 양심이 더 의심스럽습니다.</span></footer>
   </div>
-  <div class="tb-contact"><a href="mailto:jkd04255@khu.ac.kr?subject=%5B%EB%8B%A4%EB%9D%BD%EB%B0%A9%20%EB%92%B7%ED%8E%B8%20%EA%B3%B5%EA%B5%AC%20%EC%83%81%EC%9E%90%5D%20%EA%B8%B0%EC%96%B5%EB%82%98%20%EB%AC%B8%EC%9D%98%20%C2%B7%20%EC%98%A4%EB%A5%98%20%EC%A0%9C%EB%B3%B4">✉ 문의 · 오류 제보</a></div>
+  <div class="tb-contact"><a href="mailto:jkd04255@khu.ac.kr?subject=%5B%EB%8B%A4%EB%9D%BD%EB%B0%A9%20%EB%92%B7%ED%8E%B8%20%EA%B3%B5%EA%B5%AC%20%EC%83%81%EC%9E%90%5D%20%EA%B8%B0%EC%96%B5%EB%82%98%20%EB%AC%B8%EC%9D%98">✉ 문의 · 오류 제보</a></div>
 
   <script>
-  (()=>{
-    const easyWords=['의자','사과','버스','구름','연필','우산','고양이','바다','시계','모자','컵','나무','신발','책','딸기','문','강아지','학교','달','비누','열쇠','휴지','빵','기차','공','꽃','양말','물','밥','별'];
-    const hardWords=['법학전문대학원','국가과학기술연구회','전자기파흡수율측정기준','국제통화기금협정문','개인정보보호위원회','한국형발사체개발사업본부','고등교육기관평가인증원','국가균형발전특별회계','전기통신금융사기피해방지법','산업재해보상보험심사위원회','초고성능컴퓨팅활용촉진법','국립환경과학원대기질통합예보센터','정보통신기반보호위원회','지방교육재정교부금법시행령','국가연구개발혁신법시행규칙','자동차손해배상보장사업분담금','중소기업기술정보진흥원','과학기술정보통신부장관','국제연합교육과학문화기구','자본시장과금융투자업에관한법률'];
-    const snarks=['이것도 못해요?','분명 보여드렸는데요?','한 단어였는데요?','아까 봤잖아요. 설마 잊으셨어요?','기억력이 벌써 퇴근했나요?','눈은 뜨고 계셨죠?','문제가 아니라 기억력 쪽을 점검해야겠는데요.'];
-    const $=id=>document.getElementById(id);
-    const ready=$('ready-view'),show=$('show-view'),answer=$('answer-view'),result=$('result-view');
-    const phaseLabel=$('phase-label'),title=$('memory-main-title'),desc=$('phase-desc'),word=$('single-word'),countdown=$('countdown'),input=$('answer-input');
-    const userAnswer=$('user-answer'),fakeAnswer=$('fake-answer'),snarkLine=$('snark-line'),caseStatus=$('case-status');
-    let shownWord='',fakeWord='',timer=null;
-    const pick=a=>a[Math.floor(Math.random()*a.length)];
-    const hideAll=()=>[ready,show,answer,result].forEach(v=>v.classList.add('hidden'));
+    (()=>{
+      const easyWords=['의자','사과','버스','구름','연필','우산','고양이','바다','시계','모자','컵','나무','신발','책','딸기','문','강아지','학교','달','비누','열쇠','휴지','빵','기차','공','꽃','양말','물','밥','별'];
+      const hardWords=['법학전문대학원','국가과학기술연구회','전자기파흡수율측정기준','국제통화기금협정문','개인정보보호위원회','한국형발사체개발사업본부','고등교육기관평가인증원','국가균형발전특별회계','전기통신금융사기피해방지법','산업재해보상보험심사위원회','초고성능컴퓨팅활용촉진법','국립환경과학원대기질통합예보센터','정보통신기반보호위원회','지방교육재정교부금법시행령','국가연구개발혁신법시행규칙','자동차손해배상보장사업분담금','중소기업기술정보진흥원','과학기술정보통신부장관','국제연합교육과학문화기구','자본시장과금융투자업에관한법률'];
+      const snarks=['이것도 못해요?','분명 보여드렸는데요?','한 단어였는데요?','아까 봤잖아요. 설마 잊으셨어요?','기억력이 벌써 퇴근했나요?','눈은 뜨고 계셨죠?','문제가 아니라 기억력 쪽을 점검해야겠는데요.'];
+      const $=id=>document.getElementById(id);
+      const ready=$('ready-view'),show=$('show-view'),answer=$('answer-view'),result=$('result-view');
+      const phase=$('phase-label'),title=$('memory-main-title'),desc=$('phase-desc'),word=$('single-word'),countdown=$('countdown'),input=$('answer-input'),status=$('case-status');
+      let shownWord='',fakeWord='',timer=null;
+      const pick=a=>a[Math.floor(Math.random()*a.length)];
+      const hideAll=()=>[ready,show,answer,result].forEach(v=>v.classList.add('hidden'));
 
-    function startTest(){
-      shownWord=pick(easyWords); fakeWord=pick(hardWords);
-      hideAll(); show.classList.remove('hidden'); word.classList.remove('is-hiding'); word.textContent=shownWord;
-      phaseLabel.textContent='QUESTION 1 / 1'; title.textContent='이 단어 하나만 기억하세요.'; desc.textContent='이게 전부입니다. 딱 하나예요.'; caseStatus.textContent='STATUS · SHOWING';
-      let left=3; countdown.textContent=`${left}초 뒤에 사라집니다`;
-      clearInterval(timer); timer=setInterval(()=>{left--;if(left>0){countdown.textContent=`${left}초 뒤에 사라집니다`}else{clearInterval(timer);word.classList.add('is-hiding');countdown.textContent='자, 뭐였죠?';setTimeout(askAnswer,260)}},1000);
-    }
+      function start(){
+        shownWord=pick(easyWords);fakeWord=pick(hardWords);
+        hideAll();show.classList.remove('hidden');word.classList.remove('is-hiding');word.textContent=shownWord;
+        phase.textContent='QUESTION · 1 / 1';title.textContent='이 단어 하나만 기억하세요.';desc.textContent='딱 하나입니다. 3초면 충분하죠?';status.textContent='STATUS · SHOWING';
+        let left=3;countdown.textContent=`${left}초 뒤에 사라집니다`;
+        clearInterval(timer);
+        timer=setInterval(()=>{left--;if(left>0){countdown.textContent=`${left}초 뒤에 사라집니다`}else{clearInterval(timer);word.classList.add('is-hiding');countdown.textContent='자, 뭐였죠?';setTimeout(ask,260)}},1000);
+      }
 
-    function askAnswer(){
-      hideAll(); answer.classList.remove('hidden'); phaseLabel.textContent='RECALL 1 / 1'; title.textContent='방금 단어가 뭐였죠?'; desc.textContent='하나만 적으면 됩니다. 설마 벌써 잊은 건 아니죠?'; caseStatus.textContent='STATUS · RECALL'; input.value=''; setTimeout(()=>input.focus(),50);
-    }
+      function ask(){
+        hideAll();answer.classList.remove('hidden');phase.textContent='RECALL · 1 / 1';title.textContent='방금 단어가 뭐였죠?';desc.textContent='한 단어만 적으시면 됩니다.';status.textContent='STATUS · RECALL';input.value='';setTimeout(()=>input.focus(),50);
+      }
 
-    function grade(e){
-      e.preventDefault(); const typed=input.value.trim()||'(아무것도 안 적음)';
-      hideAll(); result.classList.remove('hidden'); userAnswer.textContent=typed; fakeAnswer.textContent=fakeWord; snarkLine.textContent=pick(snarks);
-      phaseLabel.textContent='WRONG · 당연히 오답입니다'; title.textContent='틀렸습니다.'; desc.textContent=`${shownWord}라고 기억하셨나요? 이상하네요. 저희 기록은 다른데요.`; caseStatus.textContent='STATUS · 0 / 1';
-    }
+      function grade(e){
+        e.preventDefault();
+        const typed=input.value.trim()||'(아무것도 안 적음)';
+        hideAll();result.classList.remove('hidden');$('user-answer').textContent=typed;$('fake-answer').textContent=fakeWord;$('snark-line').textContent=pick(snarks);
+        phase.textContent='WRONG · 오답입니다';title.textContent='틀렸습니다.';desc.textContent=`${shownWord}라고요? 이상하네요. 정답은 그게 아니었는데요.`;status.textContent='STATUS · 0 / 1';
+      }
 
-    function reset(){
-      hideAll(); ready.classList.remove('hidden'); phaseLabel.textContent='READY · 문제는 딱 하나입니다'; title.textContent='단어 하나만 기억하세요.'; desc.textContent='전체 테스트도 한 문제뿐입니다. 이 정도면 정말 쉽죠?'; caseStatus.textContent='STATUS · READY';
-    }
+      function reset(){
+        hideAll();ready.classList.remove('hidden');phase.textContent='READY · 딱 한 문제';title.textContent='단어 하나만 기억하세요.';desc.textContent='단어 하나를 3초 동안 보여드립니다. 그리고 끝입니다.';status.textContent='STATUS · READY';
+      }
 
-    $('start-btn').addEventListener('click',startTest);
-    answer.addEventListener('submit',grade);
-    $('again-btn').addEventListener('click',reset);
-  })();
+      $('start-btn').addEventListener('click',start);
+      answer.addEventListener('submit',grade);
+      $('again-btn').addEventListener('click',reset);
+    })();
   </script>
 </body>
 </html>
