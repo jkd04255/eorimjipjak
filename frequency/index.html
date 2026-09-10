@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f0f0f4">
+  <meta name="description" content="종강, 집가기, 살빼기, 성적, 여행, 돈 등 각종 소원을 초음파에 맡겨보는 믿거나 말거나 주파수 앱">
+  <title>효험 — 믿거나 말거나 주파수</title>
+  <link rel="stylesheet" href="../shared/toolbox.css">
+  <style>
+    .freq-logo svg{width:28px;height:28px}
+    .freq-stage{min-height:430px;padding:30px 22px 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden;background:#fff}
+    .freq-status{color:var(--tb-purple);font-size:12px;font-weight:800;letter-spacing:1.2px}
+    .freq-title{margin-top:7px;font-size:clamp(24px,5vw,34px);font-weight:800;letter-spacing:-.05em}
+    .freq-hz{margin-top:18px;font:850 clamp(48px,10vw,82px)/1 var(--tb-mono);letter-spacing:-5px;font-variant-numeric:tabular-nums}
+    .freq-unit{margin-top:7px;color:var(--tb-muted);font-size:13px}
+    .wave{width:min(520px,92%);height:94px;margin:22px 0 10px;display:flex;align-items:center;justify-content:center;gap:4px;overflow:hidden}
+    .wave i{display:block;width:4px;height:20%;border-radius:99px;background:var(--tb-purple);opacity:.7;transform-origin:center;animation:wave 900ms ease-in-out infinite alternate;animation-play-state:paused}
+    .wave.is-on i{animation-play-state:running}
+    .wave i:nth-child(3n){animation-duration:620ms}.wave i:nth-child(4n){animation-duration:760ms}.wave i:nth-child(5n){animation-duration:1030ms}
+    @keyframes wave{0%{height:12%}100%{height:88%}}
+    .freq-main-btn{min-width:190px;margin-top:9px}
+    .freq-disclaimer{margin-top:15px;color:var(--tb-muted);font-size:12px;line-height:1.7}
+    .freq-whisper{min-height:78px;margin-top:20px;padding:16px 18px;width:min(520px,100%);border:1px dashed #c7c2de;border-radius:14px;background:#f1eff8;color:#666172;display:flex;align-items:center;justify-content:center;font-size:14px;line-height:1.75;opacity:0;transform:translateY(5px);transition:opacity .4s ease,transform .4s ease}
+    .freq-whisper.is-show{opacity:1;transform:none}.freq-whisper strong{color:var(--tb-ink)}
+    .wish-list{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:16px}
+    .wish-btn{min-height:68px;padding:12px 13px;border:1px solid var(--tb-line);border-radius:11px;background:#fff;text-align:left;transition:background .15s,border-color .15s,transform .15s}
+    .wish-btn:hover{background:#f7f5ff;border-color:#c9bdf2}.wish-btn:active{transform:translateY(1px)}
+    .wish-btn[aria-pressed="true"]{background:var(--tb-soft);border-color:#c7bbf6}
+    .wish-btn strong{display:block;font-size:14px}.wish-btn span{display:block;margin-top:3px;color:var(--tb-muted);font:12px/1.4 var(--tb-mono)}
+    .freq-meter{margin-top:18px;padding-top:17px;border-top:1px solid var(--tb-line)}
+    .meter-row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px}.meter-row strong{font-family:var(--tb-mono)}
+    .meter-track{height:7px;margin-top:10px;overflow:hidden;border-radius:99px;background:#ebe9f2}.meter-track span{display:block;width:0;height:100%;background:var(--tb-purple);transition:width .25s ease}
+    .tiny-note{margin-top:13px;color:var(--tb-muted);font-size:12px;line-height:1.7}
+    @media(max-width:720px){.freq-stage{min-height:390px;padding:26px 14px 22px}.freq-hz{letter-spacing:-3px}.wish-list{grid-template-columns:1fr}.wave{height:76px}.freq-main-btn{width:100%}}
+    @media(prefers-reduced-motion:reduce){.wave i{animation:none}.freq-whisper,.meter-track span{transition:none}}
+  </style>
+</head>
+<body>
+  <div class="tb-shell">
+    <header class="tb-header">
+      <div class="tb-brand">
+        <span class="tb-logo freq-logo" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M3 16h3l2.4-7 4.4 14 5.1-18 4.2 22 3.3-11H29"/></svg>
+        </span>
+        <div class="tb-brand-copy"><h1 class="tb-title">효험</h1><p class="tb-subtitle">믿거나 말거나 초음파 연구소</p></div>
+      </div>
+      <span class="tb-edition">ATTIC TOOL / 013</span>
+      <a class="tb-home" href="../" aria-label="홈으로 돌아가기" title="홈">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-7h6v7"/></svg>
+      </a>
+    </header>
+
+    <main class="tb-main">
+      <div class="tb-grid">
+        <section class="tb-workspace" aria-labelledby="freq-heading">
+          <div class="tb-case">
+            <div class="tb-case-top"><span>ULTRASONIC WISH MACHINE / 013</span><span class="tb-sticker">효과는 기분 탓</span></div>
+            <div class="tb-case-paper">
+              <div class="freq-stage">
+                <p id="status" class="freq-status">READY · 소원을 골라주세요</p>
+                <h2 id="freq-heading" class="freq-title">종강하는 주파수</h2>
+                <div id="hz" class="freq-hz">19,231</div>
+                <p class="freq-unit">Hz · 초음파라고 우기는 중</p>
+                <div id="wave" class="wave" aria-hidden="true"></div>
+                <button id="play" class="tb-btn tb-btn-primary freq-main-btn" type="button">주파수 송출</button>
+                <p class="freq-disclaimer">초음파라 어차피 안 들려요. 믿거나 말거나.<br><small>* 사람과 기기에 따라 들릴 수 있으며, 아래 효능은 과학적 근거가 없습니다.</small></p>
+                <div id="whisper" class="freq-whisper" aria-live="polite">효험이 나타나기까지 잠시만 믿어보세요.</div>
+              </div>
+            </div>
+            <div class="tb-case-bottom"><span id="case-status">STATUS · STANDBY</span><span>근거 없음 · 자신감 있음</span></div>
+          </div>
+        </section>
+
+        <aside class="tb-settings" aria-labelledby="wish-title">
+          <p class="tb-eyebrow">CHOOSE YOUR MIRACLE</p>
+          <h2 id="wish-title" class="tb-heading">어떤 효험이 필요하세요?</h2>
+          <p class="tb-intro">효과는 전부 보장하지 않습니다. 주파수 숫자만 아주 정밀해 보이게 준비했습니다.</p>
+          <div class="tb-control-card">
+            <div id="wish-list" class="wish-list"></div>
+            <div class="freq-meter">
+              <div class="meter-row"><span>현재 믿음 수치</span><strong id="faith-value">0%</strong></div>
+              <div class="meter-track"><span id="faith-bar"></span></div>
+              <p class="tiny-note">재생할수록 믿음 수치만 올라갑니다. 실제 효과와는 관계가 없습니다.</p>
+            </div>
+          </div>
+          <section class="tb-thought" aria-label="연구소의 설명">
+            <p class="tb-thought-label">“ 효험 연구소의 한마디</p>
+            <h3 id="lab-title">정확히 19,231 Hz입니다.</h3>
+            <p id="lab-body">왜 이 숫자인지는 묻지 마세요. 숫자가 구체적일수록 왠지 믿음직해 보이니까요.</p>
+          </section>
+        </aside>
+      </div>
+    </main>
+
+    <footer class="tb-footer"><span>다락방 뒷편 공구 상자</span><span>의학·학업·금전·여행 효과를 실제로 제공하지 않습니다.</span></footer>
+  </div>
+  <div class="tb-contact"><a href="mailto:jkd04255@khu.ac.kr?subject=%5B%EB%8B%A4%EB%9D%BD%EB%B0%A9%20%EB%92%B7%ED%8E%B8%20%EA%B3%B5%EA%B5%AC%20%EC%83%81%EC%9E%90%5D%20%ED%9A%A8%ED%97%98%20%EB%AC%B8%EC%9D%98%20%C2%B7%20%EC%98%A4%EB%A5%98%20%EC%A0%9C%EB%B3%B4">✉ 문의 · 오류 제보</a></div>
+
+  <script>
+    (() => {
+      const wishes = [
+        {name:'종강하는 주파수', hz:19231, tag:'SEMESTER END', line:'학사일정은 안 움직입니다. <strong>달력을 확인하세요.</strong>', lab:'종강을 약 0일 앞당기는 것으로 추정됩니다.'},
+        {name:'집가는 주파수', hz:19387, tag:'GO HOME', line:'주파수보다 빠른 방법이 있습니다. <strong>가방부터 싸세요.</strong>', lab:'귀가 의지는 높일 수 있습니다. 집까지 데려다주진 않습니다.'},
+        {name:'살 빠지는 주파수', hz:19513, tag:'SLIM MODE', line:'음… <strong>차라리 산책을 하세요.</strong>', lab:'지방은 듣지 못합니다. 운동화는 알아들을 수도 있습니다.'},
+        {name:'성적 오르는 주파수', hz:19661, tag:'GRADE UP', line:'이거 들을 시간에 <strong>공부나 하시지…</strong>', lab:'성적표와 직접 통신하는 데 실패했습니다.'},
+        {name:'일본 여행가는 주파수', hz:19109, tag:'JAPAN TRIP', line:'주파수보다 <strong>항공권부터 보는 게 빠릅니다.</strong>', lab:'도쿄 방향으로 송출 중입니다. 항공사는 모릅니다.'},
+        {name:'돈 들어오는 주파수', hz:19441, tag:'MONEY IN', line:'<strong>공짜 좋아하면 대머리 된대요.</strong>', lab:'계좌번호를 모르기 때문에 입금은 어렵습니다.'},
+        {name:'지각 면하는 주파수', hz:19739, tag:'NOT LATE', line:'지금 이거 누르고 있을 때가 아닙니다. <strong>뛰세요.</strong>', lab:'시간을 늦추는 데 실패했습니다. 시계가 너무 완강합니다.'},
+        {name:'과제 사라지는 주파수', hz:19073, tag:'NO HOMEWORK', line:'과제는 그대로 있습니다. <strong>제출 버튼도 안 사라집니다.</strong>', lab:'파일명만 쳐다보다가 포기했습니다.'},
+        {name:'연락 오는 주파수', hz:19817, tag:'TEXT ME', line:'기다리지만 말고 <strong>먼저 연락해보세요.</strong>', lab:'상대방 휴대폰과의 텔레파시 연결이 거부되었습니다.'}
+      ];
+
+      const list = document.getElementById('wish-list');
+      const heading = document.getElementById('freq-heading');
+      const hzEl = document.getElementById('hz');
+      const status = document.getElementById('status');
+      const caseStatus = document.getElementById('case-status');
+      const play = document.getElementById('play');
+      const wave = document.getElementById('wave');
+      const whisper = document.getElementById('whisper');
+      const faithValue = document.getElementById('faith-value');
+      const faithBar = document.getElementById('faith-bar');
+      const labTitle = document.getElementById('lab-title');
+      const labBody = document.getElementById('lab-body');
+
+      let selected = 0;
+      let ctx = null;
+      let osc = null;
+      let gain = null;
+      let running = false;
+      let revealTimer = null;
+      let faithTimer = null;
+      let faith = 0;
+
+      for(let i=0;i<34;i++){
+        const bar = document.createElement('i');
+        bar.style.animationDelay = `${(i % 9) * -70}ms`;
+        wave.appendChild(bar);
+      }
+
+      function renderButtons(){
+        list.innerHTML = '';
+        wishes.forEach((wish, index) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'wish-btn';
+          btn.setAttribute('aria-pressed', index === selected ? 'true' : 'false');
+          btn.innerHTML = `<strong>${wish.name}</strong><span>${wish.hz.toLocaleString('ko-KR')} Hz</span>`;
+          btn.addEventListener('click', () => selectWish(index));
+          list.appendChild(btn);
+        });
+      }
+
+      function selectWish(index){
+        stopTone(false);
+        selected = index;
+        const wish = wishes[selected];
+        heading.textContent = wish.name;
+        hzEl.textContent = wish.hz.toLocaleString('ko-KR');
+        status.textContent = `READY · ${wish.tag}`;
+        caseStatus.textContent = 'STATUS · STANDBY';
+        whisper.classList.remove('is-show');
+        whisper.innerHTML = '효험이 나타나기까지 잠시만 믿어보세요.';
+        labTitle.textContent = `정확히 ${wish.hz.toLocaleString('ko-KR')} Hz입니다.`;
+        labBody.textContent = wish.lab;
+        faith = 0;
+        updateFaith();
+        renderButtons();
+      }
+
+      function updateFaith(){
+        faithValue.textContent = `${Math.round(faith)}%`;
+        faithBar.style.width = `${Math.min(100, faith)}%`;
+      }
+
+      async function startTone(){
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if(!AudioContextClass){
+          status.textContent = 'ERROR · 이 브라우저는 너무 현실적입니다';
+          whisper.innerHTML = '주파수 송출 기능을 지원하지 않습니다. <strong>효험은 원래 없었습니다.</strong>';
+          whisper.classList.add('is-show');
+          return;
+        }
+        if(!ctx) ctx = new AudioContextClass();
+        if(ctx.state === 'suspended') await ctx.resume();
+
+        const wish = wishes[selected];
+        osc = ctx.createOscillator();
+        gain = ctx.createGain();
+        osc.type = 'sine';
+        const safeHz = Math.min(wish.hz, ctx.sampleRate * 0.45);
+        osc.frequency.setValueAtTime(safeHz, ctx.currentTime);
+        gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.002, ctx.currentTime + 0.08);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start();
+        running = true;
+        wave.classList.add('is-on');
+        play.textContent = '송출 중지';
+        status.textContent = `TRANSMITTING · ${wish.tag}`;
+        caseStatus.textContent = 'STATUS · VERY SCIENTIFIC';
+        whisper.classList.remove('is-show');
+        faith = 8;
+        updateFaith();
+
+        clearTimeout(revealTimer);
+        revealTimer = setTimeout(() => {
+          whisper.innerHTML = wish.line;
+          whisper.classList.add('is-show');
+        }, 3300);
+
+        clearInterval(faithTimer);
+        faithTimer = setInterval(() => {
+          faith = Math.min(99, faith + 3 + Math.random() * 5);
+          updateFaith();
+        }, 650);
+      }
+
+      function stopTone(resetText=true){
+        clearTimeout(revealTimer);
+        clearInterval(faithTimer);
+        if(gain && ctx){
+          try{
+            gain.gain.cancelScheduledValues(ctx.currentTime);
+            gain.gain.setValueAtTime(Math.max(gain.gain.value, 0.0001), ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.05);
+          }catch(e){}
+        }
+        if(osc){
+          try{osc.stop(ctx ? ctx.currentTime + 0.06 : 0)}catch(e){}
+          try{osc.disconnect()}catch(e){}
+        }
+        if(gain){try{gain.disconnect()}catch(e){}}
+        osc = null; gain = null; running = false;
+        wave.classList.remove('is-on');
+        play.textContent = '주파수 송출';
+        if(resetText){
+          status.textContent = `PAUSED · ${wishes[selected].tag}`;
+          caseStatus.textContent = 'STATUS · 효과 확인 불가';
+        }
+      }
+
+      play.addEventListener('click', () => running ? stopTone() : startTone());
+      document.addEventListener('visibilitychange', () => { if(document.hidden && running) stopTone(); });
+      window.addEventListener('pagehide', () => stopTone(false));
+
+      renderButtons();
+      selectWish(0);
+    })();
+  </script>
+</body>
+</html>
