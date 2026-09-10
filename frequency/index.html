@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#f0f0f4">
   <meta name="description" content="종강, 집가기, 살빼기, 성적, 여행, 돈 등 각종 소원을 초음파에 맡겨보는 믿거나 말거나 주파수 앱">
-  <title>효험 — 믿거나 말거나 주파수</title>
+  <title>될지도 — 믿거나 말거나 주파수</title>
   <link rel="stylesheet" href="../shared/toolbox.css">
   <style>
     .freq-logo svg{width:28px;height:28px}
@@ -43,7 +43,7 @@
         <span class="tb-logo freq-logo" aria-hidden="true">
           <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><path d="M3 16h3l2.4-7 4.4 14 5.1-18 4.2 22 3.3-11H29"/></svg>
         </span>
-        <div class="tb-brand-copy"><h1 class="tb-title">효험</h1><p class="tb-subtitle">믿거나 말거나 초음파 연구소</p></div>
+        <div class="tb-brand-copy"><h1 class="tb-title">될지도</h1><p class="tb-subtitle">믿거나 말거나 초음파 연구소</p></div>
       </div>
       <span class="tb-edition">ATTIC TOOL / 013</span>
       <a class="tb-home" href="../" aria-label="홈으로 돌아가기" title="홈">
@@ -65,7 +65,7 @@
                 <div id="wave" class="wave" aria-hidden="true"></div>
                 <button id="play" class="tb-btn tb-btn-primary freq-main-btn" type="button">주파수 송출</button>
                 <p class="freq-disclaimer">초음파라 어차피 안 들려요. 믿거나 말거나.<br><small>* 사람과 기기에 따라 들릴 수 있으며, 아래 효능은 과학적 근거가 없습니다.</small></p>
-                <div id="whisper" class="freq-whisper" aria-live="polite">효험이 나타나기까지 잠시만 믿어보세요.</div>
+                <div id="whisper" class="freq-whisper" aria-live="polite">될지도 모릅니다. 잠시만 믿어보세요.</div>
               </div>
             </div>
             <div class="tb-case-bottom"><span id="case-status">STATUS · STANDBY</span><span>근거 없음 · 자신감 있음</span></div>
@@ -74,7 +74,7 @@
 
         <aside class="tb-settings" aria-labelledby="wish-title">
           <p class="tb-eyebrow">CHOOSE YOUR MIRACLE</p>
-          <h2 id="wish-title" class="tb-heading">어떤 효험이 필요하세요?</h2>
+          <h2 id="wish-title" class="tb-heading">어떤 소원을 맡길까요?</h2>
           <p class="tb-intro">효과는 전부 보장하지 않습니다. 주파수 숫자만 아주 정밀해 보이게 준비했습니다.</p>
           <div class="tb-control-card">
             <div id="wish-list" class="wish-list"></div>
@@ -84,8 +84,8 @@
               <p class="tiny-note">재생할수록 믿음 수치만 올라갑니다. 실제 효과와는 관계가 없습니다.</p>
             </div>
           </div>
-          <section class="tb-thought" aria-label="연구소의 설명">
-            <p class="tb-thought-label">“ 효험 연구소의 한마디</p>
+          <section class="tb-thought" aria-label="될지도의 한마디">
+            <p class="tb-thought-label">“ 될지도의 한마디</p>
             <h3 id="lab-title">정확히 19,231 Hz입니다.</h3>
             <p id="lab-body">왜 이 숫자인지는 묻지 마세요. 숫자가 구체적일수록 왠지 믿음직해 보이니까요.</p>
           </section>
@@ -95,7 +95,7 @@
 
     <footer class="tb-footer"><span>다락방 뒷편 공구 상자</span><span>의학·학업·금전·여행 효과를 실제로 제공하지 않습니다.</span></footer>
   </div>
-  <div class="tb-contact"><a href="mailto:jkd04255@khu.ac.kr?subject=%5B%EB%8B%A4%EB%9D%BD%EB%B0%A9%20%EB%92%B7%ED%8E%B8%20%EA%B3%B5%EA%B5%AC%20%EC%83%81%EC%9E%90%5D%20%ED%9A%A8%ED%97%98%20%EB%AC%B8%EC%9D%98%20%C2%B7%20%EC%98%A4%EB%A5%98%20%EC%A0%9C%EB%B3%B4">✉ 문의 · 오류 제보</a></div>
+  <div class="tb-contact"><a href="mailto:jkd04255@khu.ac.kr?subject=%5B%EB%8B%A4%EB%9D%BD%EB%B0%A9%20%EB%92%B7%ED%8E%B8%20%EA%B3%B5%EA%B5%AC%20%EC%83%81%EC%9E%90%5D%20%EB%90%A0%EC%A7%80%EB%8F%84%20%EB%AC%B8%EC%9D%98%20%C2%B7%20%EC%98%A4%EB%A5%98%20%EC%A0%9C%EB%B3%B4">✉ 문의 · 오류 제보</a></div>
 
   <script>
     (() => {
@@ -161,7 +161,7 @@
         status.textContent = `READY · ${wish.tag}`;
         caseStatus.textContent = 'STATUS · STANDBY';
         whisper.classList.remove('is-show');
-        whisper.innerHTML = '효험이 나타나기까지 잠시만 믿어보세요.';
+        whisper.innerHTML = '될지도 모릅니다. 잠시만 믿어보세요.';
         labTitle.textContent = `정확히 ${wish.hz.toLocaleString('ko-KR')} Hz입니다.`;
         labBody.textContent = wish.lab;
         faith = 0;
@@ -178,7 +178,7 @@
         const AudioContextClass = window.AudioContext || window.webkitAudioContext;
         if(!AudioContextClass){
           status.textContent = 'ERROR · 이 브라우저는 너무 현실적입니다';
-          whisper.innerHTML = '주파수 송출 기능을 지원하지 않습니다. <strong>효험은 원래 없었습니다.</strong>';
+          whisper.innerHTML = '주파수 송출 기능을 지원하지 않습니다. <strong>효과는 원래 없었습니다.</strong>';
           whisper.classList.add('is-show');
           return;
         }
