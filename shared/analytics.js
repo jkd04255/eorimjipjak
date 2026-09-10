@@ -133,12 +133,13 @@
     });
 
     const popularityOrder = [...scores].sort((a, b) => b.score - a.score || a.originalIndex - b.originalIndex);
-    const popularTop2 = popularityOrder.filter((item) => item.score > 0).slice(0, 2).map((item) => item.card);
-
     const withoutNewest = popularityOrder.filter((item) => item.card !== newestCard);
+    const popularTop2 = withoutNewest.filter((item) => item.score > 0).slice(0, 2).map((item) => item.card);
+
     const finalOrder = [...withoutNewest];
+    const newestEntry = popularityOrder.find((item) => item.card === newestCard);
     const insertAt = Math.min(2, finalOrder.length);
-    if (newestCard) finalOrder.splice(insertAt, 0, newestCard);
+    if (newestEntry) finalOrder.splice(insertAt, 0, newestEntry);
 
     finalOrder.forEach((item) => grid.appendChild(item.card));
     if (comingCard) grid.appendChild(comingCard);
@@ -166,7 +167,6 @@
     const state = { grid, cards, newestCard, comingCard };
     refreshHomeRanking(state);
 
-    // 홈을 계속 열어둔 경우에도 최신 인기 순서를 주기적으로 반영합니다.
     setInterval(() => {
       if (!document.hidden) refreshHomeRanking(state);
     }, 60000);
