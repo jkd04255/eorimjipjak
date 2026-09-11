@@ -11,7 +11,7 @@
     'calculator', 'spell-checker', 'kkamppak', 'survival', 'siren',
     'what-to-eat', 'nunchi-timer', 'gugu-mackerel', 'broken-clock',
     'solar-charge', 'clock-out', 'seolleong-seolleong', 'changbak',
-    'frequency', 'excuse', 'memory-test', 'fishing', 'late-alarm'
+    'frequency', 'excuse', 'memory-test', 'fishing', 'late-alarm', 'memo'
   ]);
 
   if (location.hostname !== PRODUCTION_HOST) return;
@@ -119,6 +119,19 @@
       @media(max-width:720px){.tool-top .status-cluster{max-width:72%;gap:5px}.live-badge{padding:4px 8px;font-size:9px}}
     `;
     document.head.appendChild(style);
+  }
+
+  function ensureMemoHomeCard() {
+    const grid = document.querySelector('main.grid');
+    if (!grid || grid.querySelector('a.tool-card[href^="memo/"]')) return;
+
+    const card = document.createElement('a');
+    card.className = 'tool-card';
+    card.href = 'memo/';
+    card.innerHTML = '<div class="tool-top"><div class="tool-icon">▤</div><span class="tag">적어둔 건 확실함</span></div><h3>메모했는데</h3><p>적어둔 원본은 멀쩡하지만 메모장이 가끔 내용을 흐리거나, 다르게 기억하거나, 중요한 부분만 까먹습니다.</p><div class="tool-footer"><span>까먹는 메모장</span><span class="arrow">→</span></div>';
+
+    const coming = grid.querySelector('.tool-card.coming');
+    grid.insertBefore(card, coming || null);
   }
 
   function prepareClusters(cards) {
@@ -248,5 +261,6 @@
     }
   }, { capture: true });
 
+  ensureMemoHomeCard();
   setupHomeRanking();
 })();
