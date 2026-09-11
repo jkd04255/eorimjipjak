@@ -11,7 +11,7 @@
     'calculator', 'spell-checker', 'kkamppak', 'survival', 'siren',
     'what-to-eat', 'nunchi-timer', 'gugu-mackerel', 'broken-clock',
     'solar-charge', 'clock-out', 'seolleong-seolleong', 'changbak',
-    'frequency', 'excuse', 'memory-test', 'fishing'
+    'frequency', 'excuse', 'memory-test', 'fishing', 'late-alarm'
   ]);
 
   if (location.hostname !== PRODUCTION_HOST) return;
