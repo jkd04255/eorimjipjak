@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#f0f0f4">
-  <meta name="description" content="설정한 시간보다 엄마 마음으로 조금 늦게 깨워주는 장난스러운 알람 앱">
+  <meta name="description" content="설정한 시간에 깨우려다가 엄마 마음으로 여러 번 미루는 장난스러운 알람 앱">
   <title>더자 — 엄마 마음 알람</title>
   <link rel="stylesheet" href="../shared/toolbox.css">
   <style>
     .alarm-logo svg{width:31px;height:31px}
-    .alarm-stage{min-height:470px;padding:34px 24px 28px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden;background:#fff}
+    .alarm-stage{min-height:490px;padding:34px 24px 28px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden;background:#fff}
     .alarm-stage::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 24%,rgba(133,102,241,.10),transparent 44%);pointer-events:none}
     .alarm-status{position:relative;margin:0;color:var(--tb-purple);font-size:12px;font-weight:900;letter-spacing:1.15px}
     .alarm-time{position:relative;margin-top:14px;font:850 clamp(56px,12vw,94px)/.98 var(--tb-mono);letter-spacing:-5px;font-variant-numeric:tabular-nums}
@@ -34,11 +34,12 @@
     .care-scale{display:flex;justify-content:space-between;color:var(--tb-muted);font-size:10px}
     .decision{margin-top:18px;padding:15px 16px;border:1px solid var(--tb-line);border-radius:12px;background:#fafafd}
     .decision-row{display:flex;justify-content:space-between;gap:16px;padding:5px 0;font-size:12px}.decision-row span{color:var(--tb-muted)}.decision-row strong{text-align:right}
+    .snooze-dots{display:flex;justify-content:center;gap:6px;min-height:10px;margin-top:16px}.snooze-dot{width:8px;height:8px;border-radius:50%;background:#ddd9ec;transition:background .2s,transform .2s}.snooze-dot.done{background:var(--tb-purple);transform:scale(1.08)}
     .tiny-note{margin-top:14px;color:var(--tb-muted);font-size:11px;line-height:1.7}
-    @media(max-width:720px){.alarm-stage{min-height:430px;padding:28px 14px 24px}.alarm-time{letter-spacing:-3px}.alarm-actions{width:100%}.alarm-actions .tb-btn{flex:1;min-width:0}.decision-row{align-items:flex-start}}
-    @media(prefers-reduced-motion:reduce){.alarm-stage,.alarm-time,.mom-note{animation:none!important;transition:none!important}}
+    @media(max-width:720px){.alarm-stage{min-height:445px;padding:28px 14px 24px}.alarm-time{letter-spacing:-3px}.alarm-actions{width:100%}.alarm-actions .tb-btn{flex:1;min-width:0}.decision-row{align-items:flex-start}}
+    @media(prefers-reduced-motion:reduce){.alarm-stage,.alarm-time,.mom-note,.snooze-dot{animation:none!important;transition:none!important}}
   </style>
-  <script defer src="../shared/analytics.js?v=20260911-late-alarm-1"></script>
+  <script defer src="../shared/analytics.js?v=20260911-late-alarm-2"></script>
 </head>
 <body>
   <div class="tb-shell">
@@ -59,17 +60,18 @@
       <div class="tb-grid">
         <section class="tb-workspace" aria-labelledby="alarm-heading">
           <div class="tb-case">
-            <div class="tb-case-top"><span>MOM-APPROVED ALARM / 018</span><span class="tb-sticker">너무 잘 자길래</span></div>
+            <div class="tb-case-top"><span>MOM-APPROVED ALARM / 018</span><span class="tb-sticker">계속 잘 자길래</span></div>
             <div class="tb-case-paper">
               <div id="alarm-stage" class="alarm-stage">
                 <p id="alarm-status" class="alarm-status">READY · 깨울 시간은 일단 받습니다</p>
                 <h2 id="alarm-heading" class="alarm-time">07:30</h2>
                 <p id="alarm-label" class="alarm-label">사용자가 부탁한 기상 시간</p>
                 <div id="countdown" class="alarm-countdown">알람을 맡겨주세요.</div>
-                <div id="mom-note" class="mom-note" aria-live="polite">“시간 맞춰 깨워줄게. <strong>아마도.</strong>”</div>
+                <div id="mom-note" class="mom-note" aria-live="polite">“시간 맞춰 깨워줄게. <strong>한 번에 될지는 모르겠지만.</strong>”</div>
+                <div id="snooze-dots" class="snooze-dots" aria-hidden="true"></div>
                 <div class="alarm-actions">
                   <button id="set-btn" class="tb-btn tb-btn-primary set-btn" type="button">알람 맡기기</button>
-                  <button id="demo-btn" class="tb-btn demo-btn" type="button">10초 체험</button>
+                  <button id="demo-btn" class="tb-btn demo-btn" type="button">빠른 체험</button>
                   <button id="stop-btn" class="tb-btn tb-btn-primary stop-btn" type="button">일어났어요</button>
                 </div>
               </div>
@@ -81,27 +83,28 @@
         <aside class="tb-settings" aria-labelledby="settings-title">
           <p class="tb-eyebrow">WAKE-UP REQUEST</p>
           <h2 id="settings-title" class="tb-heading">몇 시에 깨워드릴까요?</h2>
-          <p class="tb-intro">원하는 시간은 정확히 기억합니다. 다만 너무 잘 자고 있으면 엄마의 마음으로 판단합니다.</p>
+          <p class="tb-intro">원하는 시간은 정확히 기억합니다. 하지만 깨우러 갔다가 너무 잘 자고 있으면 몇 번이고 다시 돌아갑니다.</p>
           <div class="tb-control-card">
             <label for="wake-time" class="tb-label">부탁한 기상 시간</label>
             <input id="wake-time" class="time-input" type="time" value="07:30" aria-label="기상 시간">
             <div class="care-card">
               <div class="care-head"><strong>엄마의 마음</strong><span id="care-value" class="care-value">65%</span></div>
               <input id="care-range" class="care-range" type="range" min="0" max="100" step="1" value="65">
-              <div class="care-scale"><span>칼같이 깨움</span><span>조금 더 자</span><span>푹 자렴</span></div>
-              <p id="care-copy" class="tiny-note">대체로 4~16분 정도 더 재울 수 있습니다.</p>
+              <div class="care-scale"><span>칼같이 깨움</span><span>또 재움</span><span>계속 재움</span></div>
+              <p id="care-copy" class="tiny-note">대체로 4~6번 정도 깨우기를 미룹니다.</p>
             </div>
             <div class="decision" aria-label="알람 판단 정보">
               <div class="decision-row"><span>요청 시간</span><strong id="requested-view">07:30</strong></div>
+              <div class="decision-row"><span>미루기 계획</span><strong id="plan-view">엄마만 알고 있음</strong></div>
+              <div class="decision-row"><span>현재 상태</span><strong id="delay-view">아직 미정</strong></div>
               <div class="decision-row"><span>실제 기상 예정</span><strong id="actual-view">엄마만 알고 있음</strong></div>
-              <div class="decision-row"><span>추가 수면</span><strong id="delay-view">아직 미정</strong></div>
             </div>
             <p class="tiny-note">웹페이지 특성상 화면을 닫거나 휴대폰이 절전 상태가 되면 실제 알람처럼 동작하지 않을 수 있습니다. 중요한 기상용으로는 기본 알람을 함께 사용하세요.</p>
           </div>
           <section class="tb-thought" aria-label="더자의 한마디">
             <p class="tb-thought-label">“ 더자의 한마디</p>
-            <h3 id="thought-title">알람보다 중요한 건 숙면이죠.</h3>
-            <p id="thought-body">물론 내일 지각하면 이 앱은 책임지지 않습니다. 엄마의 마음이 그랬을 뿐입니다.</p>
+            <h3 id="thought-title">한 번 더 재우는 건 시작일 뿐입니다.</h3>
+            <p id="thought-body">깨우러 갔다가 다시 나오고, 또 갔다가 다시 이불을 덮어줄 수도 있습니다.</p>
           </section>
         </aside>
       </div>
@@ -121,6 +124,7 @@
       const label = $('alarm-label');
       const countdown = $('countdown');
       const note = $('mom-note');
+      const dots = $('snooze-dots');
       const setBtn = $('set-btn');
       const demoBtn = $('demo-btn');
       const stopBtn = $('stop-btn');
@@ -129,27 +133,33 @@
       const careValue = $('care-value');
       const careCopy = $('care-copy');
       const requestedView = $('requested-view');
+      const planView = $('plan-view');
       const actualView = $('actual-view');
       const delayView = $('delay-view');
       const caseStatus = $('case-status');
       const thoughtTitle = $('thought-title');
       const thoughtBody = $('thought-body');
 
-      const momLines = [
-        '너무 잘 자길래 <strong>{n}분만 더 재웠지.</strong>',
-        '깨우려다가 얼굴 보니까 너무 편안하더라. <strong>{n}분 더 자.</strong>',
-        '알람은 봤어. 근데 이불을 다시 덮어줬어. <strong>{n}분 서비스.</strong>',
-        '일어날 시간이긴 했는데… <strong>조금 더 자도 되겠다 싶었지.</strong>',
-        '엄마 마음은 원래 그래. <strong>{n}분 늦은 건 사랑이야.</strong>'
+      const deferLines = [
+        '깨우려고 왔는데 너무 잘 자네. <strong>{m}분만 더.</strong>',
+        '아직 피곤해 보이는데? <strong>이번에도 {m}분 더 자.</strong>',
+        '또 깨우러 왔는데 이불을 꼭 잡고 있더라. <strong>{m}분 추가.</strong>',
+        '이번엔 진짜 깨우려 했어. 근데… <strong>{m}분만 더.</strong>',
+        '눈도 안 떴네. <strong>엄마가 {m}분 뒤에 다시 올게.</strong>',
+        '이 정도면 일어나야 하는데 너무 평화롭다. <strong>한 번만 더.</strong>',
+        '마지막이라고 했지? <strong>그 마지막을 한 번 더 미룰게.</strong>',
+        '깨울까 말까 하다가 또 졌다. <strong>{m}분 더.</strong>'
       ];
 
       let requestedAt = null;
       let actualAt = null;
-      let delayMinutes = 0;
+      let intervals = [];
+      let decisionTimes = [];
       let timer = null;
       let ringingTimer = null;
       let audio = null;
       let demoMode = false;
+      let lastShownStep = -1;
 
       function pad(n){return String(n).padStart(2,'0')}
       function clock(date){return `${pad(date.getHours())}:${pad(date.getMinutes())}`}
@@ -162,12 +172,14 @@
         if(h) return `${h}시간 ${m}분`;
         return `${m}분 ${s}초`;
       }
+      function randomInt(min,max){return Math.floor(Math.random()*(max-min+1))+min}
 
       function careInfo(value){
-        if(value === 0) return {min:0,max:0,copy:'엄마도 약속은 지킵니다. 정확한 시간에 깨웁니다.'};
-        const max = Math.max(3, Math.round(4 + value * .26));
-        const min = Math.max(1, Math.round(max * .28));
-        return {min,max,copy:`대체로 ${min}~${max}분 정도 더 재울 수 있습니다.`};
+        if(value === 0) return {minCount:0,maxCount:0,minGap:0,maxGap:0,copy:'엄마도 약속은 지킵니다. 이번만큼은 정확한 시간에 깨웁니다.'};
+        if(value <= 25) return {minCount:1,maxCount:2,minGap:2,maxGap:4,copy:'대체로 1~2번 정도 깨우기를 미룹니다.'};
+        if(value <= 50) return {minCount:2,maxCount:4,minGap:2,maxGap:5,copy:'대체로 2~4번 정도 깨우기를 미룹니다.'};
+        if(value <= 75) return {minCount:4,maxCount:6,minGap:2,maxGap:5,copy:'대체로 4~6번 정도 깨우기를 미룹니다.'};
+        return {minCount:6,maxCount:9,minGap:2,maxGap:6,copy:'대체로 6~9번 정도 깨우기를 미룹니다. 거의 깨우기 싫어합니다.'};
       }
 
       function updateCare(){
@@ -182,36 +194,57 @@
         const now = new Date();
         const target = new Date(now);
         target.setHours(h || 0, m || 0, 0, 0);
-        if(target <= now) target.setDate(target.getDate() + 1);
+        if(target <= now) target.setDate(target.getDate()+1);
         return target;
       }
 
-      function chooseDelay(){
+      function preparePlan(isDemo){
         const value = Number(careRange.value);
         const info = careInfo(value);
-        if(!info.max) return 0;
-        return Math.floor(Math.random() * (info.max - info.min + 1)) + info.min;
+        const count = info.maxCount ? randomInt(info.minCount, info.maxCount) : 0;
+        intervals = [];
+        for(let i=0;i<count;i++){
+          intervals.push(isDemo ? randomInt(2,3) : randomInt(info.minGap,info.maxGap));
+        }
+        decisionTimes = [new Date(requestedAt)];
+        let cursor = requestedAt.getTime();
+        intervals.forEach((amount) => {
+          cursor += isDemo ? amount*1000 : amount*60000;
+          decisionTimes.push(new Date(cursor));
+        });
+        actualAt = new Date(cursor);
+      }
+
+      function totalDelayMinutes(){return intervals.reduce((sum,n)=>sum+n,0)}
+
+      function renderDots(done){
+        dots.innerHTML = '';
+        intervals.forEach((_,i)=>{
+          const dot = document.createElement('span');
+          dot.className = `snooze-dot${i < done ? ' done' : ''}`;
+          dots.appendChild(dot);
+        });
       }
 
       function prepareAudio(){
         try{
           audio = audio || new (window.AudioContext || window.webkitAudioContext)();
           if(audio.state === 'suspended') audio.resume();
-        }catch(_){audio = null}
+        }catch(_){audio=null}
       }
 
       function beep(){
         if(!audio) return;
         const osc = audio.createOscillator();
         const gain = audio.createGain();
-        osc.type = 'square';
-        osc.frequency.value = 880;
-        gain.gain.setValueAtTime(.0001, audio.currentTime);
-        gain.gain.exponentialRampToValueAtTime(.14, audio.currentTime + .02);
-        gain.gain.exponentialRampToValueAtTime(.0001, audio.currentTime + .24);
+        osc.type='square';
+        osc.frequency.value=880;
+        gain.gain.setValueAtTime(.0001,audio.currentTime);
+        gain.gain.exponentialRampToValueAtTime(.14,audio.currentTime+.02);
+        gain.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+.24);
         osc.connect(gain).connect(audio.destination);
         osc.start();
-        osc.stop(audio.currentTime + .26);
+        osc.stop(audio.currentTime+.26);
       }
 
       function stopTimers(){
@@ -221,96 +254,129 @@
 
       function setIdle(){
         stopTimers();
-        stage.className = 'alarm-stage';
-        requestedAt = actualAt = null;
-        delayMinutes = 0;
-        demoMode = false;
-        status.textContent = 'READY · 깨울 시간은 일단 받습니다';
-        timeDisplay.textContent = wakeInput.value || '07:30';
-        label.textContent = '사용자가 부탁한 기상 시간';
-        countdown.textContent = '알람을 맡겨주세요.';
-        note.innerHTML = '“시간 맞춰 깨워줄게. <strong>아마도.</strong>”';
-        requestedView.textContent = wakeInput.value || '07:30';
-        actualView.textContent = '엄마만 알고 있음';
-        delayView.textContent = '아직 미정';
-        caseStatus.textContent = 'STATUS · 엄마 대기 중';
-        thoughtTitle.textContent = '알람보다 중요한 건 숙면이죠.';
-        thoughtBody.textContent = '물론 내일 지각하면 이 앱은 책임지지 않습니다. 엄마의 마음이 그랬을 뿐입니다.';
+        requestedAt=actualAt=null;
+        intervals=[];
+        decisionTimes=[];
+        demoMode=false;
+        lastShownStep=-1;
+        stage.className='alarm-stage';
+        status.textContent='READY · 깨울 시간은 일단 받습니다';
+        timeDisplay.textContent=wakeInput.value || '07:30';
+        label.textContent='사용자가 부탁한 기상 시간';
+        countdown.textContent='알람을 맡겨주세요.';
+        note.innerHTML='“시간 맞춰 깨워줄게. <strong>한 번에 될지는 모르겠지만.</strong>”';
+        requestedView.textContent=wakeInput.value || '07:30';
+        planView.textContent='엄마만 알고 있음';
+        delayView.textContent='아직 미정';
+        actualView.textContent='엄마만 알고 있음';
+        caseStatus.textContent='STATUS · 엄마 대기 중';
+        thoughtTitle.textContent='한 번 더 재우는 건 시작일 뿐입니다.';
+        thoughtBody.textContent='깨우러 갔다가 다시 나오고, 또 갔다가 다시 이불을 덮어줄 수도 있습니다.';
+        renderDots(0);
       }
 
       function ring(){
         stopTimers();
-        stage.className = 'alarm-stage is-ringing';
-        status.textContent = 'WAKE UP · 이제는 진짜 일어나세요';
-        timeDisplay.textContent = clock(new Date());
-        label.textContent = demoMode ? '체험용 실제 기상 시간' : '엄마가 최종 승인한 기상 시간';
-        countdown.textContent = '일어날 시간입니다!';
-        const line = momLines[Math.floor(Math.random() * momLines.length)].replaceAll('{n}', String(Math.max(1,delayMinutes)));
-        note.innerHTML = `“${line}”`;
-        actualView.textContent = clock(actualAt);
-        delayView.textContent = demoMode ? '체험용으로 슬쩍 늦춤' : `${delayMinutes}분`;
-        caseStatus.textContent = 'STATUS · 이제는 진짜 깨우는 중';
-        thoughtTitle.textContent = delayMinutes ? '잘 잤죠? 이제 진짜 일어나요.' : '오늘은 정시에 깨웠습니다.';
-        thoughtBody.textContent = delayMinutes ? `원래 부탁한 시간보다 ${delayMinutes}분 늦었습니다. 엄마 판단이었습니다.` : '엄마의 마음을 0%로 두면 이 앱도 의외로 말을 잘 듣습니다.';
+        stage.className='alarm-stage is-ringing';
+        status.textContent='WAKE UP · 이제는 진짜 일어나세요';
+        timeDisplay.textContent=clock(new Date());
+        label.textContent=demoMode?'체험용 최종 기상 시간':'엄마가 결국 포기한 시간';
+        countdown.textContent='이제 정말 일어날 시간입니다!';
+        note.innerHTML=intervals.length
+          ? `“<strong>${intervals.length}번</strong>이나 봐줬으면 됐지. 이제 일어나.”`
+          : '“오늘은 약속대로 바로 깨웠어. <strong>기적이지?</strong>”';
+        renderDots(intervals.length);
+        planView.textContent=intervals.length?`${intervals.length}번 미룸`:'정시 기상';
+        delayView.textContent=demoMode?(intervals.length?'체험 완료':'정시'):`총 ${totalDelayMinutes()}분 추가 수면`;
+        actualView.textContent=clock(actualAt);
+        caseStatus.textContent='STATUS · 드디어 깨우는 중';
+        thoughtTitle.textContent=intervals.length?'엄마도 이제는 더 못 봐줍니다.':'오늘은 바로 깨웠습니다.';
+        thoughtBody.textContent=intervals.length
+          ? `깨우기를 ${intervals.length}번 미뤘고, 총 ${demoMode?'체험 시간만큼':`${totalDelayMinutes()}분`} 더 재웠습니다.`
+          : '엄마의 마음을 0%로 두면 이 앱도 의외로 말을 잘 듣습니다.';
         beep();
-        ringingTimer = setInterval(beep, 950);
+        ringingTimer=setInterval(beep,950);
         if(navigator.vibrate) navigator.vibrate([180,100,180,100,300]);
       }
 
-      function tick(){
-        if(!actualAt || !requestedAt) return;
-        const now = new Date();
-        if(now >= actualAt){ring();return}
-        if(now >= requestedAt && actualAt > requestedAt){
-          stage.className = 'alarm-stage is-late';
-          status.textContent = 'MOM DECISION · 깨울 시간이긴 한데…';
-          countdown.textContent = `엄마가 ${secondsText(actualAt-now)}만 더 재우는 중`;
-          note.innerHTML = '“지금 너무 잘 자는데 굳이 깨워야 하나… <strong>조금만 더.</strong>”';
-          caseStatus.textContent = 'STATUS · 이불 다시 덮어주는 중';
-        }else{
-          stage.className = 'alarm-stage is-waiting';
-          status.textContent = 'ARMED · 엄마에게 맡겨짐';
-          countdown.textContent = `부탁한 시간까지 ${secondsText(requestedAt-now)}`;
-          note.innerHTML = '“알았어, 깨워줄게. <strong>일단 자.</strong>”';
-          caseStatus.textContent = 'STATUS · 조용히 지켜보는 중';
+      function currentStep(now){
+        let step=0;
+        for(let i=0;i<intervals.length;i++){
+          if(now >= decisionTimes[i]) step=i+1;
+          else break;
         }
+        return step;
+      }
+
+      function showPostpone(step,now){
+        const index=step-1;
+        const amount=intervals[index];
+        const next=decisionTimes[step];
+        stage.className='alarm-stage is-late';
+        status.textContent=`MOM DECISION · ${step}번째로 그냥 재우기로 함`;
+        timeDisplay.textContent=demoMode?`+${step}`:clock(now);
+        label.textContent=`깨우기 ${step}차 시도 실패`;
+        countdown.textContent=`다음 판단까지 ${secondsText(next-now)}`;
+        const template=deferLines[index % deferLines.length];
+        note.innerHTML=`“${template.replaceAll('{m}',String(amount))}”`;
+        renderDots(step);
+        planView.textContent=`${intervals.length}번 미룰 예정`;
+        delayView.textContent=`${step}/${intervals.length}번째 미루는 중`;
+        actualView.textContent='아직 비밀';
+        caseStatus.textContent=`STATUS · ${step}번째 이불 다시 덮어줌`;
+        thoughtTitle.textContent=step===1?'아직 한 번밖에 안 미뤘어요.':`${step}번째인데도 아직 잘 자네요.`;
+        thoughtBody.textContent=step<intervals.length?'조금 뒤 다시 깨우러 옵니다. 그때 마음이 또 약해질 수 있습니다.':'이번 미루기가 마지막… 일 수도 있습니다.';
+        lastShownStep=step;
+      }
+
+      function tick(){
+        if(!requestedAt || !actualAt) return;
+        const now=new Date();
+        if(now>=actualAt){ring();return}
+        if(now<requestedAt){
+          stage.className='alarm-stage is-waiting';
+          status.textContent='ARMED · 엄마에게 맡겨짐';
+          timeDisplay.textContent=demoMode?'DEMO':clock(requestedAt);
+          label.textContent=demoMode?'곧 첫 번째로 깨우러 감':'사용자가 부탁한 기상 시간';
+          countdown.textContent=`첫 기상 시도까지 ${secondsText(requestedAt-now)}`;
+          note.innerHTML='“알았어. 시간 되면 깨우러 갈게. <strong>깨울지는 그때 보고.</strong>”';
+          renderDots(0);
+          delayView.textContent='아직 안 미룸';
+          caseStatus.textContent='STATUS · 조용히 지켜보는 중';
+          return;
+        }
+        if(intervals.length===0){ring();return}
+        const step=currentStep(now);
+        if(step>0) showPostpone(step,now);
       }
 
       function arm(isDemo){
         stopTimers();
         prepareAudio();
-        demoMode = isDemo;
-        const now = new Date();
-        if(isDemo){
-          requestedAt = new Date(now.getTime() + 5000);
-          const extraSeconds = Number(careRange.value) === 0 ? 0 : 5 + Math.floor(Math.random()*6);
-          delayMinutes = extraSeconds ? 1 : 0;
-          actualAt = new Date(requestedAt.getTime() + extraSeconds * 1000);
-        }else{
-          requestedAt = requestedDateFromInput();
-          delayMinutes = chooseDelay();
-          actualAt = new Date(requestedAt.getTime() + delayMinutes * 60000);
-        }
-        requestedView.textContent = isDemo ? '5초 뒤' : clock(requestedAt);
-        actualView.textContent = '엄마만 알고 있음';
-        delayView.textContent = delayMinutes ? (isDemo ? '비밀' : '비밀') : '0분';
-        timeDisplay.textContent = isDemo ? 'DEMO' : clock(requestedAt);
-        label.textContent = isDemo ? '5초 뒤 깨워달라고 부탁함' : '사용자가 부탁한 기상 시간';
-        thoughtTitle.textContent = delayMinutes ? '시간은 기억했습니다. 판단은 제가 할게요.' : '오늘은 정시 기상 모드입니다.';
-        thoughtBody.textContent = delayMinutes ? '실제 기상 시간은 비공개입니다. 너무 잘 자면 조금 늦어질 수 있습니다.' : '엄마의 마음이 0%라서 부탁한 시간 그대로 깨웁니다.';
+        demoMode=isDemo;
+        const now=new Date();
+        requestedAt=isDemo?new Date(now.getTime()+2000):requestedDateFromInput();
+        preparePlan(isDemo);
+        lastShownStep=-1;
+        requestedView.textContent=isDemo?'2초 뒤':clock(requestedAt);
+        planView.textContent=intervals.length?`${intervals.length}번 정도 미룰 생각`:'정시에 깨울 생각';
+        delayView.textContent='0번 미룸';
+        actualView.textContent='엄마만 알고 있음';
+        thoughtTitle.textContent=intervals.length?'몇 번이나 봐줄지는 이미 정했습니다.':'오늘은 바로 깨우겠습니다.';
+        thoughtBody.textContent=intervals.length?'하지만 실제 기상 시간은 알려드리지 않습니다. 알아버리면 알람이 아니니까요.':'엄마의 마음이 0%라서 부탁한 시간 그대로 깨웁니다.';
         tick();
-        timer = setInterval(tick, 250);
+        timer=setInterval(tick,250);
       }
 
-      careRange.addEventListener('input', updateCare);
-      wakeInput.addEventListener('input', () => {
-        requestedView.textContent = wakeInput.value || '07:30';
-        if(!requestedAt) timeDisplay.textContent = wakeInput.value || '07:30';
+      careRange.addEventListener('input',updateCare);
+      wakeInput.addEventListener('input',()=>{
+        requestedView.textContent=wakeInput.value || '07:30';
+        if(!requestedAt) timeDisplay.textContent=wakeInput.value || '07:30';
       });
-      setBtn.addEventListener('click', () => arm(false));
-      demoBtn.addEventListener('click', () => arm(true));
-      stopBtn.addEventListener('click', setIdle);
-      window.addEventListener('pagehide', stopTimers);
+      setBtn.addEventListener('click',()=>arm(false));
+      demoBtn.addEventListener('click',()=>arm(true));
+      stopBtn.addEventListener('click',setIdle);
+      window.addEventListener('pagehide',stopTimers);
 
       updateCare();
       setIdle();
