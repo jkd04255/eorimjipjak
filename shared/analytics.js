@@ -170,7 +170,7 @@
   }
 
   async function refreshHomeRanking(state) {
-    const { grid, cards, newestCard, newestCards, comingCard } = state;
+    const { grid, cards, newestCards, comingCard } = state;
     if (!grid || cards.length === 0) return;
 
     const scores = await Promise.all(cards.map(async (card) => {
@@ -200,9 +200,15 @@
       .slice(0, 2)
       .map((item) => item.card);
 
-    const newestEntry = popularityOrder.find((item) => item.card === newestCard) || null;
-    const finalOrder = popularityOrder.filter((item) => item.card !== newestCard);
-    if (newestEntry) finalOrder.splice(Math.min(2, finalOrder.length), 0, newestEntry);
+    const newestSet = new Set(newestCards);
+    const newestEntries = [...newestCards]
+      .reverse()
+      .map((card) => popularityOrder.find((item) => item.card === card))
+      .filter(Boolean);
+    const finalOrder = popularityOrder.filter((item) => !newestSet.has(item.card));
+    newestEntries.forEach((entry, index) => {
+      finalOrder.splice(Math.min(2 + index, finalOrder.length), 0, entry);
+    });
 
     const fragment = document.createDocumentFragment();
     finalOrder.forEach((item) => fragment.appendChild(item.card));
@@ -231,10 +237,9 @@
     });
 
     const newestCards = cards.slice(-2);
-    const newestCard = newestCards[newestCards.length - 1] || null;
     prepareClusters(cards);
 
-    const state = { grid, cards, newestCard, newestCards, comingCard };
+    const state = { grid, cards, newestCards, comingCard };
     refreshHomeRanking(state);
 
     setInterval(() => {
