@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f0f0f4">
+  <meta name="description" content="설정한 시간보다 엄마 마음으로 조금 늦게 깨워주는 장난스러운 알람 앱">
+  <title>더자 — 엄마 마음 알람</title>
+  <link rel="stylesheet" href="../shared/toolbox.css">
+  <style>
+    .alarm-logo svg{width:31px;height:31px}
+    .alarm-stage{min-height:470px;padding:34px 24px 28px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden;background:#fff}
+    .alarm-stage::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 24%,rgba(133,102,241,.10),transparent 44%);pointer-events:none}
+    .alarm-status{position:relative;margin:0;color:var(--tb-purple);font-size:12px;font-weight:900;letter-spacing:1.15px}
+    .alarm-time{position:relative;margin-top:14px;font:850 clamp(56px,12vw,94px)/.98 var(--tb-mono);letter-spacing:-5px;font-variant-numeric:tabular-nums}
+    .alarm-label{position:relative;margin-top:10px;color:var(--tb-muted);font-size:13px}
+    .alarm-countdown{position:relative;min-height:26px;margin-top:21px;font:800 16px/1.5 var(--tb-mono);color:var(--tb-ink)}
+    .mom-note{position:relative;width:min(530px,100%);min-height:94px;margin-top:21px;padding:18px 20px;border:1px dashed #c7c2de;border-radius:15px;background:#f3f1f9;display:flex;align-items:center;justify-content:center;color:#625e6c;font-size:14px;line-height:1.75;transition:transform .25s ease,background .25s ease}
+    .mom-note strong{color:var(--tb-ink)}
+    .alarm-stage.is-waiting .mom-note{transform:rotate(-.4deg)}
+    .alarm-stage.is-late .mom-note{background:#fff4c9;border-color:#e5cc65;transform:rotate(.7deg)}
+    .alarm-stage.is-ringing{animation:ring-bg .55s ease-in-out infinite alternate}
+    .alarm-stage.is-ringing .alarm-time{animation:shake .16s linear infinite}
+    @keyframes ring-bg{to{background:#fff8d9}}
+    @keyframes shake{0%,100%{transform:translateX(0) rotate(0)}25%{transform:translateX(-3px) rotate(-1deg)}75%{transform:translateX(3px) rotate(1deg)}}
+    .alarm-actions{position:relative;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:20px}
+    .alarm-actions .tb-btn{min-width:145px}
+    .stop-btn{display:none}.alarm-stage.is-ringing .stop-btn{display:inline-flex}.alarm-stage.is-ringing .set-btn,.alarm-stage.is-ringing .demo-btn{display:none}
+    .time-input{width:100%;min-height:58px;padding:10px 14px;border:1px solid var(--tb-line);border-radius:12px;background:#fff;color:var(--tb-ink);font:800 23px/1 var(--tb-mono);text-align:center}
+    .time-input:focus{outline:3px solid rgba(96,69,219,.13);border-color:#a999e8}
+    .care-card{margin-top:16px;padding-top:16px;border-top:1px solid var(--tb-line)}
+    .care-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px}.care-head strong{font-size:14px}.care-value{color:var(--tb-purple);font:850 17px/1 var(--tb-mono)}
+    .care-range{width:100%;margin:15px 0 4px;accent-color:var(--tb-purple)}
+    .care-scale{display:flex;justify-content:space-between;color:var(--tb-muted);font-size:10px}
+    .decision{margin-top:18px;padding:15px 16px;border:1px solid var(--tb-line);border-radius:12px;background:#fafafd}
+    .decision-row{display:flex;justify-content:space-between;gap:16px;padding:5px 0;font-size:12px}.decision-row span{color:var(--tb-muted)}.decision-row strong{text-align:right}
+    .tiny-note{margin-top:14px;color:var(--tb-muted);font-size:11px;line-height:1.7}
+    @media(max-width:720px){.alarm-stage{min-height:430px;padding:28px 14px 24px}.alarm-time{letter-spacing:-3px}.alarm-actions{width:100%}.alarm-actions .tb-btn{flex:1;min-width:0}.decision-row{align-items:flex-start}}
+    @media(prefers-reduced-motion:reduce){.alarm-stage,.alarm-time,.mom-note{animation:none!important;transition:none!important}}
+  </style>
+  <script defer src="../shared/analytics.js?v=20260911-late-alarm-1"></script>
+</head>
+<body>
+  <div class="tb-shell">
+    <header class="tb-header">
+      <div class="tb-brand">
+        <span class="tb-logo alarm-logo" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="18" r="9"/><path d="M16 13v5l3 2M9 6 5 10M23 6l4 4M12 28h8"/><path d="M9 4 4 9M23 4l5 5"/></svg>
+        </span>
+        <div class="tb-brand-copy"><h1 class="tb-title">더자</h1><p class="tb-subtitle">엄마 마음으로 깨워드리는 알람</p></div>
+      </div>
+      <span class="tb-edition">ATTIC TOOL / 018</span>
+      <a class="tb-home" href="../" aria-label="홈으로 돌아가기" title="홈">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-7h6v7"/></svg>
+      </a>
+    </header>
+
+    <main class="tb-main">
+      <div class="tb-grid">
+        <section class="tb-workspace" aria-labelledby="alarm-heading">
+          <div class="tb-case">
+            <div class="tb-case-top"><span>MOM-APPROVED ALARM / 018</span><span class="tb-sticker">너무 잘 자길래</span></div>
+            <div class="tb-case-paper">
+              <div id="alarm-stage" class="alarm-stage">
+                <p id="alarm-status" class="alarm-status">READY · 깨울 시간은 일단 받습니다</p>
+                <h2 id="alarm-heading" class="alarm-time">07:30</h2>
+                <p id="alarm-label" class="alarm-label">사용자가 부탁한 기상 시간</p>
+                <div id="countdown" class="alarm-countdown">알람을 맡겨주세요.</div>
+                <div id="mom-note" class="mom-note" aria-live="polite">“시간 맞춰 깨워줄게. <strong>아마도.</strong>”</div>
+                <div class="alarm-actions">
+                  <button id="set-btn" class="tb-btn tb-btn-primary set-btn" type="button">알람 맡기기</button>
+                  <button id="demo-btn" class="tb-btn demo-btn" type="button">10초 체험</button>
+                  <button id="stop-btn" class="tb-btn tb-btn-primary stop-btn" type="button">일어났어요</button>
+                </div>
+              </div>
+            </div>
+            <div class="tb-case-bottom"><span id="case-status">STATUS · 엄마 대기 중</span><span>정시 기상 보장 안 함</span></div>
+          </div>
+        </section>
+
+        <aside class="tb-settings" aria-labelledby="settings-title">
+          <p class="tb-eyebrow">WAKE-UP REQUEST</p>
+          <h2 id="settings-title" class="tb-heading">몇 시에 깨워드릴까요?</h2>
+          <p class="tb-intro">원하는 시간은 정확히 기억합니다. 다만 너무 잘 자고 있으면 엄마의 마음으로 판단합니다.</p>
+          <div class="tb-control-card">
+            <label for="wake-time" class="tb-label">부탁한 기상 시간</label>
+            <input id="wake-time" class="time-input" type="time" value="07:30" aria-label="기상 시간">
+            <div class="care-card">
+              <div class="care-head"><strong>엄마의 마음</strong><span id="care-value" class="care-value">65%</span></div>
+              <input id="care-range" class="care-range" type="range" min="0" max="100" step="1" value="65">
+              <div class="care-scale"><span>칼같이 깨움</span><span>조금 더 자</span><span>푹 자렴</span></div>
+              <p id="care-copy" class="tiny-note">대체로 4~16분 정도 더 재울 수 있습니다.</p>
+            </div>
+            <div class="decision" aria-label="알람 판단 정보">
+              <div class="decision-row"><span>요청 시간</span><strong id="requested-view">07:30</strong></div>
+              <div class="decision-row"><span>실제 기상 예정</span><strong id="actual-view">엄마만 알고 있음</strong></div>
+              <div class="decision-row"><span>추가 수면</span><strong id="delay-view">아직 미정</strong></div>
+            </div>
+            <p class="tiny-note">웹페이지 특성상 화면을 닫거나 휴대폰이 절전 상태가 되면 실제 알람처럼 동작하지 않을 수 있습니다. 중요한 기상용으로는 기본 알람을 함께 사용하세요.</p>
+          </div>
+          <section class="tb-thought" aria-label="더자의 한마디">
+            <p class="tb-thought-label">“ 더자의 한마디</p>
+            <h3 id="thought-title">알람보다 중요한 건 숙면이죠.</h3>
+            <p id="thought-body">물론 내일 지각하면 이 앱은 책임지지 않습니다. 엄마의 마음이 그랬을 뿐입니다.</p>
+          </section>
+        </aside>
+      </div>
+    </main>
+
+    <footer class="tb-footer"><span>다락방 뒷편 공구 상자</span><span>중요한 일정에는 실제 알람을 따로 설정하세요.</span></footer>
+  </div>
+  <div class="tb-contact"><a href="mailto:jkd04255@khu.ac.kr?subject=%5B%EB%8B%A4%EB%9D%BD%EB%B0%A9%20%EB%92%B7%ED%8E%B8%20%EA%B3%B5%EA%B5%AC%20%EC%83%81%EC%9E%90%5D%20%EB%8D%94%EC%9E%90%20%EB%AC%B8%EC%9D%98%20%C2%B7%20%EC%98%A4%EB%A5%98%20%EC%A0%9C%EB%B3%B4">✉ 문의 · 오류 제보</a></div>
+
+  <script>
+    (() => {
+      'use strict';
+      const $ = (id) => document.getElementById(id);
+      const stage = $('alarm-stage');
+      const status = $('alarm-status');
+      const timeDisplay = $('alarm-heading');
+      const label = $('alarm-label');
+      const countdown = $('countdown');
+      const note = $('mom-note');
+      const setBtn = $('set-btn');
+      const demoBtn = $('demo-btn');
+      const stopBtn = $('stop-btn');
+      const wakeInput = $('wake-time');
+      const careRange = $('care-range');
+      const careValue = $('care-value');
+      const careCopy = $('care-copy');
+      const requestedView = $('requested-view');
+      const actualView = $('actual-view');
+      const delayView = $('delay-view');
+      const caseStatus = $('case-status');
+      const thoughtTitle = $('thought-title');
+      const thoughtBody = $('thought-body');
+
+      const momLines = [
+        '너무 잘 자길래 <strong>{n}분만 더 재웠지.</strong>',
+        '깨우려다가 얼굴 보니까 너무 편안하더라. <strong>{n}분 더 자.</strong>',
+        '알람은 봤어. 근데 이불을 다시 덮어줬어. <strong>{n}분 서비스.</strong>',
+        '일어날 시간이긴 했는데… <strong>조금 더 자도 되겠다 싶었지.</strong>',
+        '엄마 마음은 원래 그래. <strong>{n}분 늦은 건 사랑이야.</strong>'
+      ];
+
+      let requestedAt = null;
+      let actualAt = null;
+      let delayMinutes = 0;
+      let timer = null;
+      let ringingTimer = null;
+      let audio = null;
+      let demoMode = false;
+
+      function pad(n){return String(n).padStart(2,'0')}
+      function clock(date){return `${pad(date.getHours())}:${pad(date.getMinutes())}`}
+      function secondsText(ms){
+        const total = Math.max(0, Math.ceil(ms / 1000));
+        if(total < 60) return `${total}초`;
+        const h = Math.floor(total / 3600);
+        const m = Math.floor((total % 3600) / 60);
+        const s = total % 60;
+        if(h) return `${h}시간 ${m}분`;
+        return `${m}분 ${s}초`;
+      }
+
+      function careInfo(value){
+        if(value === 0) return {min:0,max:0,copy:'엄마도 약속은 지킵니다. 정확한 시간에 깨웁니다.'};
+        const max = Math.max(3, Math.round(4 + value * .26));
+        const min = Math.max(1, Math.round(max * .28));
+        return {min,max,copy:`대체로 ${min}~${max}분 정도 더 재울 수 있습니다.`};
+      }
+
+      function updateCare(){
+        const value = Number(careRange.value);
+        const info = careInfo(value);
+        careValue.textContent = `${value}%`;
+        careCopy.textContent = info.copy;
+      }
+
+      function requestedDateFromInput(){
+        const [h,m] = (wakeInput.value || '07:30').split(':').map(Number);
+        const now = new Date();
+        const target = new Date(now);
+        target.setHours(h || 0, m || 0, 0, 0);
+        if(target <= now) target.setDate(target.getDate() + 1);
+        return target;
+      }
+
+      function chooseDelay(){
+        const value = Number(careRange.value);
+        const info = careInfo(value);
+        if(!info.max) return 0;
+        return Math.floor(Math.random() * (info.max - info.min + 1)) + info.min;
+      }
+
+      function prepareAudio(){
+        try{
+          audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+          if(audio.state === 'suspended') audio.resume();
+        }catch(_){audio = null}
+      }
+
+      function beep(){
+        if(!audio) return;
+        const osc = audio.createOscillator();
+        const gain = audio.createGain();
+        osc.type = 'square';
+        osc.frequency.value = 880;
+        gain.gain.setValueAtTime(.0001, audio.currentTime);
+        gain.gain.exponentialRampToValueAtTime(.14, audio.currentTime + .02);
+        gain.gain.exponentialRampToValueAtTime(.0001, audio.currentTime + .24);
+        osc.connect(gain).connect(audio.destination);
+        osc.start();
+        osc.stop(audio.currentTime + .26);
+      }
+
+      function stopTimers(){
+        if(timer){clearInterval(timer);timer=null}
+        if(ringingTimer){clearInterval(ringingTimer);ringingTimer=null}
+      }
+
+      function setIdle(){
+        stopTimers();
+        stage.className = 'alarm-stage';
+        requestedAt = actualAt = null;
+        delayMinutes = 0;
+        demoMode = false;
+        status.textContent = 'READY · 깨울 시간은 일단 받습니다';
+        timeDisplay.textContent = wakeInput.value || '07:30';
+        label.textContent = '사용자가 부탁한 기상 시간';
+        countdown.textContent = '알람을 맡겨주세요.';
+        note.innerHTML = '“시간 맞춰 깨워줄게. <strong>아마도.</strong>”';
+        requestedView.textContent = wakeInput.value || '07:30';
+        actualView.textContent = '엄마만 알고 있음';
+        delayView.textContent = '아직 미정';
+        caseStatus.textContent = 'STATUS · 엄마 대기 중';
+        thoughtTitle.textContent = '알람보다 중요한 건 숙면이죠.';
+        thoughtBody.textContent = '물론 내일 지각하면 이 앱은 책임지지 않습니다. 엄마의 마음이 그랬을 뿐입니다.';
+      }
+
+      function ring(){
+        stopTimers();
+        stage.className = 'alarm-stage is-ringing';
+        status.textContent = 'WAKE UP · 이제는 진짜 일어나세요';
+        timeDisplay.textContent = clock(new Date());
+        label.textContent = demoMode ? '체험용 실제 기상 시간' : '엄마가 최종 승인한 기상 시간';
+        countdown.textContent = '일어날 시간입니다!';
+        const line = momLines[Math.floor(Math.random() * momLines.length)].replaceAll('{n}', String(Math.max(1,delayMinutes)));
+        note.innerHTML = `“${line}”`;
+        actualView.textContent = clock(actualAt);
+        delayView.textContent = demoMode ? '체험용으로 슬쩍 늦춤' : `${delayMinutes}분`;
+        caseStatus.textContent = 'STATUS · 이제는 진짜 깨우는 중';
+        thoughtTitle.textContent = delayMinutes ? '잘 잤죠? 이제 진짜 일어나요.' : '오늘은 정시에 깨웠습니다.';
+        thoughtBody.textContent = delayMinutes ? `원래 부탁한 시간보다 ${delayMinutes}분 늦었습니다. 엄마 판단이었습니다.` : '엄마의 마음을 0%로 두면 이 앱도 의외로 말을 잘 듣습니다.';
+        beep();
+        ringingTimer = setInterval(beep, 950);
+        if(navigator.vibrate) navigator.vibrate([180,100,180,100,300]);
+      }
+
+      function tick(){
+        if(!actualAt || !requestedAt) return;
+        const now = new Date();
+        if(now >= actualAt){ring();return}
+        if(now >= requestedAt && actualAt > requestedAt){
+          stage.className = 'alarm-stage is-late';
+          status.textContent = 'MOM DECISION · 깨울 시간이긴 한데…';
+          countdown.textContent = `엄마가 ${secondsText(actualAt-now)}만 더 재우는 중`;
+          note.innerHTML = '“지금 너무 잘 자는데 굳이 깨워야 하나… <strong>조금만 더.</strong>”';
+          caseStatus.textContent = 'STATUS · 이불 다시 덮어주는 중';
+        }else{
+          stage.className = 'alarm-stage is-waiting';
+          status.textContent = 'ARMED · 엄마에게 맡겨짐';
+          countdown.textContent = `부탁한 시간까지 ${secondsText(requestedAt-now)}`;
+          note.innerHTML = '“알았어, 깨워줄게. <strong>일단 자.</strong>”';
+          caseStatus.textContent = 'STATUS · 조용히 지켜보는 중';
+        }
+      }
+
+      function arm(isDemo){
+        stopTimers();
+        prepareAudio();
+        demoMode = isDemo;
+        const now = new Date();
+        if(isDemo){
+          requestedAt = new Date(now.getTime() + 5000);
+          const extraSeconds = Number(careRange.value) === 0 ? 0 : 5 + Math.floor(Math.random()*6);
+          delayMinutes = extraSeconds ? 1 : 0;
+          actualAt = new Date(requestedAt.getTime() + extraSeconds * 1000);
+        }else{
+          requestedAt = requestedDateFromInput();
+          delayMinutes = chooseDelay();
+          actualAt = new Date(requestedAt.getTime() + delayMinutes * 60000);
+        }
+        requestedView.textContent = isDemo ? '5초 뒤' : clock(requestedAt);
+        actualView.textContent = '엄마만 알고 있음';
+        delayView.textContent = delayMinutes ? (isDemo ? '비밀' : '비밀') : '0분';
+        timeDisplay.textContent = isDemo ? 'DEMO' : clock(requestedAt);
+        label.textContent = isDemo ? '5초 뒤 깨워달라고 부탁함' : '사용자가 부탁한 기상 시간';
+        thoughtTitle.textContent = delayMinutes ? '시간은 기억했습니다. 판단은 제가 할게요.' : '오늘은 정시 기상 모드입니다.';
+        thoughtBody.textContent = delayMinutes ? '실제 기상 시간은 비공개입니다. 너무 잘 자면 조금 늦어질 수 있습니다.' : '엄마의 마음이 0%라서 부탁한 시간 그대로 깨웁니다.';
+        tick();
+        timer = setInterval(tick, 250);
+      }
+
+      careRange.addEventListener('input', updateCare);
+      wakeInput.addEventListener('input', () => {
+        requestedView.textContent = wakeInput.value || '07:30';
+        if(!requestedAt) timeDisplay.textContent = wakeInput.value || '07:30';
+      });
+      setBtn.addEventListener('click', () => arm(false));
+      demoBtn.addEventListener('click', () => arm(true));
+      stopBtn.addEventListener('click', setIdle);
+      window.addEventListener('pagehide', stopTimers);
+
+      updateCare();
+      setIdle();
+    })();
+  </script>
+</body>
+</html>
