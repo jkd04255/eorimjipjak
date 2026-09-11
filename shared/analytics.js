@@ -157,7 +157,7 @@
   }
 
   async function refreshHomeRanking(state) {
-    const { grid, cards, newestCard, comingCard } = state;
+    const { grid, cards, newestCard, newestCards, comingCard } = state;
     if (!grid || cards.length === 0) return;
 
     const scores = await Promise.all(cards.map(async (card) => {
@@ -198,7 +198,7 @@
 
     clearLiveBadges(cards);
     popularTop2.forEach((card) => addBadge(card, 'popular', '인기'));
-    if (newestCard) addBadge(newestCard, 'new', 'NEW');
+    newestCards.forEach((card) => addBadge(card, 'new', 'NEW'));
   }
 
   function setupHomeRanking() {
@@ -217,10 +217,11 @@
       card.dataset.originalIndex = String(index);
     });
 
-    const newestCard = cards[cards.length - 1] || null;
+    const newestCards = cards.slice(-2);
+    const newestCard = newestCards[newestCards.length - 1] || null;
     prepareClusters(cards);
 
-    const state = { grid, cards, newestCard, comingCard };
+    const state = { grid, cards, newestCard, newestCards, comingCard };
     refreshHomeRanking(state);
 
     setInterval(() => {
