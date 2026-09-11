@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f0f0f4">
+  <meta name="description" content="적어둔 메모를 가끔 흐릿하게, 다르게, 일부만 기억하는 까먹는 메모장. 원본은 그대로 보관됩니다.">
+  <title>메모했는데 — 까먹는 메모장</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="app.js"></script>
+  <script defer src="../shared/analytics.js?v=20260911-memo-1"></script>
+</head>
+<body>
+<div class="shell">
+  <header class="page-header">
+    <a class="brand" href="./" aria-label="메모했는데 처음 화면">
+      <span class="brand-mark" aria-hidden="true">▤</span>
+      <span><strong>메모했는데</strong><small>까먹는 메모장</small></span>
+    </a>
+    <span class="edition">THE ALMOST REMEMBERED MEMO</span>
+    <a class="home-btn" href="../">⌂ 홈</a>
+  </header>
+
+  <main class="workspace">
+    <aside class="memo-list-panel" aria-label="메모 목록">
+      <div class="panel-top">
+        <div>
+          <p class="eyebrow">MY NOTES, PROBABLY</p>
+          <h1>적어둔 것들</h1>
+        </div>
+        <button class="square-btn" id="new-note" type="button" aria-label="새 메모">＋</button>
+      </div>
+
+      <label class="search">
+        <span aria-hidden="true">⌕</span>
+        <input id="search-input" type="search" placeholder="무슨 메모였더라…" autocomplete="off">
+      </label>
+
+      <div class="list-meta">
+        <span id="note-count">메모 0개</span>
+        <span id="fuzzy-count">가물가물 0개</span>
+      </div>
+
+      <div class="note-list" id="note-list" aria-live="polite"></div>
+
+      <button class="new-note-wide" id="new-note-bottom" type="button">＋ 새 메모 남기기</button>
+    </aside>
+
+    <section class="memo-stage" aria-label="선택한 메모">
+      <div class="paper-stack" aria-hidden="true"></div>
+      <article class="memo-paper" id="memo-paper">
+        <div class="paper-head">
+          <div class="paper-label">
+            <span id="memory-status-dot" class="status-dot"></span>
+            <span id="memory-status">기억 상태</span>
+          </div>
+          <div class="paper-actions" id="paper-actions" hidden>
+            <button class="text-btn" id="edit-note" type="button">원본 수정</button>
+            <button class="text-btn danger" id="delete-note" type="button">삭제</button>
+          </div>
+        </div>
+
+        <div id="empty-state" class="empty-state">
+          <div class="empty-icon">✎</div>
+          <p class="eyebrow">분명 적어둘 게 있었는데.</p>
+          <h2>메모를 하나 남겨보세요.</h2>
+          <p>적어둔 내용은 이 브라우저에 저장됩니다.<br>그리고 가끔, 이 메모장이 먼저 까먹습니다.</p>
+          <button class="primary-btn" id="empty-new" type="button">첫 메모 남기기</button>
+        </div>
+
+        <div id="viewer" hidden>
+          <p class="paper-date" id="view-date"></p>
+          <h2 class="memory-text" id="view-title"></h2>
+          <div class="paper-rule"></div>
+          <div class="memory-body memory-text" id="view-body"></div>
+
+          <div class="memory-message" id="memory-message">
+            <span>?</span>
+            <p id="memory-message-copy">이번에는 또렷하게 기억하고 있어요.</p>
+          </div>
+
+          <div class="viewer-buttons">
+            <button class="primary-btn" id="remember-note" type="button">원래 뭐였지? 다시 떠올리기</button>
+            <button class="secondary-btn" id="forget-note" type="button">이번 메모 한번 까먹기</button>
+          </div>
+        </div>
+
+        <form id="editor" class="editor" hidden>
+          <div class="editor-kicker"><span>ORIGINAL NOTE</span><span>원본은 망가뜨리지 않아요.</span></div>
+          <label>
+            <span>제목</span>
+            <input id="title-input" maxlength="80" placeholder="예: 장보러 가서 살 것" required autocomplete="off">
+          </label>
+          <label class="body-field">
+            <span>내용</span>
+            <textarea id="body-input" maxlength="4000" placeholder="우유, 계란, 휴지… 분명 이것뿐이었나?" required></textarea>
+          </label>
+          <label class="remember-toggle">
+            <input id="important-input" type="checkbox">
+            <span><strong>◆ 이 메모는 꼭 기억하기</strong><small>망각 효과에서 제외합니다.</small></span>
+          </label>
+          <p class="editor-error" id="editor-error" hidden></p>
+          <div class="editor-actions">
+            <button class="secondary-btn" id="cancel-edit" type="button">취소</button>
+            <button class="primary-btn" type="submit">기억해 두기</button>
+          </div>
+        </form>
+      </article>
+    </section>
+
+    <aside class="settings-panel" aria-label="기억 설정">
+      <p class="eyebrow">A LITTLE HUMAN MEMORY</p>
+      <h2>얼마나 기억할까요?</h2>
+      <p class="intro">메모는 잘 저장해요.<br>보여줄 때 기억이 좀 수상할 뿐.</p>
+
+      <section class="control-card">
+        <div class="control-head">
+          <label for="probability">까먹을 확률</label>
+          <output for="probability"><span id="probability-value">35</span><small>%</small></output>
+        </div>
+        <input class="range" id="probability" type="range" min="0" max="100" step="5" value="35">
+        <div class="range-ends"><span>또렷함</span><span>거의 남의 메모</span></div>
+        <div class="presets" aria-label="까먹을 확률 빠른 설정">
+          <button type="button" data-rate="0">0%</button>
+          <button type="button" data-rate="35">35%</button>
+          <button type="button" data-rate="100">100%</button>
+        </div>
+
+        <fieldset class="memory-modes">
+          <legend>까먹는 방식</legend>
+          <label><span><strong>흐릿해져요</strong><small>읽으려면 눈을 찌푸려야 함</small></span><input type="checkbox" name="mode" value="blur" checked></label>
+          <label><span><strong>다르게 기억해요</strong><small>우유가 두유가 될 수도 있음</small></span><input type="checkbox" name="mode" value="rewrite" checked></label>
+          <label><span><strong>일부만 남아요</strong><small>중요한 부분만 꼭 사라짐</small></span><input type="checkbox" name="mode" value="fragment" checked></label>
+        </fieldset>
+
+        <label class="auto-label">
+          <span><strong>가끔 저절로 까먹기</strong><small>약 45초마다 한 번 기웃거립니다.</small></span>
+          <input type="checkbox" id="auto-memory" checked>
+        </label>
+
+        <button class="secondary-btn wide" id="shuffle-memory" type="button">↻ 아무 메모나 한번 까먹기</button>
+      </section>
+
+      <section class="thought">
+        <p class="eyebrow">“ 메모장의 한마디</p>
+        <h3 id="thought-title">적은 건 확실해요.</h3>
+        <p id="thought-copy">뭘 적었는지는 조금 자신이 없네요.</p>
+      </section>
+
+      <section class="storage-note">
+        <strong>원본은 이 브라우저에 저장돼요.</strong>
+        <p>까먹는 건 화면에 보이는 기억뿐입니다. 다른 기기로 옮기려면 백업 파일을 사용하세요.</p>
+        <div>
+          <button class="text-btn" id="export-notes" type="button">백업 저장</button>
+          <button class="text-btn" id="import-notes" type="button">백업 불러오기</button>
+        </div>
+        <input id="import-file" type="file" accept=".json,application/json" hidden>
+      </section>
+    </aside>
+  </main>
+
+  <footer>
+    <span>중요한 메모는 ◆ 꼭 기억하기를 켜두는 편이 좋습니다.</span>
+    <a href="mailto:jkd04255@khu.ac.kr?subject=%5B%EB%A9%94%EB%AA%A8%ED%96%88%EB%8A%94%EB%8D%B0%5D%20%EB%AC%B8%EC%9D%98%20%C2%B7%20%EC%98%A4%EB%A5%98%20%EC%A0%9C%EB%B3%B4">✉ 문의 · 오류 제보</a>
+  </footer>
+</div>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<dialog id="confirm-dialog">
+  <h2 id="confirm-title">정말 지울까요?</h2>
+  <p id="confirm-copy">원본 메모까지 완전히 삭제됩니다.</p>
+  <div class="dialog-actions">
+    <button class="secondary-btn" id="confirm-cancel" type="button">취소</button>
+    <button class="primary-btn danger-fill" id="confirm-ok" type="button">삭제</button>
+  </div>
+</dialog>
+
+<noscript><p class="noscript">메모했는데를 사용하려면 JavaScript를 켜주세요.</p></noscript>
+</body>
+</html>
