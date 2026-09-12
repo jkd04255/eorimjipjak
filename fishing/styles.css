@@ -44,6 +44,8 @@ kbd { display: inline-block; padding: 1px 7px; border: 1px solid #d1cedf; border
 .target { position: absolute; left: 50%; width: 37px; height: 25px; margin-left: -18.5px; bottom: 4px; display: grid; place-items: center; filter: drop-shadow(0 2px 1px #14345366); }
 .target svg { width: 37px; height: 25px; overflow: visible; }
 .target svg path { fill: #7355e9; stroke: #fff; stroke-width: 2.6; }
+.target.is-golden svg path { fill: #f8ca51; stroke: #fff1b9; }
+.target.is-golden { filter: drop-shadow(0 0 5px #ffd566); }
 .tracking-state { display: inline-flex; padding: 4px 9px; border: 1px solid #e1daef; border-radius: 7px; background: #f2eefb; color: #64459b; font-size: 13px; font-weight: 750; }
 .tracking-state.is-inside { border-color: #c6db96; background: #eff9d9; color: #436719; }
 .control-copy h3 { margin: 8px 0 0; font-size: 24px; }
@@ -65,14 +67,20 @@ kbd { display: inline-block; padding: 1px 7px; border: 1px solid #d1cedf; border
 .result-box { margin-top: 16px; padding: 23px; overflow: hidden; border: 1px solid #dcd6f1; border-radius: 16px; background: radial-gradient(ellipse at 50% 22%, #ece6ff 0, #fff 62%); text-align: center; animation: reveal .35s ease-out; }
 .result-kicker { color: var(--tb-purple); font-size: 14px; font-weight: 850; }
 .result-box[data-rarity="매우 희귀"], .result-box[data-rarity="전설?"] { border-color: #e2ca8e; background: radial-gradient(ellipse at 50% 22%, #fff0c5, #fff 65%); }
+.result-box[data-rarity="황금"] { border: 2px solid #dfb34f; background: radial-gradient(ellipse at 50% 22%, #ffe5a0, #fffcf3 65%); }
+.result-box[data-rarity="황금"] .result-icon { border-color: #ecd08b; box-shadow: 0 7px 0 #ecd08b, 0 16px 22px #c6972420; }
 .result-icon { width: 150px; height: 150px; margin: 10px auto; padding: 8px; display: grid; place-items: center; border: 1px solid #e5def7; border-radius: 28px; background: #fff; box-shadow: 0 7px 0 #e6e0f6, 0 16px 22px #6045db12; font-size: 68px; transform: rotate(-4deg); }
 .item-art { width: 100%; height: 100%; display: block; background: url('./assets/items.webp') var(--sprite-x) var(--sprite-y) / 500% 300% no-repeat; }
+.golden-fish-art { display: block; width: 100%; height: 100%; }
 .rarity { display: inline-block; margin-top: 8px; padding: 3px 10px; border: 1px solid #dcd4f5; border-radius: 7px; background: #f0ebfc; color: #6045ac; font-size: 12px; font-weight: 850; }
 .rarity[data-rarity="희귀"], .rarity[data-rarity="매우 희귀"] { background: #e7f7f5; color: #267668; border-color: #bce3dd; }
 .rarity[data-rarity="전설?"] { background: #fff1d0; color: #8f610c; border-color: #eed28b; }
+.rarity[data-rarity="황금"] { background: #ffe29a; color: #714909; border-color: #ddb44e; }
 .result-name { margin-top: 8px; font-size: 26px; }
 .result-note { margin: 7px auto 0; max-width: 420px; color: var(--tb-muted); font-size: 16px; line-height: 1.7; }
 .result-box .tb-btn { min-height: 48px; }
+.result-box .tb-btn kbd { margin-left: 7px; }
+.result-unlock { margin-top: 14px; padding: 10px 12px; border: 1px solid #e2bd62; border-radius: 10px; background: #fff3cc; color: #795110; font-size: 14px; font-weight: 750; line-height: 1.6; }
 [data-state="result"][data-outcome="caught"] .scene { height: 100px; aspect-ratio: auto; }
 [data-state="result"][data-outcome="caught"] .scene-art { object-position: center 35%; }
 [data-state="result"][data-outcome="caught"] .scene-copy { left: 14px; top: 10px; right: 14px; padding: 10px 12px; }
@@ -87,6 +95,14 @@ kbd { display: inline-block; padding: 1px 7px; border: 1px solid #d1cedf; border
 .collection-item .ci-rarity { display: block; margin-top: 4px; color: #7c718e; font-size: 12px; }
 .collection-item.locked { border-style: dashed; background: #f3f2f7; color: #7a7588; }
 .collection-item.locked .ci-icon { background: #e8e5ee; box-shadow: inset 0 2px 3px #292a3406; }
+.golden-bonus { display: flex; align-items: center; gap: 16px; margin-top: 16px; padding: 18px; border: 1px dashed #d6c8a7; border-radius: 14px; background: #f8f5ed; }
+.golden-icon { flex: 0 0 64px; width: 64px; height: 64px; display: grid; place-items: center; border-radius: 14px; background: #eee8db; color: #998865; font: 750 30px/1 var(--tb-mono); }
+.bonus-label { color: #886326; font-size: 12px; font-weight: 800; }
+.golden-bonus h3 { margin-top: 3px; font-size: 16px; }
+.golden-bonus p { margin-top: 5px; color: #746851; font-size: 14px; line-height: 1.65; }
+.golden-bonus[data-state="unlocked"], .golden-bonus[data-state="caught"] { border-style: solid; border-color: #dfb34f; background: #fff4d5; }
+.golden-bonus[data-state="unlocked"] .golden-icon, .golden-bonus[data-state="caught"] .golden-icon { background: #fffdf5; }
+.difficulty-note { margin-top: 12px; color: var(--tb-muted); font-size: 13px; line-height: 1.7; }
 .stat-stack { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
 .tiny-stat { padding: 15px; border: 1px solid var(--tb-line); border-radius: 13px; background: #fff; }
 .tiny-stat span { display: block; color: var(--tb-muted); font-size: 14px; }
