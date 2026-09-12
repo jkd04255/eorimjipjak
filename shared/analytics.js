@@ -7,6 +7,8 @@
   const REPO_PREFIX = '/eorimjipjak';
   const USAGE_TICK_SECONDS = 5;
   const USAGE_TICK_MS = USAGE_TICK_SECONDS * 1000;
+  const VISIT_SESSION_MS = 30 * 60 * 1000;
+  const VISIT_STORAGE_KEY = 'eorimjipjak-last-visit-session-v1';
   const APP_KEYS = new Set([
     'calculator', 'spell-checker', 'kkamppak', 'survival', 'siren',
     'what-to-eat', 'nunchi-timer', 'gugu-mackerel', 'broken-clock',
@@ -47,6 +49,29 @@
       img.referrerPolicy = 'no-referrer';
       img.src = url.toString();
     }
+  }
+
+  // 사이트에 새로 들어온 시각을 한국시간 기준으로 기록합니다.
+  // 같은 브라우저에서 30분 안에 앱을 여러 번 이동해도 하나의 접속 세션으로 봅니다.
+  function setupVisitHourTracking() {
+    const now = Date.now();
+    let shouldTrack = true;
+
+    try {
+      const last = Number(localStorage.getItem(VISIT_STORAGE_KEY) || 0);
+      if (Number.isFinite(last) && now - last < VISIT_SESSION_MS) {
+        shouldTrack = false;
+      } else {
+        localStorage.setItem(VISIT_STORAGE_KEY, String(now));
+      }
+    } catch (_) {
+      // 저장소를 막아둔 브라우저에서는 현재 페이지 접속을 그대로 1회 기록합니다.
+    }
+
+    if (!shouldTrack) return;
+    const kstHour = (new Date(now).getUTCHours() + 9) % 24;
+    const hourKey = `h${String(kstHour).padStart(2, '0')}`;
+    track('visit-hour', hourKey);
   }
 
   // 앱 페이지에서만 세션과 활성 이용시간을 기록합니다.
@@ -249,6 +274,7 @@
 
   const pageKey = keyFromPath(location.pathname);
   track('pageview', pageKey);
+  setupVisitHourTracking();
   setupUsageTracking(pageKey);
 
   document.addEventListener('click', (event) => {
